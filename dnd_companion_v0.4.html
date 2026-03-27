@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D&D 5e Companion</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#3a9e8e;--teal2:#2d8070;--teal-light:#e8f5f3;
+  --purple:#7c3aed;--purple-light:#ede9fe;
+  --text:#1a1a1a;--text2:#555;--text3:#999;
+  --border:#e0e0e0;--border2:#ccc;
+  --bg:#f7f7f7;--white:#fff;
+  --green:#28a745;--red:#dc3545;--orange:#e07b00;--gold:#b38a00;
+}
+body{font-family:'Inter',system-ui,sans-serif;font-size:15px;color:var(--text);background:var(--bg);min-height:100vh}
+.hdr{background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:48px;position:sticky;top:0;z-index:100}
+.hdr-title{font-size:16px;font-weight:600;flex:1;text-align:center}
+.hdr-btn{background:none;border:none;color:#fff;font-size:14px;font-weight:500;cursor:pointer;padding:8px 4px;white-space:nowrap}
+.hdr-btn:hover{opacity:.8}
+.prog{background:var(--teal2);height:3px}
+.prog-fill{background:rgba(255,255,255,.5);height:3px;transition:width .3s}
+.scr{display:none;max-width:600px;margin:0 auto;padding:16px 16px 80px}
+.scr.on{display:block}
+.land-logo{text-align:center;padding:60px 0 8px;font-size:28px;font-weight:700;color:var(--teal2)}
+.land-sub{text-align:center;color:var(--text3);font-size:14px;margin-bottom:40px}
+.land-card{background:var(--white);border:1px solid var(--border);padding:22px;margin-bottom:12px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;border-radius:2px}
+.land-card:hover{border-color:var(--teal);background:var(--teal-light)}
+.land-card h3{font-size:17px;font-weight:600;margin-bottom:4px}
+.land-card p{font-size:13px;color:var(--text3)}
+.f{margin-bottom:16px}
+.f label{display:block;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.f input,.f select,.f textarea{width:100%;border:none;border-bottom:1px solid var(--border2);background:transparent;padding:7px 4px;font-size:15px;color:var(--text);outline:none;font-family:inherit}
+.f input:focus,.f select:focus,.f textarea:focus{border-bottom-color:var(--teal)}
+.f textarea{resize:vertical;min-height:60px;border:1px solid var(--border2);padding:8px;border-radius:2px}
+.f textarea:focus{border-color:var(--teal)}
+.f select{cursor:pointer;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 6px center;padding-right:24px}
+select option{background:#fff;color:var(--text)}
+.row2{display:flex;gap:12px}.row2 .f{flex:1}
+.row3{display:flex;gap:10px}.row3 .f{flex:1}
+.btn{display:block;width:100%;padding:13px;border:1px solid var(--border2);background:var(--white);color:var(--text);font-size:15px;font-weight:500;cursor:pointer;text-align:center;font-family:inherit;border-radius:2px;margin-bottom:10px}
+.btn:hover{border-color:var(--teal);background:var(--teal-light);color:var(--teal2)}
+.btn-primary{background:var(--teal);color:#fff;border-color:var(--teal2);font-weight:600}
+.btn-primary:hover{background:var(--teal2);color:#fff}
+.btn-danger{background:var(--red);color:#fff;border-color:var(--red)}
+.btn-danger:hover{background:#b02a37;color:#fff}
+.btn-sm{padding:7px 14px;font-size:13px;margin:0;display:inline-block;width:auto}
+.btn-icon{width:32px;height:32px;border:1px solid var(--border2);background:var(--white);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;border-radius:2px;flex-shrink:0;color:var(--text2);font-family:inherit}
+.btn-icon:hover{border-color:var(--teal);color:var(--teal)}
+.btn-icon.minus:hover{border-color:var(--red);color:var(--red)}
+.sec{background:var(--white);border:1px solid var(--border);border-top:none}
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border)}
+.sec-title{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px}
+.sec-act{font-size:13px;color:var(--purple);cursor:pointer;font-weight:500;background:none;border:none;font-family:inherit;padding:0}
+.sec-act:hover{text-decoration:underline}
+.info{background:var(--teal-light);border-left:3px solid var(--teal);padding:9px 12px;font-size:13px;color:var(--teal2);line-height:1.5}
+.tabs{display:flex;border-bottom:2px solid var(--border);background:var(--white)}
+.tab{flex:1;padding:10px 4px;text-align:center;cursor:pointer;font-size:11px;font-weight:600;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-2px;letter-spacing:.3px;white-space:nowrap}
+.tab:hover{color:var(--text2)}
+.tab.on{color:var(--teal);border-bottom-color:var(--teal)}
+.hp-wrap{background:var(--white);border:1px solid var(--border);padding:14px}
+.hp-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.hp-lbl{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px}
+.hp-num{font-size:22px;font-weight:700}
+.hp-track{background:#eee;height:8px;border-radius:4px}
+.hp-fill{height:8px;border-radius:4px;transition:width .4s,background .4s}
+.hp-adj{display:flex;gap:8px;align-items:center;margin-top:10px}
+.hp-adj input{width:60px;text-align:center;border:1px solid var(--border2);padding:6px;font-size:15px;font-family:inherit;border-radius:2px;background:var(--white);color:var(--text);outline:none}
+.hp-adj input:focus{border-color:var(--teal)}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--border);border-top:none;background:var(--white)}
+.stat-cell{border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:10px 6px;text-align:center}
+.stat-cell:nth-child(3n){border-right:none}
+.stat-cell:nth-last-child(-n+3){border-bottom:none}
+.stat-val{font-size:20px;font-weight:700}
+.stat-lbl{font-size:11px;color:var(--text3);margin-top:2px}
+.stat-edit-input{width:100%;border:none;border-bottom:1px solid var(--border2);background:transparent;font-size:20px;font-weight:700;text-align:center;color:var(--text);outline:none;font-family:inherit;padding:0}
+.stat-edit-input:focus{border-bottom-color:var(--teal)}
+.ab-bar{display:grid;grid-template-columns:repeat(6,1fr);border:1px solid var(--border);border-top:none;background:var(--white)}
+.ab-col{border-right:1px solid var(--border);padding:8px 2px;text-align:center}
+.ab-col:last-child{border-right:none}
+.ab-col.clickable{cursor:pointer}
+.ab-col.clickable:hover{background:var(--teal-light)}
+.ab-col.ed{background:var(--teal-light);outline:2px solid var(--teal);outline-offset:-1px}
+.ab-score{font-size:18px;font-weight:700}
+.ab-mod{font-size:13px;font-weight:600;color:var(--teal2)}
+.ab-lbl{font-size:9px;color:var(--text3);font-weight:600;letter-spacing:.3px;margin-top:1px}
+.ab-edit-row{background:var(--white);border:1px solid var(--border);border-top:none;padding:10px 14px;display:none;align-items:center;gap:10px}
+.ab-edit-row.show{display:flex}
+.ab-edit-row input{width:56px;border:1px solid var(--border2);padding:5px;font-size:15px;text-align:center;font-family:inherit;color:var(--text);border-radius:2px;background:var(--white);outline:none}
+.ab-edit-row input:focus{border-color:var(--teal)}
+.tbl-wrap{background:var(--white);border:1px solid var(--border);border-top:none}
+.tbl-row{display:flex;align-items:center;padding:8px 14px;border-bottom:1px solid var(--border);gap:10px}
+.tbl-row:last-child{border-bottom:none}
+.tbl-row:hover{background:#fafafa}
+.tbl-name{flex:1;font-size:14px}
+.tbl-name.prof{color:var(--purple);font-weight:500}
+.tbl-name.expert{color:var(--gold);font-weight:600}
+.tbl-ab{font-size:11px;color:var(--text3);min-width:28px;text-align:right}
+.tbl-bonus{min-width:36px;text-align:right;font-size:14px;font-weight:700}
+.tbl-bonus.prof{color:var(--purple)}
+.tbl-bonus.expert{color:var(--gold)}
+.tbl-bonus.neg{color:var(--text3)}
+.prof-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0}
+.prof-dot.on{background:var(--purple);border-color:var(--purple)}
+.prof-dot.expert{background:var(--gold);border-color:var(--gold)}
+.grp-hdr{padding:6px 14px;background:#fafafa;border-bottom:1px solid var(--border);font-size:11px;font-weight:600;color:var(--teal2);letter-spacing:.5px;text-transform:uppercase}
+.prof-check{width:15px;height:15px;accent-color:var(--purple);cursor:pointer;flex-shrink:0}
+.exp-check{width:15px;height:15px;accent-color:var(--gold);cursor:pointer;flex-shrink:0}
+.ov-input{width:40px;border:none;border-bottom:1px solid var(--border2);padding:2px 3px;font-size:13px;text-align:center;font-family:inherit;color:var(--purple);background:transparent;outline:none}
+.ov-input:focus{border-bottom-color:var(--purple)}
+.reset-btn{font-size:10px;color:var(--text3);cursor:pointer;padding:1px 5px;border:1px solid var(--border);border-radius:2px;background:var(--white);font-family:inherit}
+.reset-btn:hover{border-color:var(--purple);color:var(--purple)}
+.passive-row{background:var(--white);border:1px solid var(--border);border-top:none;padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
+.sort-bar{display:flex;gap:6px;padding:7px 14px;background:var(--white);border:1px solid var(--border);border-top:none;border-bottom:none}
+.sort-btn{padding:3px 10px;border:1px solid var(--border2);background:var(--white);font-size:12px;cursor:pointer;border-radius:2px;color:var(--text2);font-family:inherit}
+.sort-btn.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+.legend{display:flex;gap:14px;padding:7px 14px;background:var(--white);border:1px solid var(--border);border-top:none;font-size:11px;color:var(--text3);flex-wrap:wrap}
+.leg-i{display:flex;align-items:center;gap:4px}
+.leg-dot{width:9px;height:9px;border-radius:50%}
+.rest-row{display:flex;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border)}
+.rest-btn{flex:1;padding:10px;border:1px solid var(--border2);background:var(--white);cursor:pointer;font-size:13px;font-weight:500;font-family:inherit;color:var(--text2);border-radius:2px;text-align:center}
+.rest-btn:hover{border-color:var(--teal);background:var(--teal-light);color:var(--teal2)}
+.rest-sub{font-size:11px;color:var(--text3);margin-top:2px;font-weight:400}
+.hd-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border)}
+.hd-count{font-size:20px;font-weight:700;color:var(--teal2);min-width:20px;text-align:center}
+.use-hd-btn{padding:7px 14px;border:1px solid var(--teal);background:var(--teal-light);color:var(--teal2);cursor:pointer;font-size:13px;font-weight:500;border-radius:2px;font-family:inherit}
+.use-hd-btn:hover{background:var(--teal);color:#fff}
+.use-hd-btn:disabled{opacity:.35;pointer-events:none;border-color:var(--border2);background:var(--white);color:var(--text3)}
+.death-wrap{padding:12px 14px}
+.death-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.death-lbl{font-size:14px;font-weight:500;min-width:80px}
+.death-circles{display:flex;gap:8px}
+.death-circle{width:28px;height:28px;border-radius:50%;border:2px solid var(--border2);cursor:pointer;background:var(--white);display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s}
+.death-circle.success{background:var(--green);border-color:var(--green);color:#fff}
+.death-circle.failure{background:var(--red);border-color:var(--red);color:#fff}
+.death-note{font-size:12px;color:var(--text3);padding:8px 10px;background:var(--bg);border-radius:2px;line-height:1.5;margin-top:4px}
+.insp-toggle{width:44px;height:24px;border-radius:12px;border:2px solid var(--border2);background:var(--border);cursor:pointer;position:relative;transition:all .2s;flex-shrink:0}
+.insp-toggle.on{background:var(--teal);border-color:var(--teal2)}
+.insp-toggle::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s}
+.insp-toggle.on::after{left:18px}
+.currency-row{display:flex;border-top:1px solid var(--border)}
+.currency-cell{flex:1;border-right:1px solid var(--border);padding:10px 6px;text-align:center}
+.currency-cell:last-child{border-right:none}
+.currency-val{font-size:18px;font-weight:700}
+.currency-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.currency-input{width:100%;border:none;border-bottom:1px solid var(--border2);background:transparent;font-size:18px;font-weight:700;text-align:center;color:var(--text);outline:none;font-family:inherit;padding:0}
+.currency-input:focus{border-bottom-color:var(--teal)}
+.cond-wrap{padding:12px 14px}
+.cond-grid{display:flex;flex-wrap:wrap;gap:5px}
+.cond-btn{padding:4px 10px;border:1px solid var(--border2);background:var(--white);font-size:12px;cursor:pointer;border-radius:2px;color:var(--text2);font-family:inherit}
+.cond-btn:hover{border-color:var(--text3)}
+.cond-btn.on{background:#fde8e8;color:var(--red);border-color:var(--red);font-weight:500}
+.temp-row{display:flex;align-items:center;gap:10px;padding:12px 14px;border-top:1px solid var(--border)}
+.temp-row label{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;min-width:76px}
+.temp-input{width:70px;border:1px solid var(--border2);padding:6px;font-size:15px;font-family:inherit;text-align:center;color:var(--text);border-radius:2px;background:var(--white);outline:none}
+.temp-input:focus{border-color:var(--teal)}
+.spell-slot-grid{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--border);border-top:none;background:var(--white)}
+.slot-cell{border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:10px 6px;text-align:center}
+.slot-cell:nth-child(3n){border-right:none}
+.slot-cell:nth-last-child(-n+3){border-bottom:none}
+.slot-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;font-weight:600}
+.slot-count{font-size:11px;color:var(--text3);margin-top:2px}
+.spell-lvl-hdr{padding:6px 14px;background:#fafafa;border-bottom:1px solid var(--border);border-top:1px solid var(--border);font-size:11px;font-weight:600;color:var(--purple);letter-spacing:.5px;text-transform:uppercase}
+.spell-row{display:flex;align-items:center;padding:9px 14px;border-bottom:1px solid var(--border);gap:10px;cursor:pointer;background:var(--white)}
+.spell-row:hover{background:#fafafa}
+.spell-name{font-size:14px;font-weight:500;flex:1}
+.conc-badge{font-size:10px;background:var(--teal-light);color:var(--teal2);padding:1px 6px;border-radius:2px;font-weight:600;margin-left:4px}
+.ritual-badge{font-size:10px;background:#f3f0ff;color:var(--purple);padding:1px 6px;border-radius:2px;font-weight:600;margin-left:4px}
+.db-panel{background:var(--white);border:1px solid var(--border);border-top:none;max-height:400px;overflow-y:auto}
+.db-search-wrap{padding:10px 14px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--white);z-index:2}
+.db-search{width:100%;border:1px solid var(--border2);padding:8px 10px;font-size:14px;font-family:inherit;color:var(--text);border-radius:2px;outline:none;background:var(--white)}
+.db-search:focus{border-color:var(--teal)}
+.db-filters{display:flex;gap:6px;padding:8px 14px;border-bottom:1px solid var(--border);flex-wrap:wrap;background:var(--white);position:sticky;top:53px;z-index:2}
+.db-filter{padding:3px 10px;border:1px solid var(--border2);background:var(--white);font-size:12px;cursor:pointer;border-radius:2px;color:var(--text2);font-family:inherit}
+.db-filter.on{background:var(--purple);color:#fff;border-color:var(--purple)}
+.db-row{display:flex;align-items:center;padding:9px 14px;border-bottom:1px solid var(--border);cursor:pointer;gap:8px}
+.db-row:hover{background:var(--purple-light)}
+.db-row.added{opacity:.5;pointer-events:none}
+.db-name{font-size:14px;font-weight:500;flex:1}
+.db-lvl{font-size:11px;font-weight:600;color:var(--purple);min-width:50px}
+.db-school{font-size:12px;color:var(--text3)}
+.db-add-lbl{font-size:12px;color:var(--purple);font-weight:600;white-space:nowrap}
+.hd-choice{display:flex;gap:10px;margin-bottom:14px}
+.hd-choice-btn{flex:1;padding:12px;border:1px solid var(--border2);background:var(--white);cursor:pointer;border-radius:2px;text-align:center;font-family:inherit}
+.hd-choice-btn:hover{border-color:var(--teal);background:var(--teal-light)}
+.hd-choice-btn.selected{border-color:var(--teal);background:var(--teal-light);border-width:2px}
+.hd-choice-title{font-size:14px;font-weight:600}
+.hd-choice-sub{font-size:12px;color:var(--text3);margin-top:3px}
+.hd-manual-row{display:flex;gap:10px;align-items:center;margin-top:4px}
+.hd-manual-input{width:70px;border:1px solid var(--border2);padding:8px;font-size:18px;font-weight:600;text-align:center;font-family:inherit;color:var(--text);border-radius:2px;background:var(--white);outline:none}
+.hd-manual-input:focus{border-color:var(--teal)}
+.hd-rolled{background:var(--teal-light);border:1px solid var(--teal);border-radius:2px;padding:10px;text-align:center;margin-bottom:10px}
+.pc{background:var(--white);border:1px solid var(--border);border-top:none;padding:14px}
+.init-item{background:var(--white);border:1px solid var(--border);border-top:none;padding:11px 14px;display:flex;align-items:center;gap:10px}
+.init-item.active-turn{border-left:3px solid var(--teal);background:var(--teal-light)}
+.init-item.dead{opacity:.35}
+.init-roll{font-size:18px;font-weight:700;color:var(--teal2);min-width:28px;text-align:center}
+.init-name{flex:1;font-size:14px;font-weight:500}
+.mini-bar{height:4px;background:#eee;margin-top:3px;border-radius:2px}
+.mini-fill{height:4px;transition:width .3s;border-radius:2px}
+.enemy-badge{font-size:10px;font-weight:600;background:#fde8e8;color:var(--red);padding:1px 6px;border-radius:2px;margin-left:4px}
+.notes-area{width:100%;border:1px solid var(--border2);padding:12px;font-size:15px;font-family:inherit;color:var(--text);min-height:180px;resize:vertical;outline:none;background:var(--white);border-radius:2px}
+.notes-area:focus{border-color:var(--teal)}
+.waiting{text-align:center;padding:40px 16px;color:var(--text3);background:var(--white);border:1px solid var(--border);border-top:none}
+.waiting h3{font-size:15px;color:var(--text2);margin-bottom:6px}
+.shop-item{background:var(--white);border:1px solid var(--border);border-top:none;padding:12px 14px;display:flex;align-items:center;justify-content:space-between}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px}
+.overlay.hidden{display:none}
+.modal{background:var(--white);width:100%;max-width:420px;border-radius:4px;overflow:hidden;max-height:90vh;overflow-y:auto}
+.modal-hdr{padding:16px 20px 12px;border-bottom:1px solid var(--border)}
+.modal-title{font-size:16px;font-weight:600}
+.modal-sub{font-size:13px;color:var(--text3);margin-top:3px}
+.modal-body{padding:16px 20px}
+.modal-effect{background:var(--bg);border-radius:2px;padding:10px 12px;margin-bottom:14px;font-size:13px;line-height:1.7;color:var(--text2)}
+.modal-effect b{color:var(--text)}
+.modal-foot{display:flex;gap:10px;padding:0 20px 16px}
+.modal-btn{flex:1;padding:11px;border-radius:2px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;border:1px solid var(--border2)}
+.modal-btn.cancel{background:var(--white);color:var(--text2)}
+.modal-btn.cancel:hover{border-color:var(--text3)}
+.modal-btn.confirm{background:var(--teal);color:#fff;border-color:var(--teal2)}
+.modal-btn.confirm:hover{background:var(--teal2)}
+.hp-opts{display:flex;gap:10px;margin-bottom:12px}
+.hp-opt{flex:1;border:1px solid var(--border2);padding:10px 6px;text-align:center;cursor:pointer;font-size:13px;color:var(--text2);border-radius:2px}
+.hp-opt:hover{border-color:var(--teal)}
+.hp-opt.on{border-color:var(--teal);background:var(--teal-light);color:var(--teal2);font-weight:600}
+.hp-big{font-size:28px;font-weight:700;color:var(--teal2);text-align:center;margin:8px 0 2px}
+.detail{background:var(--white);border:1px solid var(--border);padding:12px;margin-top:6px;font-size:13px;line-height:1.6;color:var(--text2)}
+.detail h4{font-size:14px;font-weight:600;margin-bottom:5px}
+.dtag{display:inline-block;background:var(--teal-light);color:var(--teal2);font-size:11px;padding:2px 7px;border-radius:2px;margin:2px;font-weight:500}
+.dtrait{padding-left:10px;border-left:2px solid var(--teal);color:var(--purple);font-size:12px;margin:2px 0}
+.dlink{font-size:13px;color:var(--purple);cursor:pointer;margin-top:4px;display:inline-block}
+.dlink:hover{text-decoration:underline}
+.sys-row{display:flex;gap:8px;margin-bottom:12px}
+.sys-btn{padding:6px 12px;border:1px solid var(--border2);background:var(--white);font-size:13px;cursor:pointer;border-radius:2px;color:var(--text2);font-family:inherit}
+.sys-btn.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+.ab-grid{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--border)}
+.ab-cell{border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:10px 6px;text-align:center}
+.ab-cell:nth-child(3n){border-right:none}
+.ab-cell:nth-last-child(-n+3){border-bottom:none}
+.ab-cell-lbl{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.5px;margin-bottom:5px}
+.ab-cell-ctrl{display:flex;align-items:center;justify-content:center;gap:6px}
+.ab-cell-num{font-size:20px;font-weight:700;min-width:26px}
+.ab-cell-mod{font-size:12px;color:var(--text3);margin-top:3px}
+.adj{width:20px;height:20px;border:1px solid var(--border2);background:var(--white);cursor:pointer;font-size:13px;border-radius:2px;display:flex;align-items:center;justify-content:center;color:var(--text2);padding:0;font-family:inherit}
+.adj:hover{border-color:var(--teal);color:var(--teal)}
+.adj:disabled{opacity:.25;pointer-events:none}
+.chk-list{display:flex;flex-direction:column}
+.chk-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer}
+.chk-item:last-child{border-bottom:none}
+.chk-item input{width:15px;height:15px;margin-top:2px;accent-color:var(--purple);cursor:pointer;flex-shrink:0}
+.chk-name{font-size:14px;font-weight:500}
+.chk-lim{font-size:13px;color:var(--text2);margin-bottom:10px}
+.chk-lim span{color:var(--purple);font-weight:600}
+.pers-f{margin-bottom:12px}
+.pers-f label{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:.5px;display:block;margin-bottom:4px;text-transform:uppercase}
+.pers-f textarea{width:100%;border:1px solid var(--border);padding:8px;font-size:14px;color:var(--text);font-family:inherit;resize:vertical;min-height:52px;outline:none;border-radius:2px}
+.pers-f textarea:focus{border-color:var(--teal)}
+.rev-sec{margin-bottom:16px}
+.rev-sec h3{font-size:11px;font-weight:600;color:var(--teal2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+.rev-row{display:flex;justify-content:space-between;padding:5px 0;font-size:14px;border-bottom:1px solid var(--border)}
+.rev-row:last-child{border-bottom:none}
+.rev-lbl{color:var(--text3)}.rev-val{font-weight:500}
+.rev-abs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.rev-ab{text-align:center;padding:8px;border:1px solid var(--border)}
+.rev-ab-name{font-size:10px;color:var(--text3);font-weight:600}
+.rev-ab-sc{font-size:18px;font-weight:700}
+.rev-ab-mod{font-size:12px;color:var(--teal2)}
+/* DB MODAL (full screen sheet) */
+.db-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:150;display:flex;align-items:flex-end;justify-content:center}
+.db-modal-overlay.hidden{display:none}
+.db-modal-sheet{background:var(--white);width:100%;max-width:600px;height:calc(90vh - 16px);margin-bottom:16px;border-radius:12px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 -4px 24px rgba(0,0,0,.12)}
+.db-modal-handle{padding:10px 0 4px;display:flex;justify-content:center;flex-shrink:0}
+.db-modal-handle-bar{width:36px;height:4px;background:var(--border2);border-radius:2px}
+.db-modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:4px 16px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
+.db-modal-title{font-size:17px;font-weight:600}
+.db-modal-close{width:30px;height:30px;border-radius:50%;border:none;background:var(--bg);cursor:pointer;font-size:16px;color:var(--text2);display:flex;align-items:center;justify-content:center}
+.db-modal-close:hover{background:var(--border)}
+.db-modal-search-wrap{padding:12px 16px 8px;flex-shrink:0}
+.db-modal-search{width:100%;border:1px solid var(--border2);padding:10px 14px;font-size:15px;font-family:inherit;color:var(--text);border-radius:6px;outline:none;background:var(--white)}
+.db-modal-search:focus{border-color:var(--teal)}
+.db-modal-filters{display:flex;gap:6px;padding:0 16px 10px;overflow-x:auto;flex-shrink:0;-webkit-overflow-scrolling:touch}
+.db-modal-filters::-webkit-scrollbar{display:none}
+.db-modal-filter{padding:5px 12px;border:1px solid var(--border2);background:var(--white);font-size:13px;cursor:pointer;border-radius:20px;color:var(--text2);font-family:inherit;white-space:nowrap;flex-shrink:0}
+.db-modal-filter.on{background:var(--purple);color:#fff;border-color:var(--purple)}
+.db-modal-filter.my-lvl{background:var(--teal-light);color:var(--teal2);border-color:var(--teal)}
+.db-modal-filter.my-lvl.on{background:var(--teal);color:#fff;border-color:var(--teal2)}
+.db-modal-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:16px}
+.db-modal-cat{padding:6px 16px;background:#fafafa;border-bottom:1px solid var(--border);border-top:1px solid var(--border);font-size:11px;font-weight:600;color:var(--purple);letter-spacing:.5px;text-transform:uppercase;position:sticky;top:0;z-index:2}
+.db-modal-row{display:flex;align-items:center;padding:11px 16px;border-bottom:1px solid var(--border);cursor:pointer;gap:10px}
+.db-modal-row:hover{background:var(--teal-light)}
+.db-modal-row.added{opacity:.45;pointer-events:none}
+.db-modal-row-name{font-size:14px;font-weight:500;flex:1}
+.db-modal-row-sub{font-size:12px;color:var(--text3);margin-top:2px}
+.db-modal-row-add{font-size:12px;font-weight:600;color:var(--teal2);padding:4px 10px;border:1px solid var(--teal);border-radius:2px;white-space:nowrap;flex-shrink:0}
+.db-modal-row:hover .db-modal-row-add{background:var(--teal);color:#fff}
+.custom-form-section{padding:14px 16px;border-top:2px solid var(--border);flex-shrink:0;background:var(--white)}
+.custom-form-title{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.custom-inputs-row{display:flex;gap:8px;flex-wrap:wrap}
+.custom-inputs-row input,.custom-inputs-row select{border:1px solid var(--border2);padding:8px 10px;font-size:14px;font-family:inherit;border-radius:4px;background:var(--white);color:var(--text);outline:none}
+.custom-inputs-row input:focus,.custom-inputs-row select:focus{border-color:var(--teal)}
+.custom-add-btn{padding:8px 16px;background:var(--teal);color:#fff;border:none;border-radius:4px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+.custom-add-btn:hover{background:var(--teal2)}
+/* ADD DROPDOWN */
+.add-dropdown-wrap{position:relative;display:inline-block}
+.add-dropdown-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;border:1px solid var(--border2);background:var(--white);border-radius:2px;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;font-family:inherit}
+.add-dropdown-btn:hover{border-color:var(--teal);color:var(--teal);background:var(--teal-light)}
+.add-dropdown-menu{display:none;position:absolute;top:calc(100% + 4px);right:0;background:var(--white);border:1px solid var(--border);border-radius:4px;box-shadow:0 4px 16px rgba(0,0,0,.14);z-index:50;min-width:190px;overflow:hidden}
+.add-dropdown-menu.open{display:block}
+.add-dropdown-item{display:flex;align-items:center;gap:8px;padding:11px 14px;font-size:14px;cursor:pointer;color:var(--text);border-bottom:1px solid var(--border)}
+.add-dropdown-item:last-child{border-bottom:none}
+.add-dropdown-item:hover{background:var(--teal-light);color:var(--teal2)}
+/* SPELL DETAIL */
+.spell-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.spell-detail-item{background:var(--bg);padding:8px 10px;border-radius:2px}
+.spell-detail-lbl{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.spell-detail-val{font-size:14px;font-weight:500}
+/* WEAPONS */
+.weapon-row{background:var(--white);border:1px solid var(--border);border-top:none;padding:12px 14px;cursor:pointer}
+.weapon-row:hover{background:#fafafa}
+/* MISC */
+.hp-opts{display:flex;gap:10px;margin-bottom:12px}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--teal2);color:#fff;padding:9px 22px;font-size:13px;font-weight:500;opacity:0;transition:all .25s;pointer-events:none;z-index:999;border-radius:20px}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.muted{color:var(--text3);font-size:13px}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}
+.red{color:var(--red)}.green{color:var(--green)}.gold{color:var(--gold)}.bold{font-weight:600}
+
+/* LEVEL UP SHEET */
+.lvlup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:flex;align-items:flex-end;justify-content:center}
+.lvlup-overlay.hidden{display:none}
+.lvlup-sheet{background:var(--white);width:100%;max-width:500px;max-height:90vh;border-radius:16px 16px 0 0;overflow-y:auto;padding:0 0 32px}
+.lvlup-handle{padding:12px 0 4px;display:flex;justify-content:center}
+.lvlup-handle-bar{width:40px;height:4px;background:var(--border2);border-radius:2px}
+.lvlup-hdr{padding:0 20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.lvlup-close{width:32px;height:32px;border-radius:50%;border:none;background:var(--bg);cursor:pointer;font-size:18px;color:var(--text2)}
+.lvlup-section{padding:14px 20px;border-bottom:1px solid var(--border)}
+.lvlup-section-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.lvlup-badge{text-align:center;padding:20px 0 8px}
+.lvlup-num{font-size:52px;font-weight:700;color:var(--purple)}
+.lvlup-class{font-size:15px;color:var(--text3)}
+.hp-modes{display:flex;gap:8px;margin-bottom:12px}
+.hp-mode-btn{flex:1;padding:12px 6px;border:2px solid var(--border2);border-radius:8px;text-align:center;cursor:pointer;transition:all .15s;background:var(--white)}
+.hp-mode-btn.active{border-color:var(--teal);background:var(--teal-light)}
+.hp-mode-title{font-size:13px;font-weight:600;color:var(--text)}
+.hp-mode-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.lvlup-hp-result{text-align:center;padding:10px 0}
+.lvlup-hp-total{font-size:36px;font-weight:700;color:var(--teal2)}
+.lvlup-hp-detail{font-size:13px;color:var(--text3);margin-top:4px}
+.lvlup-feature{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;background:#fff8e6;border:1px solid #ffd580;border-radius:20px;font-size:13px;margin:3px;color:var(--text2)}
+.lvlup-slot-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;font-size:14px;border-bottom:1px solid var(--border)}
+.lvlup-slot-row:last-child{border-bottom:none}
+/* LEVEL UP SHEET */
+/* DICE ROLLER */
+.dice-fab{position:fixed;bottom:24px;right:20px;width:52px;height:52px;border-radius:50%;background:var(--teal);color:#fff;border:none;font-size:22px;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.25);z-index:90;display:flex;align-items:center;justify-content:center;transition:transform .15s}
+.dice-fab:hover{transform:scale(1.08)}
+.dice-panel{position:fixed;bottom:88px;right:16px;background:var(--white);border:1px solid var(--border);border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,.18);z-index:90;width:260px;overflow:hidden}
+.dice-panel.hidden{display:none}
+.dice-panel-hdr{padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;font-weight:600;color:var(--text2);display:flex;align-items:center;justify-content:space-between}
+.dice-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px}
+.die-btn{aspect-ratio:1;border:2px solid var(--border2);background:var(--white);border-radius:8px;cursor:pointer;font-size:12px;font-weight:700;color:var(--teal2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:all .1s;font-family:inherit}
+.die-btn:hover{border-color:var(--teal);background:var(--teal-light);transform:translateY(-1px)}
+.die-btn.rolling{border-color:var(--purple);background:var(--purple-light);animation:dieShake .3s ease}
+.die-icon{font-size:18px}
+.dice-controls{padding:0 12px 10px;display:flex;align-items:center;gap:8px}
+.dice-count-btn{width:26px;height:26px;border:1px solid var(--border2);background:var(--white);border-radius:4px;cursor:pointer;font-size:15px;font-weight:600;color:var(--text2);display:flex;align-items:center;justify-content:center;font-family:inherit}
+.dice-count-btn:hover{border-color:var(--teal);color:var(--teal)}
+.dice-mod-input{width:44px;border:1px solid var(--border2);padding:4px 6px;font-size:13px;text-align:center;font-family:inherit;border-radius:4px;background:var(--white);color:var(--text);outline:none}
+.dice-mod-input:focus{border-color:var(--teal)}
+.dice-result{padding:10px 14px;border-top:1px solid var(--border);text-align:center;min-height:54px}
+.dice-result-total{font-size:32px;font-weight:700;color:var(--purple)}
+.dice-result-detail{font-size:12px;color:var(--text3);margin-top:2px}
+@keyframes dieShake{0%{transform:rotate(0deg)}25%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}75%{transform:rotate(-4deg)}100%{transform:rotate(0deg)}}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<div id="trait-popup-container"></div>
+<div class="overlay hidden" id="overlay">
+  <div class="modal" id="modal">
+    <div class="modal-hdr"><div class="modal-title" id="m-title"></div><div class="modal-sub" id="m-sub"></div></div>
+    <div class="modal-body" id="m-body"></div>
+    <div class="modal-foot">
+      <button class="modal-btn cancel" id="m-cancel" onclick="closeModal()">Cancel</button>
+      <button class="modal-btn confirm" id="m-confirm" onclick="confirmModal()">Confirm</button>
+    </div>
+  </div>
+</div>
+<div class="db-modal-overlay hidden" id="db-modal-overlay" onclick="if(event.target===this)closeDbModal()">
+  <div class="db-modal-sheet">
+    <div class="db-modal-handle"><div class="db-modal-handle-bar"></div></div>
+    <div class="db-modal-hdr">
+      <div class="db-modal-title" id="db-modal-title">Add Spell</div>
+      <button class="db-modal-close" onclick="closeDbModal()">&#10005;</button>
+    </div>
+    <div id="db-modal-db-section" style="display:flex;flex-direction:column;flex:1;overflow:hidden">
+      <div class="db-modal-search-wrap">
+        <input class="db-modal-search" id="db-modal-search" placeholder="Search..." oninput="renderDbModal()">
+      </div>
+      <div class="db-modal-filters" id="db-modal-filters"></div>
+      <div class="db-modal-list" id="db-modal-list"></div>
+    </div>
+    <div id="db-modal-custom-section" style="display:none">
+      <div class="custom-form-section" id="db-modal-custom-form"></div>
+    </div>
+  </div>
+</div>
+<div id="dice-panel" class="dice-panel hidden">
+  <div class="dice-panel-hdr">
+    <span>Dice Roller</span>
+    <div style="display:flex;align-items:center;gap:6px">
+      <span style="font-size:12px;color:var(--text3)">History:</span>
+      <button onclick="clearDiceHistory()" style="font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;font-family:inherit">Clear</button>
+    </div>
+  </div>
+  <div class="dice-controls">
+    <span style="font-size:12px;color:var(--text2);font-weight:500">Dice:</span>
+    <button class="dice-count-btn" onclick="adjDiceCount(-1)">-</button>
+    <span id="dice-count" style="font-size:14px;font-weight:700;min-width:16px;text-align:center">1</span>
+    <button class="dice-count-btn" onclick="adjDiceCount(1)">+</button>
+    <span style="font-size:12px;color:var(--text2);font-weight:500;margin-left:4px">Mod:</span>
+    <input class="dice-mod-input" type="number" id="dice-mod" value="0" placeholder="0">
+  </div>
+  <div class="dice-grid">
+    <button class="die-btn" onclick="rollDie(4)"><span class="die-icon">&#9670;</span><span>d4</span></button>
+    <button class="die-btn" onclick="rollDie(6)"><span class="die-icon">&#9632;</span><span>d6</span></button>
+    <button class="die-btn" onclick="rollDie(8)"><span class="die-icon">&#9670;</span><span>d8</span></button>
+    <button class="die-btn" onclick="rollDie(10)"><span class="die-icon">&#11046;</span><span>d10</span></button>
+    <button class="die-btn" onclick="rollDie(12)"><span class="die-icon">&#11039;</span><span>d12</span></button>
+    <button class="die-btn" onclick="rollDie(20)"><span class="die-icon">&#9671;</span><span>d20</span></button>
+    <button class="die-btn" onclick="rollDie(100)"><span class="die-icon">&#9711;</span><span>d100</span></button>
+    <button class="die-btn" onclick="rollCustom()" style="font-size:11px;color:var(--text3)"><span class="die-icon" style="font-size:14px">&#9998;</span><span>custom</span></button>
+  </div>
+  <div class="dice-result" id="dice-result">
+    <div style="color:var(--text3);font-size:13px">Tap a die to roll</div>
+  </div>
+  <div id="dice-history" style="max-height:100px;overflow-y:auto;border-top:1px solid var(--border);padding:6px 14px"></div>
+</div>
+<button class="dice-fab" id="dice-fab" onclick="toggleDicePanel()" title="Dice Roller">&#9682;</button>
+
+<div class="lvlup-overlay hidden" id="lvlup-overlay">
+  <div class="lvlup-sheet">
+    <div class="lvlup-handle"><div class="lvlup-handle-bar"></div></div>
+    <div class="lvlup-hdr">
+      <div style="font-size:18px;font-weight:700" id="lvlup-title">Level Up</div>
+      <button class="lvlup-close" onclick="closeLevelUpSheet()">&#10005;</button>
+    </div>
+    <div id="lvlup-body"></div>
+    <div style="padding:16px 20px 0">
+      <button class="btn btn-primary" id="lvlup-confirm-btn" onclick="confirmLevelUp()">Confirm Level Up</button>
+    </div>
+  </div>
+</div>
+<div id="root"></div>
+<script>
+// ===== DATA =====
+const RACES={Human:{bonus:'All +1',traits:['Extra Language','Extra Skill'],speed:30,languages:['Common','One extra']},'Wood Elf':{bonus:'DEX +2, WIS +1',traits:['Darkvision 60ft','Keen Senses','Fey Ancestry','Trance','Mask of the Wild','Fleet of Foot'],speed:35,languages:['Common','Elvish']},'High Elf':{bonus:'DEX +2, INT +1',traits:['Darkvision 60ft','Keen Senses','Fey Ancestry','Trance','Cantrip'],speed:30,languages:['Common','Elvish','One extra']},Dwarf:{bonus:'CON +2',traits:['Darkvision 60ft','Dwarven Resilience','Stonecunning'],speed:25,languages:['Common','Dwarvish']},Halfling:{bonus:'DEX +2',traits:['Lucky','Brave','Halfling Nimbleness'],speed:25,languages:['Common','Halfling']},'Half-Orc':{bonus:'STR +2, CON +1',traits:['Darkvision 60ft','Menacing','Relentless Endurance','Savage Attacks'],speed:30,languages:['Common','Orc']},Tiefling:{bonus:'INT +1, CHA +2',traits:['Darkvision 60ft','Hellish Resistance','Infernal Legacy'],speed:30,languages:['Common','Infernal']},Dragonborn:{bonus:'STR +2, CHA +1',traits:['Draconic Ancestry','Breath Weapon','Damage Resistance'],speed:30,languages:['Common','Draconic']},Gnome:{bonus:'INT +2',traits:['Darkvision 60ft','Gnome Cunning'],speed:25,languages:['Common','Gnomish']},'Half-Elf':{bonus:'CHA +2, Two others +1',traits:['Darkvision 60ft','Fey Ancestry','Skill Versatility'],speed:30,languages:['Common','Elvish','One extra']},Aasimar:{bonus:'CHA +2',traits:['Darkvision 60ft','Celestial Resistance','Healing Hands'],speed:30,languages:['Common','Celestial']}};
+const CLASSES={Barbarian:{hit:12,save:['STR','CON'],skills:['Animal Handling','Athletics','Intimidation','Nature','Perception','Survival'],numSkills:2,armor:'Light, Medium, Shields',weapons:'Simple, Martial',spellcasting:null},Bard:{hit:8,save:['DEX','CHA'],skills:['Acrobatics','Animal Handling','Arcana','Athletics','Deception','History','Insight','Intimidation','Investigation','Medicine','Nature','Perception','Performance','Persuasion','Religion','Sleight of Hand','Stealth','Survival'],numSkills:3,armor:'Light',weapons:'Simple, Longswords, Rapiers, Shortswords',spellcasting:'CHA'},Cleric:{hit:8,save:['WIS','CHA'],skills:['History','Insight','Medicine','Persuasion','Religion'],numSkills:2,armor:'Light, Medium, Shields',weapons:'Simple',spellcasting:'WIS'},Druid:{hit:8,save:['INT','WIS'],skills:['Arcana','Animal Handling','Insight','Medicine','Nature','Perception','Religion','Survival'],numSkills:2,armor:'Light, Medium, Shields',weapons:'Simple',spellcasting:'WIS'},Fighter:{hit:10,save:['STR','CON'],skills:['Acrobatics','Animal Handling','Athletics','History','Insight','Intimidation','Perception','Survival'],numSkills:2,armor:'All, Shields',weapons:'Simple, Martial',spellcasting:null},Monk:{hit:8,save:['STR','DEX'],skills:['Acrobatics','Athletics','History','Insight','Religion','Stealth'],numSkills:2,armor:'None',weapons:'Simple, Shortswords',spellcasting:null},Paladin:{hit:10,save:['WIS','CHA'],skills:['Athletics','Insight','Intimidation','Medicine','Persuasion','Religion'],numSkills:2,armor:'All, Shields',weapons:'Simple, Martial',spellcasting:'CHA'},Ranger:{hit:10,save:['STR','DEX'],skills:['Animal Handling','Athletics','Insight','Investigation','Nature','Perception','Stealth','Survival'],numSkills:3,armor:'Light, Medium, Shields',weapons:'Simple, Martial',spellcasting:'WIS'},Rogue:{hit:8,save:['DEX','INT'],skills:['Acrobatics','Athletics','Deception','Insight','Intimidation','Investigation','Perception','Performance','Persuasion','Sleight of Hand','Stealth'],numSkills:4,armor:'Light',weapons:'Simple, Longswords, Rapiers, Shortswords',spellcasting:null},Sorcerer:{hit:6,save:['CON','CHA'],skills:['Arcana','Deception','Insight','Intimidation','Persuasion','Religion'],numSkills:2,armor:'None',weapons:'Daggers, Darts, Slings, Quarterstaffs',spellcasting:'CHA'},Warlock:{hit:8,save:['WIS','CHA'],skills:['Arcana','Deception','History','Intimidation','Investigation','Nature','Religion'],numSkills:2,armor:'Light',weapons:'Simple',spellcasting:'CHA'},Wizard:{hit:6,save:['INT','WIS'],skills:['Arcana','History','Insight','Investigation','Medicine','Religion'],numSkills:2,armor:'None',weapons:'Daggers, Darts, Slings, Quarterstaffs',spellcasting:'INT'}};
+const BACKGROUNDS={Acolyte:{skills:['Insight','Religion'],feature:'Shelter of the Faithful'},Criminal:{skills:['Deception','Stealth'],feature:'Criminal Contact'},'Folk Hero':{skills:['Animal Handling','Survival'],feature:'Rustic Hospitality'},Noble:{skills:['History','Persuasion'],feature:'Position of Privilege'},Sage:{skills:['Arcana','History'],feature:'Researcher'},Soldier:{skills:['Athletics','Intimidation'],feature:'Military Rank'},Outlander:{skills:['Athletics','Survival'],feature:'Wanderer'},Entertainer:{skills:['Acrobatics','Performance'],feature:'By Popular Demand'},Hermit:{skills:['Medicine','Religion'],feature:'Discovery'},Sailor:{skills:['Athletics','Perception'],feature:"Ship's Passage"}};
+const ALIGNMENTS=['Lawful Good','Neutral Good','Chaotic Good','Lawful Neutral','True Neutral','Chaotic Neutral','Lawful Evil','Neutral Evil','Chaotic Evil'];
+const PC_COST={8:0,9:1,10:2,11:3,12:4,13:5,14:7,15:9};
+const CONDITIONS=['Blinded','Charmed','Deafened','Exhaustion','Frightened','Grappled','Incapacitated','Invisible','Paralyzed','Petrified','Poisoned','Prone','Restrained','Stunned','Unconscious'];
+const ABKEYS=['str','dex','con','int','wis','cha'];
+const ABLBL={str:'STR',dex:'DEX',con:'CON',int:'INT',wis:'WIS',cha:'CHA'};
+const ABFULL={str:'Strength',dex:'Dexterity',con:'Constitution',int:'Intelligence',wis:'Wisdom',cha:'Charisma'};
+const S2AB={STR:'str',DEX:'dex',CON:'con',INT:'int',WIS:'wis',CHA:'cha'};
+const SKILL_LIST=[{name:'Athletics',ab:'str'},{name:'Acrobatics',ab:'dex'},{name:'Sleight of Hand',ab:'dex'},{name:'Stealth',ab:'dex'},{name:'Arcana',ab:'int'},{name:'History',ab:'int'},{name:'Investigation',ab:'int'},{name:'Nature',ab:'int'},{name:'Religion',ab:'int'},{name:'Animal Handling',ab:'wis'},{name:'Insight',ab:'wis'},{name:'Medicine',ab:'wis'},{name:'Perception',ab:'wis'},{name:'Survival',ab:'wis'},{name:'Deception',ab:'cha'},{name:'Intimidation',ab:'cha'},{name:'Performance',ab:'cha'},{name:'Persuasion',ab:'cha'}];
+const SKILL_GROUPS=[{label:'Strength',ab:'str',skills:['Athletics']},{label:'Dexterity',ab:'dex',skills:['Acrobatics','Sleight of Hand','Stealth']},{label:'Intelligence',ab:'int',skills:['Arcana','History','Investigation','Nature','Religion']},{label:'Wisdom',ab:'wis',skills:['Animal Handling','Insight','Medicine','Perception','Survival']},{label:'Charisma',ab:'cha',skills:['Deception','Intimidation','Performance','Persuasion']}];
+const CLASS_HD={Barbarian:12,Bard:8,Cleric:8,Druid:8,Fighter:10,Monk:8,Paladin:10,Ranger:10,Rogue:8,Sorcerer:6,Warlock:8,Wizard:6};
+const SPELL_SLOTS_TABLE={Bard:[[2],[3,2],[4,2],[4,3],[4,3,2],[4,3,3],[4,3,3,1],[4,3,3,2],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2,1],[4,3,3,3,2,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1,1],[4,3,3,3,3,1,1,1,1],[4,3,3,3,3,2,1,1,1],[4,3,3,3,3,2,2,1,1]],Cleric:[[2],[3,2],[4,2],[4,3],[4,3,2],[4,3,3],[4,3,3,1],[4,3,3,2],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2,1],[4,3,3,3,2,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1,1],[4,3,3,3,3,1,1,1,1],[4,3,3,3,3,2,1,1,1],[4,3,3,3,3,2,2,1,1]],Druid:[[2],[3,2],[4,2],[4,3],[4,3,2],[4,3,3],[4,3,3,1],[4,3,3,2],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2,1],[4,3,3,3,2,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1,1],[4,3,3,3,3,1,1,1,1],[4,3,3,3,3,2,1,1,1],[4,3,3,3,3,2,2,1,1]],Paladin:[[],[2],[3],[3,2],[4,2],[4,2],[4,3],[4,3],[4,3,2],[4,3,2],[4,3,3],[4,3,3],[4,3,3,1],[4,3,3,1],[4,3,3,2],[4,3,3,2],[4,3,3,3,1],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2]],Ranger:[[],[2],[3],[3,2],[4,2],[4,2],[4,3],[4,3],[4,3,2],[4,3,2],[4,3,3],[4,3,3],[4,3,3,1],[4,3,3,1],[4,3,3,2],[4,3,3,2],[4,3,3,3,1],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2]],Sorcerer:[[2],[3,2],[4,2],[4,3],[4,3,2],[4,3,3],[4,3,3,1],[4,3,3,2],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2,1],[4,3,3,3,2,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1,1],[4,3,3,3,3,1,1,1,1],[4,3,3,3,3,2,1,1,1],[4,3,3,3,3,2,2,1,1]],Warlock:[[1],[2],[2],[2],[2],[2],[2],[2],[2],[2],[3],[3],[3],[3],[3],[3],[4],[4],[4],[4]],Wizard:[[2],[3,2],[4,2],[4,3],[4,3,2],[4,3,3],[4,3,3,1],[4,3,3,2],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2,1],[4,3,3,3,2,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1,1],[4,3,3,3,3,1,1,1,1],[4,3,3,3,3,2,1,1,1],[4,3,3,3,3,2,2,1,1]]};
+const SPELL_LVL_NAMES=['Cantrip','1st Level','2nd Level','3rd Level','4th Level','5th Level','6th Level','7th Level','8th Level','9th Level'];
+const XP_TABLE=[0,0,300,900,2700,6500,14000,23000,34000,48000,64000,85000,100000,120000,140000,165000,195000,225000,265000,305000,355000];
+const SPELL_DB=[
+{name:'Fire Bolt',level:0,school:'Evocation',castTime:'1 action',range:'120 feet',duration:'Instantaneous',components:'V, S',concentration:false,ritual:false,desc:'Ranged spell attack: 1d10 fire damage (scales at levels 5/11/17).'},
+{name:'Sacred Flame',level:0,school:'Evocation',castTime:'1 action',range:'60 feet',duration:'Instantaneous',components:'V, S',concentration:false,ritual:false,desc:'DEX save or 1d8 radiant damage. No cover bonus.'},
+{name:'Mage Hand',level:0,school:'Conjuration',castTime:'1 action',range:'30 feet',duration:'1 minute',components:'V, S',concentration:false,ritual:false,desc:'Spectral hand manipulates objects at range.'},
+{name:'Prestidigitation',level:0,school:'Transmutation',castTime:'1 action',range:'10 feet',duration:'Up to 1 hour',components:'V, S',concentration:false,ritual:false,desc:'Minor magical tricks for up to 1 hour.'},
+{name:'Eldritch Blast',level:0,school:'Evocation',castTime:'1 action',range:'120 feet',duration:'Instantaneous',components:'V, S',concentration:false,ritual:false,desc:'Spell attack: 1d10 force damage. Extra beams at levels 5/11/17.'},
+{name:'Vicious Mockery',level:0,school:'Enchantment',castTime:'1 action',range:'60 feet',duration:'Instantaneous',components:'V',concentration:false,ritual:false,desc:'WIS save or 1d4 psychic damage and disadvantage on next attack.'},
+{name:'Guidance',level:0,school:'Divination',castTime:'1 action',range:'Touch',duration:'Concentration, 1 min',components:'V, S',concentration:true,ritual:false,desc:'Add d4 to one ability check before spell ends.'},
+{name:'Minor Illusion',level:0,school:'Illusion',castTime:'1 action',range:'30 feet',duration:'1 minute',components:'S, M',concentration:false,ritual:false,desc:'Create a sound or image. Investigation check vs spell save DC to see through.'},
+{name:'Toll the Dead',level:0,school:'Necromancy',castTime:'1 action',range:'60 feet',duration:'Instantaneous',components:'V, S',concentration:false,ritual:false,desc:'WIS save or 1d8 necrotic (1d12 if target is missing HP).'},
+{name:'Shillelagh',level:0,school:'Transmutation',castTime:'1 bonus action',range:'Touch',duration:'1 minute',components:'V, S, M',concentration:false,ritual:false,desc:'Imbue club or staff: use WIS for attacks, damage die becomes d8.'},
+{name:'Cure Wounds',level:1,school:'Evocation',castTime:'1 action',range:'Touch',duration:'Instantaneous',components:'V, S',concentration:false,ritual:false,desc:'Regain 1d8 + spellcasting modifier HP.'},
+{name:'Magic Missile',level:1,school:'Evocation',castTime:'1 action',range:'120 feet',duration:'Instantaneous',components:'V, S',concentration:false,ritual:false,desc:'3 darts auto-hit for 1d4+1 force each. +1 dart per slot above 1st.'},
+{name:'Shield',level:1,school:'Abjuration',castTime:'1 reaction',range:'Self',duration:'1 round',components:'V, S',concentration:false,ritual:false,desc:'+5 AC until next turn including vs triggering attack.'},
+{name:'Thunderwave',level:1,school:'Evocation',castTime:'1 action',range:'Self (15-ft cube)',duration:'Instantaneous',components:'V, S',concentration:false,ritual:false,desc:'CON save: 2d8 thunder + pushed 10ft on fail, half on success.'},
+{name:'Healing Word',level:1,school:'Evocation',castTime:'1 bonus action',range:'60 feet',duration:'Instantaneous',components:'V',concentration:false,ritual:false,desc:'Regain 1d4 + spellcasting modifier HP.'},
+{name:"Hunter's Mark",level:1,school:'Divination',castTime:'1 bonus action',range:'90 feet',duration:'Concentration, 1 hour',components:'V',concentration:true,ritual:false,desc:'Mark a creature. Deal +1d6 damage each time you hit it.'},
+{name:'Bless',level:1,school:'Enchantment',castTime:'1 action',range:'30 feet',duration:'Concentration, 1 min',components:'V, S, M',concentration:true,ritual:false,desc:'Up to 3 creatures add a d4 to attack rolls and saving throws.'},
+{name:'Detect Magic',level:1,school:'Divination',castTime:'1 action',range:'Self',duration:'Concentration, 10 min',components:'V, S',concentration:true,ritual:true,desc:'Sense magic within 30 ft and see auras.'},
+{name:'Hex',level:1,school:'Enchantment',castTime:'1 bonus action',range:'90 feet',duration:'Concentration, 1 hour',components:'V, S, M',concentration:true,ritual:false,desc:'+1d6 necrotic on each hit. Target has disadvantage on chosen ability checks.'},
+{name:'Burning Hands',level:1,school:'Evocation',castTime:'1 action',range:'Self (15-ft cone)',duration:'Instantaneous',components:'V, S',concentration:false,ritual:false,desc:'DEX save: 3d6 fire on fail, half on success.'},
+{name:'Charm Person',level:1,school:'Enchantment',castTime:'1 action',range:'30 feet',duration:'1 hour',components:'V, S',concentration:false,ritual:false,desc:'WIS save or target is charmed. Knows afterward.'},
+{name:'Sleep',level:1,school:'Enchantment',castTime:'1 action',range:'90 feet',duration:'1 minute',components:'V, S, M',concentration:false,ritual:false,desc:'5d8 HP of creatures fall unconscious, lowest HP first.'},
+{name:'Goodberry',level:1,school:'Transmutation',castTime:'1 action',range:'Touch',duration:'Instantaneous',components:'V, S, M',concentration:false,ritual:false,desc:'10 berries, each restores 1 HP and provides nourishment for a day.'},
+{name:'Absorb Elements',level:1,school:'Abjuration',castTime:'1 reaction',range:'Self',duration:'1 round',components:'S',concentration:false,ritual:false,desc:'Resistance to triggering damage. Add 1d6 of that type to next melee attack.'},
+{name:'Misty Step',level:2,school:'Conjuration',castTime:'1 bonus action',range:'Self',duration:'Instantaneous',components:'V',concentration:false,ritual:false,desc:'Teleport up to 30 feet to an unoccupied visible space.'},
+{name:'Shatter',level:2,school:'Evocation',castTime:'1 action',range:'60 feet',duration:'Instantaneous',components:'V, S, M',concentration:false,ritual:false,desc:'CON save in 10-ft radius: 3d8 thunder on fail, half on success.'},
+{name:'Hold Person',level:2,school:'Enchantment',castTime:'1 action',range:'60 feet',duration:'Concentration, 1 min',components:'V, S, M',concentration:true,ritual:false,desc:'WIS save or humanoid is paralyzed for duration.'},
+{name:'Invisibility',level:2,school:'Illusion',castTime:'1 action',range:'Touch',duration:'Concentration, 1 hour',components:'V, S, M',concentration:true,ritual:false,desc:'Target is invisible until they attack or cast a spell.'},
+{name:'Spiritual Weapon',level:2,school:'Evocation',castTime:'1 bonus action',range:'60 feet',duration:'1 minute',components:'V, S',concentration:false,ritual:false,desc:'Spectral weapon attacks for 1d8 + modifier force as bonus action.'},
+{name:'Pass Without Trace',level:2,school:'Abjuration',castTime:'1 action',range:'Self',duration:'Concentration, 1 hour',components:'V, S, M',concentration:true,ritual:false,desc:'+10 Stealth for you and chosen creatures. Cannot be nonmagically tracked.'},
+{name:'Aid',level:2,school:'Abjuration',castTime:'1 action',range:'30 feet',duration:'8 hours',components:'V, S, M',concentration:false,ritual:false,desc:'Up to 3 creatures gain +5 max HP and current HP.'},
+{name:'Fireball',level:3,school:'Evocation',castTime:'1 action',range:'150 feet',duration:'Instantaneous',components:'V, S, M',concentration:false,ritual:false,desc:'DEX save in 20-ft radius: 8d6 fire on fail, half on success.'},
+{name:'Lightning Bolt',level:3,school:'Evocation',castTime:'1 action',range:'Self (100-ft line)',duration:'Instantaneous',components:'V, S, M',concentration:false,ritual:false,desc:'DEX save in 100-ft line: 8d6 lightning on fail, half on success.'},
+{name:'Counterspell',level:3,school:'Abjuration',castTime:'1 reaction',range:'60 feet',duration:'Instantaneous',components:'S',concentration:false,ritual:false,desc:'Interrupt a spell. Level 3 or lower: auto countered. Higher: DC 10+level check.'},
+{name:'Hypnotic Pattern',level:3,school:'Illusion',castTime:'1 action',range:'120 feet',duration:'Concentration, 1 min',components:'S, M',concentration:true,ritual:false,desc:'WIS save in 30-ft cube: charmed, incapacitated, speed 0.'},
+{name:'Spirit Guardians',level:3,school:'Conjuration',castTime:'1 action',range:'Self (15-ft radius)',duration:'Concentration, 10 min',components:'V, S, M',concentration:true,ritual:false,desc:'Enemies in 15 ft make WIS save: 3d8 radiant/necrotic, halved speed on fail.'},
+{name:'Haste',level:3,school:'Transmutation',castTime:'1 action',range:'30 feet',duration:'Concentration, 1 min',components:'V, S, M',concentration:true,ritual:false,desc:'Target: double speed, +2 AC, advantage on DEX saves, extra action each turn.'},
+{name:'Banishment',level:4,school:'Abjuration',castTime:'1 action',range:'60 feet',duration:'Concentration, 1 min',components:'V, S, M',concentration:true,ritual:false,desc:'CHA save or banished. Extraplanars banished permanently if held 1 min.'},
+{name:'Polymorph',level:4,school:'Transmutation',castTime:'1 action',range:'60 feet',duration:'Concentration, 1 hour',components:'V, S, M',concentration:true,ritual:false,desc:'WIS save or willing: transform into a beast. Reverts at 0 HP.'},
+{name:'Dimension Door',level:4,school:'Conjuration',castTime:'1 action',range:'500 feet',duration:'Instantaneous',components:'V',concentration:false,ritual:false,desc:'Teleport yourself and optionally one willing creature up to 500 feet.'},
+{name:'Hold Monster',level:5,school:'Enchantment',castTime:'1 action',range:'90 feet',duration:'Concentration, 1 min',components:'V, S, M',concentration:true,ritual:false,desc:'WIS save or any creature (not undead) is paralyzed.'},
+{name:'Wall of Force',level:5,school:'Evocation',castTime:'1 action',range:'120 feet',duration:'Concentration, 10 min',components:'V, S, M',concentration:true,ritual:false,desc:'Invisible wall immune to all damage. Blocks teleportation.'},
+];
+const WEAPON_DB=[
+{name:'Club',category:'Simple Melee',damage:'1d4',damageType:'Bludgeoning',weight:'2 lb',cost:'1 sp',properties:['Light'],range:null,versatile:null},
+{name:'Dagger',category:'Simple Melee',damage:'1d4',damageType:'Piercing',weight:'1 lb',cost:'2 gp',properties:['Finesse','Light','Thrown'],range:'20/60',versatile:null},
+{name:'Greatclub',category:'Simple Melee',damage:'1d8',damageType:'Bludgeoning',weight:'10 lb',cost:'2 sp',properties:['Two-handed'],range:null,versatile:null},
+{name:'Handaxe',category:'Simple Melee',damage:'1d6',damageType:'Slashing',weight:'2 lb',cost:'5 gp',properties:['Light','Thrown'],range:'20/60',versatile:null},
+{name:'Javelin',category:'Simple Melee',damage:'1d6',damageType:'Piercing',weight:'2 lb',cost:'5 sp',properties:['Thrown'],range:'30/120',versatile:null},
+{name:'Mace',category:'Simple Melee',damage:'1d6',damageType:'Bludgeoning',weight:'4 lb',cost:'5 gp',properties:[],range:null,versatile:null},
+{name:'Quarterstaff',category:'Simple Melee',damage:'1d6',damageType:'Bludgeoning',weight:'4 lb',cost:'2 sp',properties:['Versatile'],range:null,versatile:'1d8'},
+{name:'Spear',category:'Simple Melee',damage:'1d6',damageType:'Piercing',weight:'3 lb',cost:'1 gp',properties:['Thrown','Versatile'],range:'20/60',versatile:'1d8'},
+{name:'Unarmed Strike',category:'Simple Melee',damage:'1',damageType:'Bludgeoning',weight:'--',cost:'--',properties:[],range:null,versatile:null},
+{name:'Crossbow, Light',category:'Simple Ranged',damage:'1d8',damageType:'Piercing',weight:'5 lb',cost:'25 gp',properties:['Ammunition','Loading','Two-handed'],range:'80/320',versatile:null},
+{name:'Shortbow',category:'Simple Ranged',damage:'1d6',damageType:'Piercing',weight:'2 lb',cost:'25 gp',properties:['Ammunition','Two-handed'],range:'80/320',versatile:null},
+{name:'Sling',category:'Simple Ranged',damage:'1d4',damageType:'Bludgeoning',weight:'0 lb',cost:'1 sp',properties:['Ammunition'],range:'30/120',versatile:null},
+{name:'Battleaxe',category:'Martial Melee',damage:'1d8',damageType:'Slashing',weight:'4 lb',cost:'10 gp',properties:['Versatile'],range:null,versatile:'1d10'},
+{name:'Flail',category:'Martial Melee',damage:'1d8',damageType:'Bludgeoning',weight:'2 lb',cost:'10 gp',properties:[],range:null,versatile:null},
+{name:'Glaive',category:'Martial Melee',damage:'1d10',damageType:'Slashing',weight:'6 lb',cost:'20 gp',properties:['Heavy','Reach','Two-handed'],range:null,versatile:null},
+{name:'Greataxe',category:'Martial Melee',damage:'1d12',damageType:'Slashing',weight:'7 lb',cost:'30 gp',properties:['Heavy','Two-handed'],range:null,versatile:null},
+{name:'Greatsword',category:'Martial Melee',damage:'2d6',damageType:'Slashing',weight:'6 lb',cost:'50 gp',properties:['Heavy','Two-handed'],range:null,versatile:null},
+{name:'Longsword',category:'Martial Melee',damage:'1d8',damageType:'Slashing',weight:'3 lb',cost:'15 gp',properties:['Versatile'],range:null,versatile:'1d10'},
+{name:'Maul',category:'Martial Melee',damage:'2d6',damageType:'Bludgeoning',weight:'10 lb',cost:'10 gp',properties:['Heavy','Two-handed'],range:null,versatile:null},
+{name:'Rapier',category:'Martial Melee',damage:'1d8',damageType:'Piercing',weight:'2 lb',cost:'25 gp',properties:['Finesse'],range:null,versatile:null},
+{name:'Scimitar',category:'Martial Melee',damage:'1d6',damageType:'Slashing',weight:'3 lb',cost:'25 gp',properties:['Finesse','Light'],range:null,versatile:null},
+{name:'Shortsword',category:'Martial Melee',damage:'1d6',damageType:'Piercing',weight:'2 lb',cost:'10 gp',properties:['Finesse','Light'],range:null,versatile:null},
+{name:'Warhammer',category:'Martial Melee',damage:'1d8',damageType:'Bludgeoning',weight:'2 lb',cost:'15 gp',properties:['Versatile'],range:null,versatile:'1d10'},
+{name:'Whip',category:'Martial Melee',damage:'1d4',damageType:'Slashing',weight:'3 lb',cost:'2 gp',properties:['Finesse','Reach'],range:null,versatile:null},
+{name:'Longbow',category:'Martial Ranged',damage:'1d8',damageType:'Piercing',weight:'2 lb',cost:'50 gp',properties:['Ammunition','Heavy','Two-handed'],range:'150/600',versatile:null},
+{name:'Crossbow, Hand',category:'Martial Ranged',damage:'1d6',damageType:'Piercing',weight:'3 lb',cost:'75 gp',properties:['Ammunition','Light','Loading'],range:'30/120',versatile:null},
+{name:'Crossbow, Heavy',category:'Martial Ranged',damage:'1d10',damageType:'Piercing',weight:'18 lb',cost:'50 gp',properties:['Ammunition','Heavy','Loading','Two-handed'],range:'100/400',versatile:null},
+];
+const WEAPON_CATS=['Simple Melee','Simple Ranged','Martial Melee','Martial Ranged'];
+const GEAR_DB=[
+  // Potions
+  {name:'Potion of Healing',category:'Potion',cost:'50 gp',weight:'0.5 lb',desc:'Regain 2d4+2 HP when you drink this potion.'},
+  {name:'Potion of Greater Healing',category:'Potion',cost:'150 gp',weight:'0.5 lb',desc:'Regain 4d4+4 HP when you drink this potion.'},
+  {name:'Potion of Superior Healing',category:'Potion',cost:'450 gp',weight:'0.5 lb',desc:'Regain 8d4+8 HP when you drink this potion.'},
+  {name:'Potion of Supreme Healing',category:'Potion',cost:'1350 gp',weight:'0.5 lb',desc:'Regain 10d4+20 HP when you drink this potion.'},
+  {name:'Potion of Animal Friendship',category:'Potion',cost:'200 gp',weight:'0.5 lb',desc:'Cast Animal Friendship (save DC 13) for 1 hour after drinking.'},
+  {name:'Potion of Climbing',category:'Potion',cost:'180 gp',weight:'0.5 lb',desc:'Gain a climbing speed equal to your walking speed for 1 hour.'},
+  {name:'Potion of Invisibility',category:'Potion',cost:'180 gp',weight:'0.5 lb',desc:'Become invisible for 1 hour. Ends if you attack or cast a spell.'},
+  {name:'Potion of Heroism',category:'Potion',cost:'180 gp',weight:'0.5 lb',desc:'Gain 10 temporary HP and the Bless effect for 1 hour.'},
+  {name:'Potion of Giant Strength (Hill)',category:'Potion',cost:'200 gp',weight:'0.5 lb',desc:'STR becomes 21 for 1 hour.'},
+  {name:'Potion of Speed',category:'Potion',cost:'400 gp',weight:'0.5 lb',desc:'Haste effect for 1 minute.'},
+  // Ammunition
+  {name:'Arrows (20)',category:'Ammunition',cost:'1 gp',weight:'1 lb',desc:'Ammunition for shortbows and longbows.'},
+  {name:'Crossbow Bolts (20)',category:'Ammunition',cost:'1 gp',weight:'1.5 lb',desc:'Ammunition for crossbows.'},
+  {name:'Sling Bullets (20)',category:'Ammunition',cost:'4 cp',weight:'1.5 lb',desc:'Ammunition for slings.'},
+  {name:'Blowgun Needles (50)',category:'Ammunition',cost:'1 gp',weight:'1 lb',desc:'Ammunition for blowguns.'},
+  // Adventuring Gear
+  {name:'Backpack',category:'Gear',cost:'2 gp',weight:'5 lb',desc:'Holds 1 cubic foot or 30 pounds of gear.'},
+  {name:'Bedroll',category:'Gear',cost:'1 gp',weight:'7 lb',desc:'Used for sleeping outdoors or in dungeons.'},
+  {name:'Rope, Hempen (50 ft)',category:'Gear',cost:'1 gp',weight:'10 lb',desc:'Has 2 hit points and can be burst with a DC 17 STR check.'},
+  {name:'Rope, Silk (50 ft)',category:'Gear',cost:'10 gp',weight:'5 lb',desc:'Has 2 hit points and can be burst with a DC 17 STR check.'},
+  {name:'Torch',category:'Gear',cost:'1 cp',weight:'1 lb',desc:'Burns for 1 hour, bright light in 20-ft radius and dim light in 40-ft radius.'},
+  {name:'Lantern, Bullseye',category:'Gear',cost:'10 gp',weight:'2 lb',desc:'Bright light in 60-ft cone, dim light for 60 ft beyond that. Burns 6 hours per oil flask.'},
+  {name:'Oil Flask',category:'Gear',cost:'1 sp',weight:'1 lb',desc:'Fuels lanterns. As an action, splash on a creature (DC 10 DEX save) for 5 fire damage on a hit.'},
+  {name:'Rations (1 day)',category:'Gear',cost:'5 sp',weight:'2 lb',desc:'Dry food suitable for extended travel.'},
+  {name:'Waterskin',category:'Gear',cost:'2 sp',weight:'5 lb',desc:'Holds 4 pints of liquid.'},
+  {name:'Tinderbox',category:'Gear',cost:'5 sp',weight:'1 lb',desc:'Start a fire in 1 action (or 1 minute if windy/wet).'},
+  {name:'Grappling Hook',category:'Gear',cost:'2 gp',weight:'4 lb',desc:'Use with rope to climb walls or cross gaps.'},
+  {name:'Crowbar',category:'Gear',cost:'2 gp',weight:'5 lb',desc:'Grants advantage on STR checks to pry things open.'},
+  {name:'Hammer',category:'Gear',cost:'1 gp',weight:'3 lb',desc:'Used for driving pitons and other tasks.'},
+  {name:'Piton',category:'Gear',cost:'5 cp',weight:'0.25 lb',desc:'Iron spike driven into stone or wood for climbing anchors.'},
+  {name:'Pole (10 ft)',category:'Gear',cost:'5 cp',weight:'7 lb',desc:'Useful for probing floors, ceilings, and walls.'},
+  {name:'Spyglass',category:'Gear',cost:'1000 gp',weight:'1 lb',desc:'Objects viewed are magnified to twice their size.'},
+  {name:'Mirror, Steel',category:'Gear',cost:'5 gp',weight:'0.5 lb',desc:'Used to see around corners or signal with sunlight.'},
+  {name:'Chalk (1 piece)',category:'Gear',cost:'1 cp',weight:'0 lb',desc:'Mark walls, floors, and other surfaces.'},
+  {name:'Ink (1 oz)',category:'Gear',cost:'10 gp',weight:'0 lb',desc:'Used for writing.'},
+  {name:'Parchment (1 sheet)',category:'Gear',cost:'1 sp',weight:'0 lb',desc:'Writing material.'},
+  {name:'Poison, Basic',category:'Gear',cost:'100 gp',weight:'0 lb',desc:'Coat a weapon or piece of ammo. Next creature hit takes 1d4 poison damage and DC 10 CON save or poisoned for 1 minute.'},
+  // Tools
+  {name:'Thieves Tools',category:'Tool',cost:'25 gp',weight:'1 lb',desc:'Proficiency lets you add prof. bonus to disarm traps and open locks.'},
+  {name:"Healer's Kit",category:'Tool',cost:'5 gp',weight:'3 lb',desc:'10 uses. Stabilize a creature at 0 HP without a Medicine check.'},
+  {name:'Herbalism Kit',category:'Tool',cost:'5 gp',weight:'3 lb',desc:'Craft antitoxin and healing potions with proficiency.'},
+  {name:'Disguise Kit',category:'Tool',cost:'25 gp',weight:'3 lb',desc:'Proficiency lets you add prof. bonus to Deception checks using a disguise.'},
+  {name:'Forgery Kit',category:'Tool',cost:'15 gp',weight:'5 lb',desc:'Proficiency lets you create forged documents.'},
+  {name:'Poisoners Kit',category:'Tool',cost:'50 gp',weight:'2 lb',desc:'Proficiency lets you craft, harvest, and apply poisons.'},
+  {name:"Alchemist's Supplies",category:'Tool',cost:'50 gp',weight:'8 lb',desc:'Proficiency lets you identify substances and craft alchemical items.'},
+  // Magic Items
+  {name:'Bag of Holding',category:'Magic Item',cost:'--',weight:'15 lb',desc:'Holds up to 500 lb / 64 cubic feet. Always weighs 15 lb. Retrieving an item takes an action.'},
+  {name:'Cloak of Protection',category:'Magic Item',cost:'--',weight:'0 lb',desc:'Requires attunement. +1 bonus to AC and saving throws.'},
+  {name:'Ring of Protection',category:'Magic Item',cost:'--',weight:'0 lb',desc:'Requires attunement. +1 bonus to AC and saving throws.'},
+  {name:'Boots of Speed',category:'Magic Item',cost:'--',weight:'1 lb',desc:'Requires attunement. Bonus action: double walking speed and opportunity attacks against you have disadvantage. Lasts 10 minutes per day.'},
+  {name:'Gloves of Missile Snaring',category:'Magic Item',cost:'--',weight:'0 lb',desc:'Requires attunement. Reaction: reduce ranged attack damage by 1d10 + DEX mod; catch it if it reduces to 0.'},
+  {name:"Robe of the Archmagi",category:'Magic Item',cost:'--',weight:'4 lb',desc:'Requires attunement (wizard/sorcerer/warlock). AC 15+DEX, advantage on saves vs spells, spell save DC +2.'},
+  {name:'Necklace of Fireballs',category:'Magic Item',cost:'--',weight:'0 lb',desc:'3d6 beads, each casts Fireball (8d6). Multiple beads create one larger fireball.'},
+  {name:'Wand of Magic Missiles',category:'Magic Item',cost:'--',weight:'1 lb',desc:'7 charges. Expend 1-3 charges to cast Magic Missile at 1st-3rd level. Regains 1d6+1 charges daily.'},
+  {name:'Amulet of Health',category:'Magic Item',cost:'--',weight:'0 lb',desc:'Requires attunement. CON score becomes 19. No effect if already 19 or higher.'},
+  {name:'Headband of Intellect',category:'Magic Item',cost:'--',weight:'0 lb',desc:'Requires attunement. INT score becomes 19. No effect if already 19 or higher.'},
+];
+const GEAR_CATS=['Potion','Ammunition','Gear','Tool','Magic Item'];
+
+const RACIAL_TRAITS={Human:[{name:'Versatile',desc:'Gain +1 to all ability scores, one extra skill proficiency, and one extra language.'}],'Wood Elf':[{name:'Darkvision',desc:'See in dim light within 60 ft as if bright, darkness as if dim.'},{name:'Keen Senses',desc:'Proficiency in Perception.'},{name:'Fey Ancestry',desc:'Advantage on saves vs charm. Cannot be magically put to sleep.'},{name:'Mask of the Wild',desc:'Can hide when only lightly obscured by natural phenomena.'},{name:'Fleet of Foot',desc:'Base walking speed is 35 feet.'}],'High Elf':[{name:'Darkvision',desc:'See in dim light within 60 ft as if bright.'},{name:'Keen Senses',desc:'Proficiency in Perception.'},{name:'Fey Ancestry',desc:'Advantage on saves vs charm. Cannot be magically put to sleep.'},{name:'Cantrip',desc:'Know one wizard cantrip. Intelligence is your spellcasting ability for it.'}],Dwarf:[{name:'Darkvision',desc:'See in dim light within 60 ft as if bright.'},{name:'Dwarven Resilience',desc:'Advantage on saves vs poison, resistance to poison damage.'},{name:'Stonecunning',desc:'Double proficiency bonus on History checks related to stonework.'}],Halfling:[{name:'Lucky',desc:'When you roll a 1 on an attack, ability check, or save, reroll and use the new result.'},{name:'Brave',desc:'Advantage on saving throws against being frightened.'},{name:'Halfling Nimbleness',desc:'Move through the space of any creature larger than you.'}],'Half-Orc':[{name:'Darkvision',desc:'See in dim light within 60 ft as if bright.'},{name:'Menacing',desc:'Proficiency in Intimidation.'},{name:'Relentless Endurance',desc:'When reduced to 0 HP but not killed outright, drop to 1 HP instead. Once per long rest.'},{name:'Savage Attacks',desc:'On a critical hit with a melee weapon, roll one extra weapon damage die.'}],Tiefling:[{name:'Darkvision',desc:'See in dim light within 60 ft as if bright.'},{name:'Hellish Resistance',desc:'Resistance to fire damage.'},{name:'Infernal Legacy',desc:'Know Thaumaturgy. At 3rd: Hellish Rebuke 1/day. At 5th: Darkness 1/day.'}],Dragonborn:[{name:'Draconic Ancestry',desc:'Choose a dragon type. Determines your breath weapon type and damage resistance.'},{name:'Breath Weapon',desc:'Use action to exhale destructive energy in an area. DEX or CON save or take 2d6 damage.'},{name:'Damage Resistance',desc:'Resistance to the damage type of your draconic ancestry.'}],Gnome:[{name:'Darkvision',desc:'See in dim light within 60 ft as if bright.'},{name:'Gnome Cunning',desc:'Advantage on INT, WIS, and CHA saving throws against magic.'}],'Half-Elf':[{name:'Darkvision',desc:'See in dim light within 60 ft as if bright.'},{name:'Fey Ancestry',desc:'Advantage on saves vs charm. Cannot be magically put to sleep.'},{name:'Skill Versatility',desc:'Gain proficiency in two skills of your choice.'}],Aasimar:[{name:'Darkvision',desc:'See in dim light within 60 ft as if bright.'},{name:'Celestial Resistance',desc:'Resistance to necrotic and radiant damage.'},{name:'Healing Hands',desc:'As an action, restore HP equal to your level. Once per long rest.'}]};
+const CLASS_FEATURES={Barbarian:[{name:'Rage',desc:'Bonus action to enter rage: advantage on STR checks/saves, bonus melee damage, resistance to BPS damage. Lasts 1 minute.'},{name:'Unarmored Defense',desc:'While not wearing armor: AC = 10 + DEX mod + CON mod.'}],Bard:[{name:'Spellcasting',desc:'CHA is your spellcasting ability. Spell save DC = 8 + prof + CHA mod.'},{name:'Bardic Inspiration',desc:'Bonus action: give a creature within 60 ft a d6 they add to one check/attack/save. Uses = CHA mod per long rest.'},{name:'Jack of All Trades',desc:'Add half proficiency bonus to ability checks not already proficient in.'},{name:'Song of Rest',desc:'During a short rest, allies who spend Hit Dice regain extra 1d6 HP.'}],Cleric:[{name:'Spellcasting',desc:'WIS is your spellcasting ability. Spell save DC = 8 + prof + WIS mod.'},{name:'Divine Domain',desc:'Choose a domain at level 1. Grants domain spells and features at levels 1,2,6,8,17.'},{name:'Channel Divinity',desc:'At level 2: channel divine energy. Recharges on short or long rest.'}],Druid:[{name:'Spellcasting',desc:'WIS is your spellcasting ability. Spell save DC = 8 + prof + WIS mod.'},{name:'Wild Shape',desc:'At level 2: assume the shape of a beast you have seen. CR 1/4 max (no fly/swim). 2 uses per short rest.'}],Fighter:[{name:'Fighting Style',desc:'Choose: Archery (+2 ranged), Defense (+1 AC), Dueling (+2 one-handed melee), Great Weapon Fighting, Protection, or Two-Weapon Fighting.'},{name:'Second Wind',desc:'Bonus action: regain 1d10 + fighter level HP. Once per short or long rest.'},{name:'Action Surge',desc:'At level 2: take one additional action on your turn. Once per short or long rest.'}],Monk:[{name:'Unarmored Defense',desc:'While not wearing armor or shield: AC = 10 + DEX mod + WIS mod.'},{name:'Martial Arts',desc:'Use DEX instead of STR for unarmed strikes and monk weapons. Unarmed damage: d4 at level 1. Bonus unarmed strike action.'},{name:'Ki',desc:'At level 2: Ki points = your level. Spend to fuel features. Recharge on short rest.'}],Paladin:[{name:'Divine Sense',desc:'As an action, detect celestials, fiends, undead within 60 ft. Uses = 1 + CHA mod per long rest.'},{name:'Lay on Hands',desc:'HP pool = paladin level x 5. Touch to restore HP or cure disease/poison (5 HP per effect).'},{name:'Divine Smite',desc:'At level 2: when you hit a melee attack, expend a slot to deal +2d8 radiant (+1d8 per level above 1st).'}],Ranger:[{name:'Favored Enemy',desc:'Advantage on Survival checks to track your favored enemy type and INT checks to recall info about them.'},{name:'Natural Explorer',desc:'Double proficiency in INT/WIS checks in favored terrain. Many travel benefits.'},{name:'Spellcasting',desc:'At level 2. WIS is your spellcasting ability. Spell save DC = 8 + prof + WIS mod.'}],Rogue:[{name:'Sneak Attack',desc:'Once per turn, deal +1d6 damage when you have advantage or an ally is adjacent to your target. Scales every 2 levels.'},{name:"Thieves' Cant",desc:'Secret mix of dialect and code to hide messages in conversation.'},{name:'Cunning Action',desc:'At level 2: bonus action to Dash, Disengage, or Hide.'}],Sorcerer:[{name:'Spellcasting',desc:'CHA is your spellcasting ability. Spell save DC = 8 + prof + CHA mod.'},{name:'Sorcerous Origin',desc:'Choose origin at level 1 (Draconic Bloodline, Wild Magic, etc). Features at levels 1,6,14,18.'},{name:'Font of Magic',desc:'At level 2: Sorcery Points = your level. Create spell slots or fuel metamagic.'}],Warlock:[{name:'Otherworldly Patron',desc:'Bargain with a powerful entity. Features at levels 1,6,10,14.'},{name:'Pact Magic',desc:'CHA is your spellcasting ability. Slots recharge on short rest.'},{name:'Eldritch Invocations',desc:'At level 2: learn 2 invocations that grant magical abilities.'}],Wizard:[{name:'Spellcasting',desc:'INT is your spellcasting ability. Spell save DC = 8 + prof + INT mod.'},{name:'Arcane Recovery',desc:'Once per day after short rest: recover slots totaling half your wizard level (max 5th).'},{name:'Arcane Tradition',desc:'At level 2: choose a school. Features at levels 2,6,10,14.'}]};
+
+const LEVEL_UP_FEATURES={
+  Barbarian:{2:['Reckless Attack','Danger Sense'],3:['Primal Path'],4:['Ability Score Improvement'],5:['Extra Attack','Fast Movement'],6:['Path Feature'],7:['Feral Instinct'],8:['Ability Score Improvement'],9:['Brutal Critical (1 die)'],10:['Path Feature'],11:['Relentless Rage'],12:['Ability Score Improvement'],13:['Brutal Critical (2 dice)'],14:['Path Feature'],15:['Persistent Rage'],16:['Ability Score Improvement'],17:['Brutal Critical (3 dice)'],18:['Indomitable Might'],19:['Ability Score Improvement'],20:['Primal Champion (+4 STR, +4 CON)']},
+  Bard:{2:['Jack of All Trades','Song of Rest (d6)'],3:['Bard College','Expertise'],4:['Ability Score Improvement'],5:['Bardic Inspiration (d8)','Font of Inspiration'],6:['Countercharm','College Feature'],7:[],8:['Ability Score Improvement'],9:['Song of Rest (d8)'],10:['Bardic Inspiration (d10)','Expertise','Magical Secrets'],11:[],12:['Ability Score Improvement'],13:['Song of Rest (d10)'],14:['Magical Secrets','College Feature'],15:['Bardic Inspiration (d12)'],16:['Ability Score Improvement'],17:['Song of Rest (d12)'],18:['Magical Secrets'],19:['Ability Score Improvement'],20:['Superior Inspiration']},
+  Cleric:{2:['Channel Divinity (1/rest)','Domain Feature'],3:[],4:['Ability Score Improvement'],5:['Destroy Undead (CR 1/2)'],6:['Channel Divinity (2/rest)','Domain Feature'],7:[],8:['Ability Score Improvement','Destroy Undead (CR 1)','Domain Feature'],9:[],10:['Divine Intervention'],11:['Destroy Undead (CR 2)'],12:['Ability Score Improvement'],13:[],14:['Destroy Undead (CR 3)'],15:[],16:['Ability Score Improvement'],17:['Destroy Undead (CR 4)','Domain Feature'],18:['Channel Divinity (3/rest)'],19:['Ability Score Improvement'],20:['Divine Intervention improvement']},
+  Druid:{2:['Wild Shape','Druid Circle'],3:[],4:['Wild Shape improvement','Ability Score Improvement'],5:[],6:['Circle Feature'],7:[],8:['Ability Score Improvement'],9:[],10:['Circle Feature'],11:[],12:['Ability Score Improvement'],13:[],14:['Circle Feature'],15:[],16:['Ability Score Improvement'],17:[],18:['Timeless Body','Beast Spells'],19:['Ability Score Improvement'],20:['Archdruid']},
+  Fighter:{2:['Action Surge (1/rest)'],3:['Martial Archetype'],4:['Ability Score Improvement'],5:['Extra Attack'],6:['Ability Score Improvement'],7:['Archetype Feature'],8:['Ability Score Improvement'],9:['Indomitable (1/rest)'],10:['Archetype Feature'],11:['Extra Attack (2)'],12:['Ability Score Improvement'],13:['Indomitable (2/rest)'],14:['Ability Score Improvement'],15:['Archetype Feature'],16:['Ability Score Improvement'],17:['Action Surge (2/rest)','Indomitable (3/rest)'],18:['Archetype Feature'],19:['Ability Score Improvement'],20:['Extra Attack (3)']},
+  Monk:{2:['Ki','Unarmored Movement'],3:['Monastic Tradition','Deflect Missiles'],4:['Ability Score Improvement','Slow Fall'],5:['Extra Attack','Stunning Strike'],6:['Ki-Empowered Strikes','Tradition Feature'],7:['Evasion','Stillness of Mind'],8:['Ability Score Improvement'],9:['Unarmored Movement improvement'],10:['Purity of Body'],11:['Tradition Feature'],12:['Ability Score Improvement'],13:['Tongue of the Sun and Moon'],14:['Diamond Soul'],15:['Timeless Body'],16:['Ability Score Improvement'],17:['Tradition Feature'],18:['Empty Body'],19:['Ability Score Improvement'],20:['Perfect Self']},
+  Paladin:{2:['Fighting Style','Spellcasting','Divine Smite'],3:['Divine Health','Sacred Oath'],4:['Ability Score Improvement'],5:['Extra Attack'],6:['Aura of Protection'],7:['Oath Feature'],8:['Ability Score Improvement'],9:[],10:['Aura of Courage'],11:['Improved Divine Smite'],12:['Ability Score Improvement'],13:[],14:['Cleansing Touch'],15:['Oath Feature'],16:['Ability Score Improvement'],17:[],18:['Aura improvements'],19:['Ability Score Improvement'],20:['Oath Feature (Sacred Oath capstone)']},
+  Ranger:{2:['Fighting Style','Spellcasting','Primeval Awareness'],3:['Ranger Archetype','Primeval Awareness'],4:['Ability Score Improvement'],5:['Extra Attack'],6:['Favored Enemy improvement','Natural Explorer improvement'],7:['Archetype Feature'],8:['Ability Score Improvement','Land\'s Stride'],9:[],10:['Natural Explorer improvement','Hide in Plain Sight'],11:['Archetype Feature'],12:['Ability Score Improvement'],13:[],14:['Favored Enemy improvement','Vanish'],15:['Archetype Feature'],16:['Ability Score Improvement'],17:[],18:['Feral Senses'],19:['Ability Score Improvement'],20:['Foe Slayer']},
+  Rogue:{2:['Cunning Action'],3:['Roguish Archetype'],4:['Ability Score Improvement'],5:['Uncanny Dodge'],6:['Expertise'],7:['Evasion'],8:['Ability Score Improvement'],9:['Archetype Feature'],10:['Ability Score Improvement'],11:['Reliable Talent'],12:['Ability Score Improvement'],13:['Archetype Feature'],14:['Blindsense'],15:['Slippery Mind'],16:['Ability Score Improvement'],17:['Archetype Feature'],18:['Elusive'],19:['Ability Score Improvement'],20:['Stroke of Luck']},
+  Sorcerer:{2:['Font of Magic'],3:['Metamagic'],4:['Ability Score Improvement'],5:[],6:['Sorcerous Origin Feature'],7:[],8:['Ability Score Improvement'],9:[],10:['Metamagic'],11:[],12:['Ability Score Improvement'],13:[],14:['Sorcerous Origin Feature'],15:[],16:['Ability Score Improvement'],17:['Metamagic'],18:['Sorcerous Origin Feature'],19:['Ability Score Improvement'],20:['Sorcerous Restoration']},
+  Warlock:{2:['Eldritch Invocations'],3:['Pact Boon'],4:['Ability Score Improvement'],5:['Eldritch Invocations upgrade'],6:['Otherworldly Patron Feature'],7:[],8:['Ability Score Improvement'],9:[],10:['Otherworldly Patron Feature'],11:['Mystic Arcanum (6th level)'],12:['Ability Score Improvement'],13:['Mystic Arcanum (7th level)'],14:['Otherworldly Patron Feature'],15:['Mystic Arcanum (8th level)'],16:['Ability Score Improvement'],17:['Mystic Arcanum (9th level)'],18:[],19:['Ability Score Improvement'],20:['Eldritch Master']},
+  Wizard:{2:['Arcane Tradition'],3:[],4:['Ability Score Improvement'],5:[],6:['Arcane Tradition Feature'],7:[],8:['Ability Score Improvement'],9:[],10:['Arcane Tradition Feature'],11:[],12:['Ability Score Improvement'],13:[],14:['Arcane Tradition Feature'],15:[],16:['Ability Score Improvement'],17:[],18:['Spell Mastery'],19:['Ability Score Improvement'],20:['Signature Spells']},
+};
+
+const BG_FEATURES={Acolyte:[{name:'Shelter of the Faithful',desc:'Free healing and care at temples of your faith. Can request assistance from priests.'}],Criminal:[{name:'Criminal Contact',desc:'A reliable contact acting as liaison to a criminal network. Can send and receive messages.'}],'Folk Hero':[{name:'Rustic Hospitality',desc:'Fit in among common folk. Find places to hide, rest, or recuperate among commoners.'}],Noble:[{name:'Position of Privilege',desc:'Welcome in high society. People assume you have the right to be wherever you are.'}],Sage:[{name:'Researcher',desc:'If you do not know a piece of lore, you know where and from whom you can find it.'}],Soldier:[{name:'Military Rank',desc:'Soldiers of your former organization recognize your rank and may defer to you.'}],Outlander:[{name:'Wanderer',desc:'Excellent memory for maps and geography. Can always recall terrain and settlements around you.'}],Entertainer:[{name:'By Popular Demand',desc:'Always find a place to perform. Receive free lodging and food while performing each night.'}],Hermit:[{name:'Discovery',desc:'Your seclusion gave you access to a unique discovery. Work with your DM on what it is.'}],Sailor:[{name:"Ship's Passage",desc:'Secure free passage on sailing ships for yourself and companions.'}]};
+const QA_COMBAT=[{name:'Attack',sub:'Make one melee or ranged attack',desc:'Make one attack. Certain features let you make multiple attacks with this action.'},{name:'Dash',sub:'Double your movement speed this turn',desc:'Gain extra movement equal to your speed for the current turn, after applying modifiers.'},{name:'Disengage',sub:'Move without provoking opportunity attacks',desc:'Your movement does not provoke opportunity attacks for the rest of the turn.'},{name:'Dodge',sub:'Attacks against you have disadvantage',desc:'Attacks against you have disadvantage if you can see the attacker. You make DEX saves with advantage. Lasts until your next turn.'},{name:'Help',sub:'Give an ally advantage on their next roll',desc:'Aid another creature. An ally has advantage on their next attack roll against a creature within 5 ft of you, made before your next turn.'},{name:'Hide',sub:'Attempt to hide from enemies',desc:'Make a Stealth check. You must be heavily obscured or behind full cover. While hidden, attacks against you have disadvantage.'},{name:'Ready',sub:'Prepare an action for a specific trigger',desc:'Choose a trigger and a reaction. When the trigger occurs, take your readied action or ignore it.'},{name:'Use an Object',sub:'Interact with items like potions',desc:'When an object requires your action for its use, take the Use an Object action.'}];
+const QA_CONDITIONS=[{name:'Blinded',sub:"Cannot see, attacks against you have advantage",desc:"Cannot see and auto-fails checks requiring sight. Attacks against it have advantage; its attacks have disadvantage."},{name:'Charmed',sub:"Cannot attack the charmer",desc:"Cannot attack the charmer or target it with harmful abilities. The charmer has advantage on social checks against it."},{name:'Frightened',sub:'Disadvantage while source is visible',desc:"Disadvantage on checks and attacks while source of fear is in line of sight. Cannot willingly move closer to the source."},{name:'Grappled',sub:'Speed becomes 0',desc:"Speed becomes 0. Ends if the grappler is incapacitated or if moved out of reach."},{name:'Incapacitated',sub:"Cannot take actions or reactions",desc:"Cannot take actions or reactions."},{name:'Paralyzed',sub:'Incapacitated, auto-fail STR/DEX saves',desc:"Incapacitated and cannot move or speak. Auto-fails STR and DEX saves. Attacks have advantage. Hits within 5 ft are critical hits."},{name:'Prone',sub:'Disadvantage on attacks, melee against you has advantage',desc:"Can only crawl unless it stands up (costs half movement). Melee attacks against it have advantage. Its attack rolls have disadvantage."},{name:'Stunned',sub:'Incapacitated, auto-fail STR/DEX saves',desc:"Incapacitated, cannot move, can only speak falteringly. Auto-fails STR and DEX saves. Attacks have advantage."},{name:'Unconscious',sub:'Incapacitated, prone, auto-fail STR/DEX',desc:"Incapacitated, cannot move or speak, drops held items, falls prone. Attacks have advantage. Hits within 5 ft are critical hits."}];
+const QA_RULES=[{name:'Advantage & Disadvantage',sub:'Roll 2d20, take higher or lower',desc:'With advantage, roll 2d20 and use the higher. With disadvantage, use the lower. If you have both, they cancel out.'},{name:'Passive Checks',sub:'10 + modifier, no dice roll',desc:'Represents the average result for a repeated task. Passive Perception = 10 + Perception modifier.'},{name:'Opportunity Attacks',sub:'React when enemy leaves your reach',desc:'When a hostile creature you can see moves out of your reach, use your reaction to make one melee attack.'},{name:'Concentration',sub:'Maintain a spell, lost when you take damage',desc:'Only one concentration spell at a time. Lost if you cast another, become incapacitated, or fail CON save (DC 10 or half damage taken).'},{name:'Short Rest',sub:'1 hour - spend Hit Dice to recover HP',desc:'At least 1 hour of downtime. Spend Hit Dice (up to your max), rolling each and adding CON modifier to regain that many HP.'},{name:'Long Rest',sub:'8 hours - restore all HP and spell slots',desc:'At least 8 hours. Regain all lost HP and half your maximum spent Hit Dice (min 1). All spell slots restored. Need at least 1 HP.'}];
+// ===== STATE =====
+let S={screen:'landing',dmTab:'players',sheetTab:'info',role:null,session:null,campName:'',myChar:null,players:{},enemies:[],initiative:[],currentTurn:0,combatActive:false,shopItems:[],shopOpen:false,notes:'',wiz:{name:'',race:'Human',class:'Fighter',level:1,hpMode:'avg',system:'custom',str:10,dex:10,con:10,int:10,wis:10,cha:10,background:'Acolyte',alignment:'True Neutral',personality:'',ideals:'',bonds:'',flaws:'',about:'',skills:[]},showRaceDetail:false,showClassDetail:false,activeAbEdit:null,sortAlpha:false,editMode:false,weaponFinesseChoice:{},activeInfoTab:-1,dbModalType:null,dbModalMode:null,dbModalFilter:'All',dbModalQuery:'',hdMode:'manual',hdRolledVal:null,pendingAction:null,spellDetailOpen:false,weaponDetailOpen:false};
+
+// ===== HELPERS =====
+const mod=v=>Math.floor((v-10)/2);
+const modStr=v=>{const m=mod(v);return(m>=0?'+':'')+m;};
+const profB=lvl=>Math.ceil(lvl/4)+1;
+const fmtB=n=>(n>=0?'+':'')+n;
+const hpCol=p=>p>0.5?'var(--green)':p>0.2?'var(--orange)':'var(--red)';
+const pid=n=>'p_'+n.replace(/\s/g,'_');
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+function go(sc){S.screen=sc;S.activeAbEdit=null;S.activeInfoTab=-1;S.editMode=false;render();}
+function getSlots(c){const tbl=SPELL_SLOTS_TABLE[c.class];if(!tbl)return[];return tbl[Math.min(c.level,20)-1]||[];}
+function spellAtk(c){const ab=CLASSES[c.class]&&CLASSES[c.class].spellcasting;if(!ab)return null;return mod(c[ab.toLowerCase()])+profB(c.level);}
+function spellDC(c){const ab=CLASSES[c.class]&&CLASSES[c.class].spellcasting;if(!ab)return null;return 8+mod(c[ab.toLowerCase()])+profB(c.level);}
+function saveBonus(c,ab){if(c.saveOverrides&&c.saveOverrides[ab]!==undefined)return c.saveOverrides[ab];return mod(c[S2AB[ab]])+(c.saveProficiencies&&c.saveProficiencies.includes(ab)?profB(c.level):0);}
+function skillBonus(c,name){if(c.skillOverrides&&c.skillOverrides[name]!==undefined)return c.skillOverrides[name];const sk=SKILL_LIST.find(s=>s.name===name);if(!sk)return 0;const exp=c.skillExpertise&&c.skillExpertise.includes(name);const pr=c.skillProficiencies&&c.skillProficiencies.includes(name);return mod(c[sk.ab])+(exp?profB(c.level)*2:pr?profB(c.level):0);}
+function calcHP(w){const die=CLASSES[w.class]&&CLASSES[w.class].hit||8;const con=mod(w.con);if(w.hpMode==='max')return(die+con)*w.level;if(w.hpMode==='roll')return(Math.floor(Math.random()*die)+1+con)*w.level;return(Math.floor(die/2)+1+con)*w.level;}
+function isFinesse(w){return w.properties&&w.properties.includes('Finesse');}
+function isRanged(w){return w.category&&w.category.includes('Ranged');}
+function isMartial(w){return w.category&&w.category.startsWith('Martial');}
+function isProfWeapon(c,w){const mart=['Barbarian','Fighter','Paladin','Ranger'];if(mart.includes(c.class))return true;return!isMartial(w);}
+function wAtkBonus(c,w){const pb=profB(c.level);const prof=isProfWeapon(c,w)?pb:0;if(isFinesse(w)){const k=S.weaponFinesseChoice[w.name]||'str';return mod(c[k])+prof;}if(isRanged(w))return mod(c.dex)+prof;return mod(c.str)+prof;}
+function wDmgBonus(c,w){if(isFinesse(w)){const k=S.weaponFinesseChoice[w.name]||'str';return mod(c[k]);}if(isRanged(w))return mod(c.dex);return mod(c.str);}
+function fmtDur(dur){if(!dur)return'';const d=dur.toLowerCase();if(d.includes('instantaneous'))return'Instant';if(d.includes('concentration')){const r=dur.replace(/concentration,?\s*/i,'').trim().replace(/^up to /i,'');return'Conc. '+r;}return dur.replace(/^up to /i,'');}
+function getDmgDice(desc){if(!desc)return'';const types='fire|cold|lightning|thunder|radiant|necrotic|psychic|poison|acid|force|piercing|slashing|bludgeoning';let m=desc.match(new RegExp('(\\d+d\\d+)\\s*(?:'+types+')','i'));if(m)return m[1];m=desc.match(/(?:save:|deals?|takes?)\s+(\d+d\d+)/i);if(m)return m[1];m=desc.match(/(\d+d\d+)/);if(m&&/\b(?:save|damage|hit|attack)\b/i.test(desc))return m[1];return'';}
+
+// ===== MODAL =====
+function openModal(title,sub,body,confirmLbl,action,hideCancel){document.getElementById('m-title').textContent=title;document.getElementById('m-sub').textContent=sub||'';document.getElementById('m-body').innerHTML=body;document.getElementById('m-confirm').textContent=confirmLbl||'Confirm';S.pendingAction=action;const cb=document.getElementById('m-cancel');if(cb)cb.style.display=hideCancel?'none':'';document.getElementById('overlay').classList.remove('hidden');}
+function closeModal(){document.getElementById('overlay').classList.add('hidden');S.pendingAction=null;S.hdMode='manual';S.hdRolledVal=null;const cb=document.getElementById('m-cancel');if(cb)cb.style.display='';}
+function confirmModal(){if(S.pendingAction)S.pendingAction();closeModal();render();}
+
+// ===== REST / HIT DIE =====
+function askShortRest(){const c=S.myChar;const rem=c.hitDiceTotal-c.hitDiceUsed;const die=CLASS_HD[c.class]||8;openModal('Short Rest','Take a short rest (1 hour)','<div class="modal-effect"><b>What happens:</b><br>Spend Hit Dice to recover HP. Each Hit Die: roll d'+die+' + CON ('+modStr(c.con)+').<br><br>You have <b>'+rem+' of '+c.hitDiceTotal+'</b> Hit Dice remaining.'+(rem===0?'<br><br><b style="color:var(--red)">No Hit Dice remaining.</b>':'')+'</div>','Start Short Rest',()=>{toast('Short rest complete. Use Hit Dice to heal.');});}
+function askLongRest(){const c=S.myChar;const half=Math.max(1,Math.floor(c.hitDiceTotal/2));openModal('Long Rest','Take a long rest (8 hours)','<div class="modal-effect"><b>What happens:</b><br>&#8226; HP: '+c.hp+' &#8594; '+c.maxHp+'<br>&#8226; Hit Dice recovered: '+half+'<br>&#8226; All spell slots restored<br>&#8226; Inspiration cleared<br>&#8226; Death saves reset</div>','Take Long Rest',()=>{c.hp=c.maxHp;c.tempHp=0;c.hitDiceUsed=Math.max(0,c.hitDiceUsed-half);c.deathSuccesses=0;c.deathFailures=0;c.isStable=false;c.isDead=false;c.inspiration=false;if(c.spellSlotsUsed)c.spellSlotsUsed=c.spellSlotsUsed.map(()=>0);toast('Long rest complete.');});}
+function buildHdBody(){const c=S.myChar;const die=CLASS_HD[c.class]||8;const con=mod(c.con);const rolled=S.hdRolledVal;const healed=rolled!==null?Math.max(0,rolled+con):null;return'<div class="hd-choice"><button class="hd-choice-btn '+(S.hdMode==='manual'?'selected':'')+'" onclick="S.hdMode=\'manual\';S.hdRolledVal=null;document.getElementById(\'m-body\').innerHTML=buildHdBody()"><div class="hd-choice-title">Manual</div><div class="hd-choice-sub">Roll dice yourself</div></button><button class="hd-choice-btn '+(S.hdMode==='roll'?'selected':'')+'" onclick="S.hdMode=\'roll\';S.hdRolledVal=null;document.getElementById(\'m-body\').innerHTML=buildHdBody()"><div class="hd-choice-title">App Roll</div><div class="hd-choice-sub">Roll d'+die+' in app</div></button></div>'+(S.hdMode==='manual'?'<div class="modal-effect">Roll your d'+die+'. CON ('+fmtB(con)+') added automatically.</div><div class="hd-manual-row"><label style="font-size:13px;color:var(--text2);flex:1">You rolled:</label><input class="hd-manual-input" type="number" id="hd-val" min="1" max="'+die+'" placeholder="1-'+die+'" oninput="S.hdRolledVal=+this.value;document.getElementById(\'m-body\').innerHTML=buildHdBody();setTimeout(()=>{const i=document.getElementById(\'hd-val\');if(i){i.focus();i.value=S.hdRolledVal||\'\';}},0)"></div>'+(rolled!==null&&rolled>=1?'<div style="margin-top:10px;padding:10px;background:var(--teal-light);border-radius:2px;text-align:center"><div style="font-size:22px;font-weight:700;color:var(--teal2)">'+rolled+fmtB(con)+' = '+healed+' HP</div><div class="muted">'+c.hp+' to '+Math.min(c.maxHp,c.hp+healed)+'</div></div>':''):rolled===null?'<div class="modal-effect">App will roll d'+die+' + CON ('+fmtB(con)+').</div><button onclick="S.hdRolledVal=Math.floor(Math.random()*'+die+')+1;document.getElementById(\'m-body\').innerHTML=buildHdBody()" style="width:100%;padding:12px;background:var(--teal);color:#fff;border:none;border-radius:2px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit">Roll d'+die+'</button>':'<div class="hd-rolled"><div style="font-size:26px;font-weight:700;color:var(--teal2)">'+rolled+fmtB(con)+' = '+healed+'</div><div class="muted" style="margin-top:4px">'+c.hp+' to '+Math.min(c.maxHp,c.hp+healed)+'</div></div><button onclick="S.hdRolledVal=Math.floor(Math.random()*'+die+')+1;document.getElementById(\'m-body\').innerHTML=buildHdBody()" style="width:100%;padding:8px;background:var(--white);border:1px solid var(--border2);border-radius:2px;font-size:13px;color:var(--text2);cursor:pointer;font-family:inherit;margin-top:6px">Roll again</button>');}
+function askUseHitDie(){const c=S.myChar;if((c.hitDiceTotal-c.hitDiceUsed)<=0){toast('No Hit Dice remaining');return;}if(c.hp>=c.maxHp){toast('Already at maximum HP');return;}S.hdMode='manual';S.hdRolledVal=null;openModal('Use Hit Die','d'+(CLASS_HD[c.class]||8)+' + CON ('+modStr(c.con)+')',buildHdBody(),'Apply Healing',()=>{if(!S.hdRolledVal||S.hdRolledVal<1){toast('Enter or roll a value first');return;}const healed=Math.max(0,S.hdRolledVal+mod(c.con));c.hitDiceUsed++;c.hp=Math.min(c.maxHp,c.hp+healed);toast('+'+healed+' HP from Hit Die');});}
+function askAdjHd(dir){const c=S.myChar;const rem=c.hitDiceTotal-c.hitDiceUsed;if(dir<0&&rem<=0){toast('No Hit Dice to spend');return;}if(dir>0&&c.hitDiceUsed<=0){toast('No used Hit Dice to restore');return;}openModal(dir<0?'Spend Hit Die':'Restore Hit Die','Manually adjust Hit Dice','<div class="modal-effect">'+(dir<0?'Mark one Hit Die as spent.<br>Remaining: <b>'+rem+' &#8594; '+(rem-1)+'</b> of '+c.hitDiceTotal:'Restore one spent Hit Die.<br>Remaining: <b>'+rem+' &#8594; '+(rem+1)+'</b> of '+c.hitDiceTotal)+'<br><br><span style="color:var(--text3);font-size:12px">Use only to correct mistakes.</span></div>',dir<0?'Spend Hit Die':'Restore Hit Die',()=>{if(dir<0)c.hitDiceUsed++;else c.hitDiceUsed=Math.max(0,c.hitDiceUsed-1);});}
+// ===== DB MODAL =====
+function openDbModal(type,mode){S.dbModalType=type;S.dbModalMode=mode;S.dbModalFilter='All';S.dbModalQuery='';const el=document.getElementById('db-modal-overlay');if(el)el.classList.remove('hidden');const title=document.getElementById('db-modal-title');if(title)title.textContent=(mode==='custom'?'Custom ':'')+( type==='spell'?'Spell':'Weapon');const dbSec=document.getElementById('db-modal-db-section');const cusSec=document.getElementById('db-modal-custom-section');if(dbSec)dbSec.style.display=mode==='db'?'flex':'none';if(cusSec)cusSec.style.display=mode==='custom'?'block':'none';if(mode==='db'){buildDbFilters();renderDbList();}else{buildCustomForm();}const srch=document.getElementById('db-modal-search');if(srch){srch.value='';setTimeout(()=>srch.focus(),100);}}
+function closeDbModal(){const el=document.getElementById('db-modal-overlay');if(el)el.classList.add('hidden');S.dbModalType=null;}
+function buildDbFilters(){const fc=document.getElementById('db-modal-filters');if(!fc)return;const c=S.myChar;if(S.dbModalType==='spell'){const mx=c?Math.ceil((c.level||1)/2):9;const filters=['All','My Level (1-'+mx+')','Cantrip','1st','2nd','3rd','4th','5th'];fc.innerHTML=filters.map(f=>'<button class="db-modal-filter '+(f.startsWith('My Level')?'my-lvl ':'')+' '+(S.dbModalFilter===f?'on':'')+'" onclick="S.dbModalFilter=\''+f+'\';buildDbFilters();renderDbList()">'+f+'</button>').join('');}else{const filters=['All',...WEAPON_CATS];fc.innerHTML=filters.map(f=>'<button class="db-modal-filter '+(S.dbModalFilter===f?'on':'')+'" onclick="S.dbModalFilter=\''+f+'\';buildDbFilters();renderDbList()">'+f+'</button>').join('');}}
+function renderDbList(){
+  const list=document.getElementById('db-modal-list');
+  if(!list)return;
+  const srch=document.getElementById('db-modal-search');
+  const q=(srch?srch.value:'').toLowerCase();
+  const f=S.dbModalFilter||'All';
+  const c=S.myChar;
+  const mx=c?Math.ceil((c.level||1)/2):9;
+  let html='';
+  if(S.dbModalType==='spell'){
+    const added=(c&&c.spells||[]).map(s=>s.name);
+    const isMyLvl=f.startsWith('My Level');
+    const items=SPELL_DB.filter(sp=>{
+      const mQ=!q||sp.name.toLowerCase().includes(q)||sp.school.toLowerCase().includes(q);
+      let mF=true;
+      if(isMyLvl)mF=sp.level<=mx;
+      else if(f==='Cantrip')mF=sp.level===0;
+      else if(f!=='All'){const n=['Cantrip','1st','2nd','3rd','4th','5th'].indexOf(f);mF=sp.level===n;}
+      return mQ&&mF;
+    }).sort((a,b)=>a.level-b.level);
+    if(!items.length){list.innerHTML='<div style="padding:32px;text-align:center;color:var(--text3);font-size:13px">No spells found</div>';return;}
+    let lastL=-1;
+    items.forEach(sp=>{
+      const isA=added.includes(sp.name);
+      const safeN=sp.name.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+      if(sp.level!==lastL){html+='<div class="db-modal-cat">'+(sp.level===0?'Cantrip':SPELL_LVL_NAMES[sp.level])+'</div>';lastL=sp.level;}
+      const dmg=getDmgDice(sp.desc||'');
+      html+='<div class="db-modal-row '+(isA?'added':'')+'" data-spellname="'+safeN+'">'
+        +'<div style="flex:1"><div class="db-modal-row-name">'+sp.name+(sp.concentration?'<span class="conc-badge">C</span>':'')+(sp.ritual?'<span class="ritual-badge">R</span>':'')+'</div>'
+        +'<div class="db-modal-row-sub">'+sp.school+' &bull; '+sp.castTime+(dmg?' &bull; <b style="color:var(--red)">'+dmg+'</b>':'')+'</div></div>'
+        +'<div class="db-modal-row-add">'+(isA?'Added':'+ Add')+'</div></div>';
+    });
+    list.innerHTML=html;
+    list.onclick=function(e){
+      const row=e.target.closest('[data-spellname]');
+      if(!row)return;
+      const name=row.getAttribute('data-spellname').replace(/&quot;/g,'"').replace(/&amp;/g,'&');
+      openSpellDetailDb(name);
+    };
+  } else {
+    const added=(c&&c.weapons||[]);
+    const items=WEAPON_DB.filter(w=>{
+      const mQ=!q||w.name.toLowerCase().includes(q)||w.category.toLowerCase().includes(q);
+      const mF=f==='All'||w.category===f;
+      return mQ&&mF;
+    });
+    if(!items.length){list.innerHTML='<div style="padding:32px;text-align:center;color:var(--text3);font-size:13px">No weapons found</div>';return;}
+    let lastC='';
+    items.forEach(w=>{
+      const isA=added.includes(w.name);
+      const safeN=w.name.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+      if(w.category!==lastC){html+='<div class="db-modal-cat">'+w.category+'</div>';lastC=w.category;}
+      html+='<div class="db-modal-row '+(isA?'added':'')+'" data-weaponname="'+safeN+'">'
+        +'<div style="flex:1"><div class="db-modal-row-name">'+w.name+'</div>'
+        +'<div class="db-modal-row-sub">'+w.damage+' '+w.damageType+(w.properties&&w.properties.length?' &bull; '+w.properties.join(', '):'')+(w.range?' &bull; '+w.range:'')+'</div></div>'
+        +'<div class="db-modal-row-add">'+(isA?'Added':'+ Add')+'</div></div>';
+    });
+    list.innerHTML=html;
+    list.onclick=function(e){
+      const row=e.target.closest('[data-weaponname]');
+      if(!row)return;
+      const name=row.getAttribute('data-weaponname').replace(/&quot;/g,'"').replace(/&amp;/g,'&');
+      openWeaponDetailDb(name);
+    };
+  }
+}
+
+function openSpellDetailDb(name){
+  const c=S.myChar;
+  const sp=SPELL_DB.find(s=>s.name===name);
+  if(!sp)return;
+  const isAdded=c&&(c.spells||[]).find(s=>s.name===name);
+  const dur=fmtDur(sp.duration||'');
+  const dmg=getDmgDice(sp.desc||'');
+  const stats='<div class="spell-detail-grid">'
+    +'<div class="spell-detail-item"><div class="spell-detail-lbl">Casting Time</div><div class="spell-detail-val">'+sp.castTime+'</div></div>'
+    +'<div class="spell-detail-item"><div class="spell-detail-lbl">Range</div><div class="spell-detail-val">'+(sp.range||'--')+'</div></div>'
+    +'<div class="spell-detail-item"><div class="spell-detail-lbl">Duration</div><div class="spell-detail-val">'+(dur||sp.duration||'--')+'</div></div>'
+    +'<div class="spell-detail-item"><div class="spell-detail-lbl">Components</div><div class="spell-detail-val">'+(sp.components||'--')+'</div></div>'
+    +(dmg?'<div class="spell-detail-item" style="background:rgba(220,53,69,.08);border:1px solid rgba(220,53,69,.2)"><div class="spell-detail-lbl">Damage</div><div style="font-size:16px;font-weight:700;color:var(--red)">'+dmg+'</div></div>':'')
+    +(sp.classes?'<div class="spell-detail-item" style="grid-column:span 2"><div class="spell-detail-lbl">Classes</div><div>'+sp.classes.map(cl=>'<span class="dtag">'+cl+'</span>').join('')+'</div></div>':'')
+    +'</div>';
+  const addBtn=isAdded
+    ?'<div style="padding:8px 10px;background:var(--teal-light);border-radius:2px;font-size:13px;color:var(--teal2);margin-top:8px">Already added to your character</div>'
+    :'<button id="db-add-spell-btn" style="width:100%;padding:11px;background:var(--teal);color:#fff;border:none;border-radius:2px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:8px">+ Add to Character</button>';
+  const body='<div style="margin-bottom:10px"><div style="font-size:17px;font-weight:600;margin-bottom:4px">'+sp.name+(sp.concentration?'<span class="conc-badge" style="margin-left:6px">Concentration</span>':'')+(sp.ritual?'<span class="ritual-badge" style="margin-left:4px">Ritual</span>':'')+'</div><div style="font-size:13px;color:var(--text3);margin-bottom:12px">'+(sp.level===0?'Cantrip':SPELL_LVL_NAMES[sp.level])+' &bull; '+sp.school+'</div></div>'+stats+'<div style="font-size:14px;line-height:1.6;color:var(--text2);margin-top:8px">'+sp.desc+'</div>'+addBtn;
+  openModal(sp.name,'',body,'Close',()=>{},true);
+  setTimeout(()=>{
+    const btn=document.getElementById('db-add-spell-btn');
+    if(btn)btn.onclick=function(){
+      addSpellFromDb(name);
+      closeModal();
+      renderDbList();
+    };
+  },50);
+}
+
+function openWeaponDetailDb(name){
+  const c=S.myChar;
+  const w=WEAPON_DB.find(x=>x.name===name);
+  if(!w)return;
+  const isAdded=c&&(c.weapons||[]).includes(name);
+  const atk=c?wAtkBonus(c,w):0;
+  const dmgB=c?wDmgBonus(c,w):0;
+  const prof=c?isProfWeapon(c,w):true;
+  const stats='<div class="spell-detail-grid">'
+    +'<div class="spell-detail-item"><div class="spell-detail-lbl">Damage</div><div style="font-size:16px;font-weight:700;color:var(--red)">'+w.damage+' '+w.damageType+'</div></div>'
+    +'<div class="spell-detail-item"><div class="spell-detail-lbl">Attack Bonus</div><div style="font-size:16px;font-weight:700;color:var(--purple)">'+fmtB(atk)+(prof?'':' <span style="font-size:11px;font-weight:400;color:var(--orange)">(not proficient)</span>')+'</div></div>'
+    +'<div class="spell-detail-item"><div class="spell-detail-lbl">Range</div><div class="spell-detail-val">'+(w.range||'Melee')+'</div></div>'
+    +'<div class="spell-detail-item"><div class="spell-detail-lbl">Weight / Cost</div><div class="spell-detail-val">'+w.weight+' &bull; '+w.cost+'</div></div>'
+    +(w.versatile?'<div class="spell-detail-item"><div class="spell-detail-lbl">Versatile</div><div class="spell-detail-val">'+w.versatile+' '+w.damageType+'</div></div>':'')
+    +(w.properties&&w.properties.length?'<div class="spell-detail-item" style="grid-column:span 2"><div class="spell-detail-lbl">Properties</div><div>'+w.properties.map(p=>'<span class="dtag">'+p+'</span>').join('')+'</div></div>':'')
+    +'</div>';
+  const addBtn=isAdded
+    ?'<div style="padding:8px 10px;background:var(--teal-light);border-radius:2px;font-size:13px;color:var(--teal2);margin-top:8px">Already added to your character</div>'
+    :'<button id="db-add-weapon-btn" style="width:100%;padding:11px;background:var(--teal);color:#fff;border:none;border-radius:2px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:8px">+ Add to Character</button>';
+  const body='<div style="margin-bottom:10px"><div style="font-size:17px;font-weight:600;margin-bottom:2px">'+w.name+'</div><div style="font-size:13px;color:var(--text3);margin-bottom:12px">'+w.category+'</div></div>'+stats+addBtn;
+  openModal(w.name,'',body,'Close',()=>{},true);
+  setTimeout(()=>{
+    const btn=document.getElementById('db-add-weapon-btn');
+    if(btn)btn.onclick=function(){
+      addWeaponFromDb(name);
+      closeModal();
+      renderDbList();
+    };
+  },50);
+}
+
+
+function addSpellFromDb(name){const c=S.myChar;if(!c)return;c.spells=c.spells||[];if(c.spells.find(s=>s.name===name)){toast('Already added');return;}const sp=SPELL_DB.find(s=>s.name===name);if(!sp)return;c.spells.push({...sp});toast(name+' added');renderDbList();render();}
+function addWeaponFromDb(name){const c=S.myChar;if(!c)return;c.weapons=c.weapons||[];if(c.weapons.includes(name)){toast('Already added');return;}c.weapons.push(name);toast(name+' added');renderDbList();render();}
+function buildCustomForm(){const fc=document.getElementById('db-modal-custom-form');if(!fc)return;if(S.dbModalType==='spell'){fc.innerHTML='<div class="custom-form-title">Custom Spell / Ability</div>'+'<div class="custom-inputs-row" style="margin-bottom:8px"><input id="cf-name" placeholder="Name" style="flex:2;min-width:120px"><select id="cf-lvl" style="flex:1"><option>Cantrip</option><option>1st</option><option>2nd</option><option>3rd</option><option>4th</option><option>5th</option></select><input id="cf-school" placeholder="School" style="flex:1;min-width:80px"></div>'+'<div class="custom-inputs-row" style="margin-bottom:8px"><input id="cf-cast" placeholder="Casting time (1 action)" style="flex:1"><input id="cf-dmg" placeholder="Damage dice (e.g. 2d6)" style="flex:1"></div>'+'<button class="custom-add-btn" onclick="addCustomSpell()">Add Custom Spell</button>';}else{fc.innerHTML='<div class="custom-form-title">Custom Weapon</div>'+'<div class="custom-inputs-row" style="margin-bottom:8px"><input id="cf-name" placeholder="Name" style="flex:2;min-width:100px"><input id="cf-dmg" placeholder="Damage (1d6)" style="flex:1"><input id="cf-type" placeholder="Type (Slashing)" style="flex:1"></div>'+'<div class="custom-inputs-row" style="margin-bottom:8px"><input id="cf-range" placeholder="Range (optional)" style="flex:1"><input id="cf-atk" type="number" placeholder="Atk bonus override" style="flex:1"></div>'+'<button class="custom-add-btn" onclick="addCustomWeapon()">Add Custom Weapon</button>';}}
+function addCustomSpell(){const name=(document.getElementById('cf-name')&&document.getElementById('cf-name').value||'').trim();if(!name){toast('Enter a spell name');return;}const c=S.myChar;c.spells=c.spells||[];if(c.spells.find(s=>s.name===name)){toast('Already added');return;}const lvlStr=(document.getElementById('cf-lvl')&&document.getElementById('cf-lvl').value)||'Cantrip';const lvlNum=['Cantrip','1st','2nd','3rd','4th','5th'].indexOf(lvlStr);c.spells.push({name,level:Math.max(0,lvlNum),school:(document.getElementById('cf-school')&&document.getElementById('cf-school').value)||'Custom',castTime:(document.getElementById('cf-cast')&&document.getElementById('cf-cast').value)||'1 action',range:'--',duration:'--',components:'V, S',concentration:false,ritual:false,desc:''});toast(name+' added');closeDbModal();render();}
+function addCustomWeapon(){const name=(document.getElementById('cf-name')&&document.getElementById('cf-name').value||'').trim();if(!name){toast('Enter a weapon name');return;}const c=S.myChar;c.weapons=c.weapons||[];c.customWeapons=c.customWeapons||[];if(c.weapons.includes(name)){toast('Already added');return;}c.weapons.push(name);c.customWeapons.push({name,damage:(document.getElementById('cf-dmg')&&document.getElementById('cf-dmg').value)||'1d4',damageType:(document.getElementById('cf-type')&&document.getElementById('cf-type').value)||'Slashing',atkBonus:(document.getElementById('cf-atk')&&document.getElementById('cf-atk').value)||null,range:(document.getElementById('cf-range')&&document.getElementById('cf-range').value)||null,custom:true});toast(name+' added');closeDbModal();render();}
+
+// ===== SPELL DETAIL =====
+function openSpellDetail(name){const c=S.myChar;const sp=SPELL_DB.find(s=>s.name===name)||(c&&c.spells||[]).find(s=>s.name===name);if(!sp)return;const isChar=c&&(c.spells||[]).find(s=>s.name===name);const slots=c?getSlots(c):[];const dur=fmtDur(sp.duration||'');const dmg=getDmgDice(sp.desc||'');const stats='<div class="spell-detail-grid">'+'<div class="spell-detail-item"><div class="spell-detail-lbl">Casting Time</div><div class="spell-detail-val">'+sp.castTime+'</div></div>'+'<div class="spell-detail-item"><div class="spell-detail-lbl">Range</div><div class="spell-detail-val">'+(sp.range||'--')+'</div></div>'+'<div class="spell-detail-item"><div class="spell-detail-lbl">Duration</div><div class="spell-detail-val">'+(dur||sp.duration||'--')+'</div></div>'+'<div class="spell-detail-item"><div class="spell-detail-lbl">Components</div><div class="spell-detail-val">'+(sp.components||'--')+'</div></div>'+(dmg?'<div class="spell-detail-item" style="background:rgba(220,53,69,.08);border:1px solid rgba(220,53,69,.2)"><div class="spell-detail-lbl">Damage</div><div style="font-size:16px;font-weight:700;color:var(--red)">'+dmg+'</div></div>':'')+'</div>';let castBtn='';if(isChar&&sp.level>0){const avail=slots.map((tot,i)=>({i,lvl:i+1,av:tot-((c.spellSlotsUsed||[])[i]||0)})).filter(s=>s.lvl>=sp.level&&s.av>0);if(!avail.length)castBtn='<div style="padding:10px;background:#fff3cd;border:1px solid #ffc107;border-radius:2px;font-size:13px;color:#856404;margin-top:8px">No spell slots available.</div>';else castBtn='<div style="margin-top:8px">'+(avail.length>1?'<div style="font-size:12px;color:var(--text2);margin-bottom:6px">Cast using slot:</div>':'')+avail.map(s=>'<button onclick="castSpell(\''+name.replace(/'/g,"\\'")+'\','+s.i+')" style="padding:8px 14px;background:var(--purple);color:#fff;border:none;border-radius:2px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin:2px">'+SPELL_LVL_NAMES[s.lvl]+' ('+s.av+' left)</button>').join('')+'</div>';}else if(isChar&&sp.level===0)castBtn='<div style="padding:8px;background:var(--teal-light);border-radius:2px;font-size:13px;color:var(--teal2);margin-top:8px">Cantrip - no slot needed</div>';const body='<div style="margin-bottom:10px"><div style="font-size:17px;font-weight:600;margin-bottom:4px">'+sp.name+(sp.concentration?'<span class="conc-badge" style="margin-left:6px">Concentration</span>':'')+(sp.ritual?'<span class="ritual-badge" style="margin-left:4px">Ritual</span>':'')+'</div><div style="font-size:13px;color:var(--text3);margin-bottom:12px">'+(sp.level===0?'Cantrip':SPELL_LVL_NAMES[sp.level])+' &bull; '+sp.school+'</div></div>'+stats+'<div style="font-size:14px;line-height:1.6;color:var(--text2);margin-top:4px">'+sp.desc+'</div>'+castBtn;openModal(sp.name,'',body,'Close',()=>{},true);}
+function castSpell(name,slotIdx){const c=S.myChar;const slots=getSlots(c);const total=slots[slotIdx]||0;const used=(c.spellSlotsUsed||[])[slotIdx]||0;if(used>=total){toast('No slots remaining');return;}c.spellSlotsUsed=c.spellSlotsUsed||[];c.spellSlotsUsed[slotIdx]=used+1;closeModal();render();toast(name+' cast! '+SPELL_LVL_NAMES[slotIdx+1]+' slot used.');}
+function removeSpell(name){S.myChar.spells=(S.myChar.spells||[]).filter(s=>s.name!==name);render();toast('Removed');}
+function useSpellSlot(lvl){const c=S.myChar;const slots=getSlots(c);const tot=slots[lvl]||0;const used=(c.spellSlotsUsed||[])[lvl]||0;if(used>=tot){toast('No slots remaining');return;}c.spellSlotsUsed=c.spellSlotsUsed||[];c.spellSlotsUsed[lvl]=used+1;render();toast(SPELL_LVL_NAMES[lvl+1]+' slot used');}
+function restoreSpellSlot(lvl){const c=S.myChar;c.spellSlotsUsed=c.spellSlotsUsed||[];const used=c.spellSlotsUsed[lvl]||0;if(used<=0){toast('All slots available');return;}c.spellSlotsUsed[lvl]=Math.max(0,used-1);render();toast(SPELL_LVL_NAMES[lvl+1]+' slot restored');}
+function resetSpellSlots(){S.myChar.spellSlotsUsed=getSlots(S.myChar).map(()=>0);render();toast('Spell slots restored');}
+
+// ===== WEAPON DETAIL =====
+function openWeaponDetail(name){const c=S.myChar;const w=WEAPON_DB.find(x=>x.name===name);if(!w)return;const atk=wAtkBonus(c,w);const dmgB=wDmgBonus(c,w);const prof=isProfWeapon(c,w);const stats='<div class="spell-detail-grid">'+'<div class="spell-detail-item"><div class="spell-detail-lbl">Damage</div><div style="font-size:16px;font-weight:700;color:var(--red)">'+w.damage+' '+w.damageType+'</div></div>'+'<div class="spell-detail-item"><div class="spell-detail-lbl">Attack Bonus</div><div style="font-size:16px;font-weight:700;color:var(--purple)">'+fmtB(atk)+(prof?'':' <span style="font-size:11px;font-weight:400;color:var(--orange)">(not proficient)</span>')+'</div></div>'+'<div class="spell-detail-item"><div class="spell-detail-lbl">Range</div><div class="spell-detail-val">'+(w.range||'Melee')+'</div></div>'+'<div class="spell-detail-item"><div class="spell-detail-lbl">Weight / Cost</div><div class="spell-detail-val">'+w.weight+' &bull; '+w.cost+'</div></div>'+(w.versatile?'<div class="spell-detail-item"><div class="spell-detail-lbl">Versatile</div><div class="spell-detail-val">'+w.versatile+' '+w.damageType+'</div></div>':'')+(w.properties&&w.properties.length?'<div class="spell-detail-item" style="grid-column:span 2"><div class="spell-detail-lbl">Properties</div><div>'+w.properties.map(p=>'<span class="dtag">'+p+'</span>').join('')+'</div></div>':'')+'</div>';const body='<div style="margin-bottom:10px"><div style="font-size:17px;font-weight:600;margin-bottom:2px">'+w.name+'</div><div style="font-size:13px;color:var(--text3);margin-bottom:12px">'+w.category+'</div></div>'+stats;openModal(w.name,'',body,'Close',()=>{},true);}
+function setFinesseChoice(name,choice){S.weaponFinesseChoice[name]=choice;render();}
+function removeWeapon(name){const c=S.myChar;c.weapons=(c.weapons||[]).filter(w=>w!==name);if(c.customWeapons)c.customWeapons=c.customWeapons.filter(w=>w.name!==name);render();toast('Removed');}
+
+// ===== TRAIT POPUP =====
+function showTraitPopup(name,source,desc){const c=document.getElementById('trait-popup-container');if(!c)return;c.innerHTML='<div style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)closeTraitPopup()"><div style="background:var(--white);border-radius:10px;padding:20px;max-width:400px;width:calc(100% - 40px);max-height:80vh;overflow-y:auto;font-family:inherit"><div style="font-size:18px;font-weight:700;margin-bottom:4px;color:var(--text)">'+name+'</div><div style="font-size:13px;color:var(--text3);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)">'+source+'</div><div style="font-size:14px;line-height:1.7;color:var(--text2)">'+desc+'</div><button onclick="closeTraitPopup()" style="margin-top:16px;width:100%;padding:11px;background:var(--teal);color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">Close</button></div></div>';}
+function closeTraitPopup(){const c=document.getElementById('trait-popup-container');if(c)c.innerHTML='';}
+function handleTraitClick(el){showTraitPopup(el.getAttribute('data-tname'),el.getAttribute('data-tsrc'),el.getAttribute('data-tdesc'));}
+
+// ===== INFO SHEETS =====
+function openInfoSheet(tab){S.activeInfoTab=S.activeInfoTab===tab?-1:tab;render();}
+function closeInfoSheet(){S.activeInfoTab=-1;render();}
+function addExp(){const val=+(document.getElementById('exp-add-input')&&document.getElementById('exp-add-input').value)||0;if(val<=0){toast('Enter a valid XP amount');return;}S.myChar.exp=(S.myChar.exp||0)+val;if(document.getElementById('exp-add-input'))document.getElementById('exp-add-input').value='';toast('+'+val+' XP added!');render();}
+function doLevelUp(){
+  const c=S.myChar;const lvl=c.level||1;
+  if((c.exp||0)<XP_TABLE[Math.min(lvl+1,20)]){toast('Not enough XP');return;}
+  if(lvl>=20){toast('Already max level');return;}
+  // Close EXP sheet, open level up sheet
+  S.activeInfoTab=-1;
+  render();
+  const newLvl=lvl+1;
+  const die=CLASS_HD[c.class]||8;
+  const conMod=mod(c.con||10);
+  const features=(LEVEL_UP_FEATURES[c.class]&&LEVEL_UP_FEATURES[c.class][newLvl])||[];
+  const oldPb=profB(lvl);const newPb=profB(newLvl);
+  const oldSlots=getSlots(c);
+  const newSlots=getSlots({class:c.class,level:newLvl});
+  S._lvlUp={newLvl,die,conMod,hpMode:'avg',hpVal:Math.floor(die/2)+1+conMod,rolledVal:null,oldPb,newPb,oldSlots,newSlots,features,c};
+  // Build sheet body
+  const avgHp=Math.floor(die/2)+1+conMod;
+  const el=document.getElementById('lvlup-title');
+  if(el)el.textContent=c.name+' - Level '+newLvl;
+  buildLevelUpBody();
+  const overlay=document.getElementById('lvlup-overlay');
+  if(overlay)overlay.classList.remove('hidden');
+}
+function buildLevelUpBody(){
+  const lu=S._lvlUp;if(!lu)return;
+  const {newLvl,die,conMod,features,oldPb,newPb,oldSlots,newSlots}=lu;
+  const avgHp=Math.floor(die/2)+1+conMod;
+  let body='<div class="lvlup-badge"><div class="lvlup-num">'+newLvl+'</div><div class="lvlup-class">'+lu.c.class+'</div></div>';
+  // HP section
+  body+='<div class="lvlup-section"><div class="lvlup-section-title">Hit Points</div>';
+  body+='<div class="hp-modes">';
+  body+='<div class="hp-mode-btn '+(lu.hpMode==='avg'?'active':'')+'" id="hpmode-avg" onclick="lvlUpSetMode0()"><div class="hp-mode-title">Average</div><div class="hp-mode-sub">+'+avgHp+' HP</div></div>';
+  body+='<div class="hp-mode-btn '+(lu.hpMode==='roll'?'active':'')+'" id="hpmode-roll" onclick="lvlUpSetMode1()"><div class="hp-mode-title">Roll d'+die+'</div><div class="hp-mode-sub">App rolls</div></div>';
+  body+='<div class="hp-mode-btn '+(lu.hpMode==='manual'?'active':'')+'" id="hpmode-manual" onclick="lvlUpSetMode2()"><div class="hp-mode-title">Manual</div><div class="hp-mode-sub">Enter result</div></div>';
+  body+='</div><div id="lvlup-hp-content">'+buildHpContent()+'</div></div>';
+  // Prof bonus
+  if(newPb!==oldPb){
+    body+='<div class="lvlup-section"><div class="lvlup-section-title">Proficiency Bonus</div>';
+    body+='<div class="lvlup-slot-row"><span>Proficiency Bonus</span><span style="color:var(--purple);font-weight:600">+'+oldPb+' &#8594; +'+newPb+'</span></div></div>';
+  }
+  // Spell slots
+  const slotChanges=newSlots.some((n,i)=>n!==(oldSlots[i]||0));
+  if(slotChanges||newSlots.length>oldSlots.length){
+    body+='<div class="lvlup-section"><div class="lvlup-section-title">Spell Slots</div>';
+    newSlots.forEach((n,i)=>{const old=oldSlots[i]||0;if(n!==old)body+='<div class="lvlup-slot-row"><span>'+SPELL_LVL_NAMES[i+1]+'</span><span style="color:var(--purple);font-weight:600">'+old+' &#8594; '+n+'</span></div>';});
+    body+='</div>';
+  }
+  // Features
+  if(features.length){
+    body+='<div class="lvlup-section"><div class="lvlup-section-title">New Features</div><div style="display:flex;flex-wrap:wrap;margin:-3px">';
+    features.forEach(f=>{body+='<div class="lvlup-feature"><span style="color:#f0a500">&#10022;</span>'+f+'</div>';});
+    body+='</div></div>';
+  }
+  const bodyEl=document.getElementById('lvlup-body');
+  if(bodyEl)bodyEl.innerHTML=body;
+}
+function buildHpContent(){
+  const lu=S._lvlUp;if(!lu)return'';
+  const {die,conMod,hpMode,rolledVal}=lu;
+  const avgHp=Math.floor(die/2)+1+conMod;
+  if(hpMode==='avg'){
+    lu.hpVal=avgHp;
+    return '<div class="lvlup-hp-result"><div class="lvlup-hp-total">+'+avgHp+' HP</div><div class="lvlup-hp-detail">'+(Math.floor(die/2)+1)+' + CON ('+fmtB(conMod)+')</div></div>';
+  }
+  if(hpMode==='roll'){
+    if(rolledVal===null){
+      return '<div style="text-align:center;padding:8px 0"><button class="btn btn-primary" style="margin:0" onclick="lvlUpDoRoll()">Roll d'+die+'</button></div>';
+    }
+    const total=Math.max(1,rolledVal+conMod);
+    lu.hpVal=total;
+    return '<div class="lvlup-hp-result"><div class="lvlup-hp-total">+'+total+' HP</div><div class="lvlup-hp-detail">Rolled '+rolledVal+' + CON ('+fmtB(conMod)+')</div></div>'
+      +'<button class="btn" style="margin:0;padding:8px;font-size:13px;color:var(--text2);border:1px solid var(--border2)" onclick="lvlUpDoRoll()">Roll again</button>';
+  }
+  // manual
+  lu.hpVal=Math.max(1,1+conMod);
+  return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;justify-content:center">'
+    +'<input type="number" id="lvlup-manual-roll" min="1" max="'+die+'" placeholder="1-'+die+'" '
+    +'style="width:80px;border:1px solid var(--border2);padding:8px;font-size:20px;font-weight:700;text-align:center;border-radius:6px;font-family:inherit;outline:none" '
+    +'oninput="lvlUpSetManual(this.value)">'
+    +'<span id="lvlup-manual-result" style="font-size:24px;font-weight:700;color:var(--teal2);min-width:60px"></span>'
+    +'</div>';
+}
+function lvlUpSetMode(mode){
+  if(!S._lvlUp)return;
+  S._lvlUp.hpMode=mode;
+  S._lvlUp.rolledVal=null;
+  ['avg','roll','manual'].forEach(m=>{
+    const el=document.getElementById('hpmode-'+m);
+    if(el)el.className='hp-mode-btn'+(m===mode?' active':'');
+  });
+  const el=document.getElementById('lvlup-hp-content');
+  if(el)el.innerHTML=buildHpContent();
+}
+function lvlUpSetMode0(){lvlUpSetMode('avg');}
+function lvlUpSetMode1(){lvlUpSetMode('roll');}
+function lvlUpSetMode2(){lvlUpSetMode('manual');}
+function lvlUpDoRoll(){
+  if(!S._lvlUp)return;
+  const die=S._lvlUp.die;
+  S._lvlUp.rolledVal=Math.floor(Math.random()*die)+1;
+  const el=document.getElementById('lvlup-hp-content');
+  if(el)el.innerHTML=buildHpContent();
+}
+function lvlUpSetManual(val){
+  if(!S._lvlUp)return;
+  const n=parseInt(val);
+  S._lvlUp.hpVal=isNaN(n)?Math.max(1,1+S._lvlUp.conMod):Math.max(1,n+S._lvlUp.conMod);
+  const el=document.getElementById('lvlup-manual-result');
+  if(el)el.textContent='+'+S._lvlUp.hpVal+' HP';
+}
+function confirmLevelUp(){
+  const lu=S._lvlUp;if(!lu)return;
+  const c=lu.c;
+  c.level=lu.newLvl;
+  c.profBonus=lu.newPb;
+  c.hitDiceTotal=c.level;
+  c.maxHp=c.maxHp+lu.hpVal;
+  c.hp=c.hp+lu.hpVal;
+  c.spellSlotsUsed=lu.newSlots.map(()=>0);
+  S._lvlUp=null;
+  closeLevelUpSheet();
+  toast('Welcome to level '+c.level+'!');
+  render();
+}
+function closeLevelUpSheet(){
+  const el=document.getElementById('lvlup-overlay');
+  if(el)el.classList.add('hidden');
+  S._lvlUp=null;
+}
+
+
+// ===== DROPDOWN =====
+function closeAllDropdowns(){document.querySelectorAll('.add-dropdown-menu').forEach(el=>el.classList.remove('open'));}
+function openAddDropdown(id){document.querySelectorAll('.add-dropdown-menu').forEach(el=>el.classList.remove('open'));const el=document.getElementById(id);if(el)el.classList.add('open');}
+document.addEventListener('click',function(e){if(!e.target.closest('.add-dropdown-wrap'))document.querySelectorAll('.add-dropdown-menu').forEach(el=>el.classList.remove('open'));});
+// ===== RENDER =====
+function render(){const sc=S.screen;if(sc!=='player-sheet')S.activeInfoTab=-1;let html='';if(sc==='landing')html=rLanding();else if(sc==='player-menu')html=rPlayerMenu();else if(sc.startsWith('create-'))html=rWiz(+sc.split('-')[1]);else if(sc==='player-sheet')html=rSheet();else if(sc==='dm-start')html=rDMStart();else if(sc==='dm-dash')html=rDMDash();document.getElementById('root').innerHTML=html;}
+function hdr(title,back,backAct){return '<div class="hdr"><button class="hdr-btn" onclick="'+backAct+'">'+back+'</button><div class="hdr-title">'+title+'</div><div style="width:48px"></div></div>';}
+function rLanding(){return '<div class="scr on"><div class="land-logo">D&D Companion</div><div class="land-sub">5th Edition</div><div class="land-card" onclick="go(\'player-menu\')"><div><h3>Player</h3><p>Create a character and join a session</p></div><span style="font-size:20px;color:var(--text3)">&#8594;</span></div><div class="land-card" onclick="go(\'dm-start\')"><div><h3>Dungeon Master</h3><p>Start a session and manage your players</p></div><span style="font-size:20px;color:var(--text3)">&#8594;</span></div></div>';}
+function rPlayerMenu(){return hdr('Player','&#8592;',"go('landing')")+'<div class="scr on"><div class="sec-hdr mt8"><span class="sec-title">My Character</span></div>'+(S.myChar?'<div class="pc" style="cursor:pointer;border-top:1px solid var(--border)" onclick="go(\'player-sheet\')"><div style="font-size:15px;font-weight:600">'+S.myChar.name+'</div><div class="muted" style="margin:2px 0 8px">'+S.myChar.race+' '+S.myChar.class+' &middot; Level '+S.myChar.level+'</div><div style="display:flex;gap:14px;font-size:13px"><span class="red bold">'+S.myChar.hp+'/'+S.myChar.maxHp+' HP</span><span class="muted">AC '+S.myChar.ac+'</span></div></div>':'<div style="padding:20px 0;color:var(--text3);font-size:13px">No character yet.</div>')+'<button class="btn btn-primary mt8" onclick="resetWiz();go(\'create-1\')">+ Create New Character</button><div class="sec-hdr mt8"><span class="sec-title">Join Session</span></div><div class="f"><label>Session Code</label><input id="jcode" placeholder="e.g. SWORD" style="font-size:20px;letter-spacing:4px;text-transform:uppercase"></div><button class="btn btn-primary" onclick="joinSession()">Join Session</button></div>';}
+function resetWiz(){S.wiz={name:'',race:'Human',class:'Fighter',level:1,hpMode:'avg',system:'custom',str:10,dex:10,con:10,int:10,wis:10,cha:10,background:'Acolyte',alignment:'True Neutral',personality:'',ideals:'',bonds:'',flaws:'',about:'',skills:[]};S.showRaceDetail=false;S.showClassDetail=false;}
+function joinSession(){if(!S.myChar){toast('Create a character first');return;}const code=(document.getElementById('jcode')&&document.getElementById('jcode').value||'').trim().toUpperCase();if(!code){toast('Enter a session code');return;}S.session=code;S.role='player';S.players[pid(S.myChar.name)]=Object.assign({},S.myChar);go('player-sheet');toast('Joined '+code+'!');}
+
+// ===== WIZARD =====
+function rWiz(step){const titles=['Character Basics','Ability Scores','Background & Skills','Review & Finish'];const pct=Math.round((step/4)*100);const back=step>1?"go('create-"+(step-1)+"')"  :"go('player-menu')";let body='';if(step===1)body=wiz1();else if(step===2)body=wiz2();else if(step===3)body=wiz3();else body=wiz4();return '<div class="hdr"><button class="hdr-btn" onclick="'+back+'">&#8592; Back</button><div class="hdr-title">'+titles[step-1]+'</div>'+(step<4?'<button class="hdr-btn" onclick="go(\'create-'+(step+1)+'\')">Next &#8594;</button>':'<button class="hdr-btn" style="background:rgba(255,255,255,.2);padding:6px 10px;border-radius:2px" onclick="finishChar()">Create</button>')+'</div><div class="prog"><div class="prog-fill" style="width:'+pct+'%"></div></div><div class="scr on">'+body+'</div>';}
+function wiz1(){const w=S.wiz;const cls=CLASSES[w.class];const die=cls.hit;const hp=calcHP(w);return '<p class="muted mb12">Name, race, class and level?</p><div class="f"><label>Character Name</label><input value="'+w.name+'" oninput="S.wiz.name=this.value" placeholder="Enter name"></div><div class="row3"><div class="f"><label>Race</label><select onchange="S.wiz.race=this.value;render()">'+Object.keys(RACES).map(r=>'<option '+(r===w.race?'selected':'')+'>'+r+'</option>').join('')+'</select><span class="dlink" onclick="S.showRaceDetail=!S.showRaceDetail;render()">Race details</span></div><div class="f"><label>Class</label><select onchange="S.wiz.class=this.value;render()">'+Object.keys(CLASSES).map(c=>'<option '+(c===w.class?'selected':'')+'>'+c+'</option>').join('')+'</select><span class="dlink" onclick="S.showClassDetail=!S.showClassDetail;render()">Class details</span></div><div class="f" style="max-width:70px"><label>Level</label><input type="number" min="1" max="20" value="'+w.level+'" oninput="S.wiz.level=Math.max(1,+this.value);render()"></div></div>'+(S.showRaceDetail?'<div class="detail mb12"><h4>'+w.race+'</h4><b>Bonus:</b> '+RACES[w.race].bonus+' <b>Speed:</b> '+RACES[w.race].speed+'ft<br><div style="margin-top:6px">'+RACES[w.race].traits.map(t=>'<div class="dtrait">- '+t+'</div>').join('')+'</div></div>':'')+(S.showClassDetail?'<div class="detail mb12"><h4>'+w.class+'</h4><b>Hit Die:</b> d'+cls.hit+' <b>Saves:</b> '+cls.save.join(', ')+'<br><b>Armor:</b> '+cls.armor+'<br>'+(cls.spellcasting?'<b>Spellcasting:</b> '+cls.spellcasting+'<br>':'')+'<div style="margin-top:6px">'+cls.skills.map(s=>'<span class="dtag">'+s+'</span>').join('')+'</div></div>':'')+'<div class="sec-hdr mt8"><span class="sec-title">Hit Points</span></div><div class="info mb8">d'+die+' + CON ('+modStr(w.con)+') per level.</div><div class="hp-opts"><div class="hp-opt '+(w.hpMode==='max'?'on':'')+'" onclick="S.wiz.hpMode=\'max\';render()">Max<br><small>'+die+'</small></div><div class="hp-opt '+(w.hpMode==='avg'?'on':'')+'" onclick="S.wiz.hpMode=\'avg\';render()">Average<br><small>'+(Math.floor(die/2)+1)+'</small></div><div class="hp-opt '+(w.hpMode==='roll'?'on':'')+'" onclick="S.wiz.hpMode=\'roll\';render()">Roll d'+die+'</div></div><div class="hp-big">'+hp+'</div><div class="muted" style="text-align:center">total HP at level '+w.level+'</div>';}
+function wiz2(){const w=S.wiz;const used=ABKEYS.reduce((a,s)=>a+(PC_COST[w[s]]||0),0);const rem=27-used;return '<p class="muted mb12">Set ability scores.</p><div class="sys-row"><button class="sys-btn '+(w.system==='custom'?'on':'')+'" onclick="S.wiz.system=\'custom\';render()">Custom</button><button class="sys-btn '+(w.system==='pointbuy'?'on':'')+'" onclick="S.wiz.system=\'pointbuy\';ABKEYS.forEach(s=>S.wiz[s]=8);render()">Point Buy</button><button class="sys-btn '+(w.system==='standard'?'on':'')+'" onclick="S.wiz.system=\'standard\';Object.assign(S.wiz,{str:15,dex:14,con:13,int:12,wis:10,cha:8});render()">Standard Array</button></div>'+(w.system==='pointbuy'?'<div class="muted mb8">Remaining: <b style="color:var(--teal2)">'+rem+'</b> / 27</div>':'')+'<div class="ab-grid">'+ABKEYS.map(s=>{const v=w[s];const ci=w.system==='pointbuy'?(v<15&&rem>=(PC_COST[v+1]||99)-(PC_COST[v]||0)):v<30;const cd=w.system==='pointbuy'?v>8:v>1;return'<div class="ab-cell"><div class="ab-cell-lbl">'+ABLBL[s]+'</div><div class="ab-cell-ctrl"><button class="adj" '+(cd?'':'disabled')+' onclick="S.wiz.'+s+'=Math.max('+(w.system==='pointbuy'?8:1)+',S.wiz.'+s+'-1);render()">-</button><div class="ab-cell-num">'+v+'</div><button class="adj" '+(ci?'':'disabled')+' onclick="S.wiz.'+s+'=Math.min('+(w.system==='pointbuy'?15:30)+',S.wiz.'+s+'+1);render()">+</button></div><div class="ab-cell-mod">'+modStr(v)+'</div></div>';}).join('')+'</div><div class="info mt8">Racial bonus ('+RACES[w.race].bonus+') added automatically.</div>';}
+function wiz3(){const w=S.wiz;const cls=CLASSES[w.class];const bg=BACKGROUNDS[w.background];const sel=w.skills.filter(s=>cls.skills.includes(s));return '<div class="row2"><div class="f"><label>Background</label><select onchange="S.wiz.background=this.value;render()">'+Object.keys(BACKGROUNDS).map(b=>'<option '+(b===w.background?'selected':'')+'>'+b+'</option>').join('')+'</select></div><div class="f"><label>Alignment</label><select onchange="S.wiz.alignment=this.value">'+ALIGNMENTS.map(a=>'<option '+(a===w.alignment?'selected':'')+'>'+a+'</option>').join('')+'</select></div></div><div class="detail mb12"><b>'+w.background+'</b> - '+bg.feature+'<br><span class="muted">Skills: '+bg.skills.join(', ')+'</span></div><div class="sec-hdr"><span class="sec-title">Class Skills - choose '+cls.numSkills+'</span></div><div class="chk-lim">Selected <span>'+sel.length+'</span> / '+cls.numSkills+'</div><div class="chk-list">'+cls.skills.map(sk=>{const chk=w.skills.includes(sk);const dis=!chk&&sel.length>=cls.numSkills;return'<label class="chk-item" style="'+(dis?'opacity:.4':'')+'"><input type="checkbox" '+(chk?'checked':'')+' '+(dis?'disabled':'')+' onchange="toggleWizSkill(\''+sk+'\')"><div class="chk-name">'+sk+'</div></label>';}).join('')+'</div><div class="sec-hdr mt12"><span class="sec-title">Personality</span></div><div class="pers-f"><label>Traits</label><textarea oninput="S.wiz.personality=this.value" placeholder="How does your character behave?">'+w.personality+'</textarea></div><div class="pers-f"><label>Ideals</label><textarea oninput="S.wiz.ideals=this.value">'+w.ideals+'</textarea></div><div class="pers-f"><label>Bonds</label><textarea oninput="S.wiz.bonds=this.value">'+w.bonds+'</textarea></div><div class="pers-f"><label>Flaws</label><textarea oninput="S.wiz.flaws=this.value">'+w.flaws+'</textarea></div><div class="pers-f"><label>Backstory</label><textarea oninput="S.wiz.about=this.value" style="min-height:80px">'+w.about+'</textarea></div>';}
+function wiz4(){const w=S.wiz;const hp=calcHP(w);const spd=RACES[w.race]&&RACES[w.race].speed||30;const pb=profB(w.level);return '<div class="rev-sec"><h3>Identity</h3><div class="rev-row"><span class="rev-lbl">Name</span><span class="rev-val">'+(w.name||'(unnamed)')+'</span></div><div class="rev-row"><span class="rev-lbl">Race</span><span class="rev-val">'+w.race+'</span></div><div class="rev-row"><span class="rev-lbl">Class</span><span class="rev-val">'+w.class+' '+w.level+'</span></div><div class="rev-row"><span class="rev-lbl">Background</span><span class="rev-val">'+w.background+'</span></div><div class="rev-row"><span class="rev-lbl">Alignment</span><span class="rev-val">'+w.alignment+'</span></div></div><div class="rev-sec"><h3>Combat Stats</h3><div class="rev-row"><span class="rev-lbl">Hit Points</span><span class="rev-val red">'+hp+' HP</span></div><div class="rev-row"><span class="rev-lbl">Armor Class</span><span class="rev-val">'+(10+mod(w.dex))+'</span></div><div class="rev-row"><span class="rev-lbl">Initiative</span><span class="rev-val">'+modStr(w.dex)+'</span></div><div class="rev-row"><span class="rev-lbl">Speed</span><span class="rev-val">'+spd+' ft</span></div><div class="rev-row"><span class="rev-lbl">Prof. Bonus</span><span class="rev-val">+'+pb+'</span></div></div><div class="rev-sec"><h3>Abilities</h3><div class="rev-abs">'+ABKEYS.map(s=>'<div class="rev-ab"><div class="rev-ab-name">'+ABLBL[s]+'</div><div class="rev-ab-sc">'+w[s]+'</div><div class="rev-ab-mod">'+modStr(w[s])+'</div></div>').join('')+'</div></div>'+(w.skills.length?'<div class="rev-sec"><h3>Skills</h3>'+w.skills.map(s=>'<div class="rev-row"><span class="rev-val">'+s+'</span></div>').join('')+'</div>':'')+'<button class="btn btn-primary mt8" onclick="finishChar()">Create Character</button>';}
+function toggleWizSkill(sk){const i=S.wiz.skills.indexOf(sk);if(i>=0)S.wiz.skills.splice(i,1);else S.wiz.skills.push(sk);render();}
+function finishChar(){const w=S.wiz;if(!w.name.trim()){toast('Enter a character name');return;}const pb=profB(w.level);const spd=RACES[w.race]&&RACES[w.race].speed||30;const bgSkills=BACKGROUNDS[w.background]&&BACKGROUNDS[w.background].skills||[];const classSaves=CLASSES[w.class]&&CLASSES[w.class].save||[];const slots=getSlots({class:w.class,level:w.level});S.myChar={name:w.name,race:w.race,class:w.class,level:w.level,photoUrl:'',str:w.str,dex:w.dex,con:w.con,int:w.int,wis:w.wis,cha:w.cha,hp:calcHP(w),maxHp:calcHP(w),tempHp:0,ac:10+mod(w.dex),speed:spd,initiative:mod(w.dex),passive:10+mod(w.wis)+pb,profBonus:pb,background:w.background,alignment:w.alignment,personality:w.personality,ideals:w.ideals,bonds:w.bonds,flaws:w.flaws,about:w.about,skillProficiencies:[...w.skills,...bgSkills],skillExpertise:[],skillOverrides:{},saveProficiencies:[...classSaves],saveOverrides:{},hitDiceTotal:w.level,hitDiceUsed:0,deathSuccesses:0,deathFailures:0,isStable:false,isDead:false,inspiration:false,inventory:[],spells:[],spellSlotsUsed:slots.map(()=>0),weapons:[],customWeapons:[],conditions:[],gp:0,sp:0,ep:0,cp:0,pp:0,exp:0};S.role='player';S.players[pid(w.name)]=Object.assign({},S.myChar);toast('Character created!');S.activeInfoTab=-1;go('player-sheet');}
+// ===== PLAYER SHEET =====
+function rSheet(){const c=S.myChar;if(!c)return go('player-menu');const pct=Math.max(0,c.hp/c.maxHp);const tabs=['info','saves','skills','spells','weapons','gear'];const tabLbls={info:'Info',saves:'Saves',skills:'Skills',spells:'Spells',weapons:'Weapons',gear:'Gear'};let body='';if(S.sheetTab==='info')body=sheetInfo(c);else if(S.sheetTab==='saves')body=sheetSaves(c);else if(S.sheetTab==='skills')body=sheetSkills(c);else if(S.sheetTab==='spells')body=sheetSpells(c);else if(S.sheetTab==='weapons')body=sheetWeapons(c);else if(S.sheetTab==='gear')body=sheetGear(c);
+const lvl=c.level||1;const exp=c.exp||0;const thisXP=XP_TABLE[Math.min(lvl,20)]||0;const nextXP=XP_TABLE[Math.min(lvl+1,20)]||thisXP+300;const xpRange=nextXP-thisXP;const xpPct=xpRange>0?Math.min(100,Math.max(0,Math.round((exp-thisXP)/xpRange*100))):0;const xpLeft=Math.max(0,nextXP-exp);const canLvl=exp>=nextXP&&lvl<20;
+const SVis='position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:flex-end;justify-content:center';const SHid='display:none';const Sinner='background:var(--white);width:100%;max-width:600px;height:88vh;border-radius:14px 14px 0 0;display:flex;flex-direction:column;overflow:hidden';
+const tRow=(t,src)=>'<div class="trait-clickable" data-tname="'+t.name.replace(/"/g,'&quot;')+'" data-tsrc="'+src+'" data-tdesc="'+t.desc.replace(/"/g,'&quot;')+'" style="display:flex;align-items:center;gap:6px;padding:7px 0;border-bottom:1px solid #f3f0ff;cursor:pointer;color:var(--purple);font-size:15px;font-weight:500" onclick="handleTraitClick(this)">&#8212; '+t.name+'</div>';
+const qaItem=(a,src)=>'<div data-tname="'+a.name+'" data-tsrc="'+src+'" data-tdesc="'+a.desc.replace(/"/g,'&quot;')+'" style="padding:10px 12px;background:var(--white);border:1px solid var(--border);border-radius:4px;margin-bottom:6px;cursor:pointer" onclick="handleTraitClick(this)"><div style="font-size:14px;font-weight:600;margin-bottom:2px">'+a.name+'</div><div style="font-size:12px;color:var(--text3)">'+a.sub+'</div></div>';
+const rTraits=(RACIAL_TRAITS[c.race]||[]).map(t=>tRow(t,c.race+' Racial Trait')).join('');
+const cFeats=(CLASS_FEATURES[c.class]||[]).map(t=>tRow(t,c.class+' Feature')).join('');
+const bgFeats=(BG_FEATURES[c.background]||[]).map(t=>tRow(t,c.background+' Background')).join('');
+let milestones='';for(let i=Math.max(1,lvl-1);i<=Math.min(lvl+4,20);i++){const xp=XP_TABLE[i];const done=exp>=xp;const cur=i===lvl;milestones+='<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:14px;'+(cur?'font-weight:600;color:var(--purple)':done?'color:var(--text3)':'')+'">'+'<span>Level '+i+'</span><span style="font-size:13px;color:var(--text3)">'+xp.toLocaleString()+' XP</span>'+(done?'<span style="color:var(--green);font-weight:700">&#10003;</span>':'<span style="font-size:12px;color:var(--text3)">'+(xp-exp).toLocaleString()+' to go</span>')+'</div>';}
+const overlays=
+'<div style="'+(S.activeInfoTab===0?SVis:SHid)+'" onclick="if(event.target===this)closeInfoSheet()">'
++'<div style="'+Sinner+'">'
++'<div style="padding:10px 0 4px;display:flex;justify-content:center;flex-shrink:0"><div style="width:36px;height:4px;background:var(--border2);border-radius:2px"></div></div>'
++'<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 16px 14px;border-bottom:1px solid var(--border);flex-shrink:0"><div style="font-size:18px;font-weight:700">About '+c.name+'</div><button onclick="closeInfoSheet()" style="width:30px;height:30px;border-radius:50%;border:none;background:var(--bg);cursor:pointer;font-size:16px;color:var(--text2)">&#10005;</button></div>'
++'<div style="flex:1;overflow-y:auto;padding:0 0 32px">'
++'<div style="padding:20px 16px">'
++'<div style="display:flex;gap:8px;margin-bottom:6px;font-size:15px"><span style="font-weight:600;min-width:90px">Background:</span><span>'+c.background+'</span></div>'
++'<div style="display:flex;gap:8px;margin-bottom:6px;font-size:15px"><span style="font-weight:600;min-width:90px">Alignment:</span><span style="color:var(--text2)">'+c.alignment+'</span></div>'
++(c.personality?'<div style="margin-top:12px;font-weight:600;font-size:14px;margin-bottom:4px">Personality Traits</div><div style="font-size:14px;line-height:1.7;color:var(--text2)">'+c.personality+'</div>':'')
++(c.ideals?'<div style="margin-top:10px;font-weight:600;font-size:14px;margin-bottom:4px">Ideals</div><div style="font-size:14px;line-height:1.7;color:var(--text2)">'+c.ideals+'</div>':'')
++(c.bonds?'<div style="margin-top:10px;font-weight:600;font-size:14px;margin-bottom:4px">Bonds</div><div style="font-size:14px;line-height:1.7;color:var(--text2)">'+c.bonds+'</div>':'')
++(c.flaws?'<div style="margin-top:10px;font-weight:600;font-size:14px;margin-bottom:4px">Flaws</div><div style="font-size:14px;line-height:1.7;color:var(--text2)">'+c.flaws+'</div>':'')
++(c.about?'<div style="margin-top:10px;font-weight:600;font-size:14px;margin-bottom:4px">Backstory</div><div style="font-size:14px;line-height:1.7;color:var(--text2);white-space:pre-line">'+c.about+'</div>':'')
++'</div>'
++'<div style="padding:0 16px 20px"><div style="font-size:16px;font-weight:700;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)">Racial Traits - '+c.race+'</div>'+(rTraits||'<div style="font-size:14px;color:var(--text3)">No data available.</div>')+'</div>'
++'<div style="padding:0 16px 20px"><div style="font-size:16px;font-weight:700;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)">'+c.class+' Features</div>'+(cFeats||'<div style="font-size:14px;color:var(--text3)">No data available.</div>')+'</div>'
++'<div style="padding:0 16px 20px"><div style="font-size:16px;font-weight:700;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)">Background Feature</div>'+(bgFeats||'<div style="font-size:14px;color:var(--text3)">No data available.</div>')+'</div>'
++'<div style="padding:0 16px 20px"><div style="font-size:16px;font-weight:700;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)">Proficiencies</div>'
++'<div style="margin-bottom:10px"><div style="font-size:14px;font-weight:600;margin-bottom:4px">Weapons</div><div style="font-size:14px;color:var(--text2)">'+((CLASSES[c.class]&&CLASSES[c.class].weapons)||'--')+'</div></div>'
++'<div style="margin-bottom:10px"><div style="font-size:14px;font-weight:600;margin-bottom:4px">Armor</div><div style="font-size:14px;color:var(--text2)">'+((CLASSES[c.class]&&CLASSES[c.class].armor)||'--')+'</div></div>'
++'<div><div style="font-size:14px;font-weight:600;margin-bottom:4px">Languages</div><div style="font-size:14px;color:var(--text2)">'+((RACES[c.race]&&RACES[c.race].languages)||[]).join(', ')+'</div></div>'
++'</div></div></div></div>'
++'<div style="'+(S.activeInfoTab===1?SVis:SHid)+'" onclick="if(event.target===this)closeInfoSheet()">'
++'<div style="'+Sinner+'">'
++'<div style="padding:10px 0 4px;display:flex;justify-content:center;flex-shrink:0"><div style="width:36px;height:4px;background:var(--border2);border-radius:2px"></div></div>'
++'<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 16px 14px;border-bottom:1px solid var(--border);flex-shrink:0"><div style="font-size:18px;font-weight:700">Experience &amp; Level</div><button onclick="closeInfoSheet()" style="width:30px;height:30px;border-radius:50%;border:none;background:var(--bg);cursor:pointer;font-size:16px;color:var(--text2)">&#10005;</button></div>'
++'<div style="flex:1;overflow-y:auto;padding:20px 16px 32px">'
++'<div style="text-align:center;padding:16px 0 20px"><div style="font-size:48px;font-weight:700;color:var(--purple)">'+exp.toLocaleString()+'</div><div style="font-size:13px;color:var(--text3);margin-top:4px">Experience Points</div></div>'
++'<div style="height:12px;background:#eee;border-radius:6px;margin-bottom:6px;overflow:hidden"><div style="height:12px;background:linear-gradient(90deg,var(--purple),#a855f7);border-radius:6px;width:'+xpPct+'%"></div></div>'
++'<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text3);margin-bottom:20px"><span>Level '+lvl+' - '+thisXP.toLocaleString()+' XP</span><span>Level '+(lvl+1)+' - '+nextXP.toLocaleString()+' XP</span></div>'
++'<div style="font-size:13px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Level Milestones</div>'+milestones
++'<div style="border-top:1px solid var(--border);padding-top:16px;margin-top:16px">'
++'<div style="font-size:13px;font-weight:600;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Add Experience</div>'
++'<div style="display:flex;gap:8px;margin-bottom:10px"><input id="exp-add-input" type="number" placeholder="XP amount" style="flex:1;border:1px solid var(--border2);padding:10px 12px;font-size:15px;font-family:inherit;border-radius:4px;background:var(--white);color:var(--text);outline:none"><button onclick="addExp()" style="padding:10px 18px;background:var(--purple);color:#fff;border:none;border-radius:4px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">+ Add XP</button></div>'
++'<button onclick="doLevelUp()" '+(canLvl?'':'disabled')+' style="width:100%;padding:13px;background:'+(canLvl?'linear-gradient(90deg,var(--purple),#a855f7)':'var(--border)')+';color:'+(canLvl?'#fff':'var(--text3)')+';border:none;border-radius:6px;font-size:16px;font-weight:700;cursor:'+(canLvl?'pointer':'not-allowed')+';font-family:inherit">'+(canLvl?'Level Up to '+(lvl+1)+'!':lvl>=20?'Max Level':'Need '+(nextXP-exp).toLocaleString()+' more XP')+'</button>'
++'</div></div></div></div>'
++'<div style="'+(S.activeInfoTab===2?SVis:SHid)+'" onclick="if(event.target===this)closeInfoSheet()">'
++'<div style="'+Sinner+'">'
++'<div style="padding:10px 0 4px;display:flex;justify-content:center;flex-shrink:0"><div style="width:36px;height:4px;background:var(--border2);border-radius:2px"></div></div>'
++'<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 16px 14px;border-bottom:1px solid var(--border);flex-shrink:0"><div style="font-size:18px;font-weight:700">Quick Access</div><button onclick="closeInfoSheet()" style="width:30px;height:30px;border-radius:50%;border:none;background:var(--bg);cursor:pointer;font-size:16px;color:var(--text2)">&#10005;</button></div>'
++'<div style="flex:1;overflow-y:auto;padding:16px 16px 32px">'
++'<div style="font-size:16px;font-weight:700;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)">Combat Actions</div>'+QA_COMBAT.map(a=>qaItem(a,'Combat Action')).join('')
++'<div style="font-size:16px;font-weight:700;margin:20px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--border)">Conditions</div>'+QA_CONDITIONS.map(a=>qaItem(a,'Condition')).join('')
++'<div style="font-size:16px;font-weight:700;margin:20px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--border)">Rules Reference</div>'+QA_RULES.map(a=>qaItem(a,'Rule')).join('')
++'</div></div></div>';
+return overlays
++'<div class="hdr"><button class="hdr-btn" onclick="go(\'player-menu\')">&#8592;</button><div></div><button class="hdr-btn" onclick="S.editMode=!S.editMode;render()">'+(S.editMode?'Done':'&#9998; Edit')+'</button></div>'
++'<div style="max-width:600px;margin:0 auto">'
++'<div style="background:var(--white);padding:20px 16px 0;text-align:center;border-bottom:1px solid var(--border)">'
++'<div style="width:80px;height:80px;border-radius:50%;border:3px solid var(--teal);overflow:hidden;margin:0 auto 12px;cursor:'+(S.editMode?'pointer':'default')+'" '+(S.editMode?'onclick="promptPhotoUrl()"':'')+'>'+( c.photoUrl?'<img src="'+c.photoUrl+'" style="width:100%;height:100%;object-fit:cover">':'<div style="width:100%;height:100%;background:linear-gradient(135deg,#e8f5f3,#c8e8e3);display:flex;align-items:center;justify-content:center;font-size:32px">&#129497;</div>')+'</div>'
++'<div style="font-size:21px;font-weight:700;margin-bottom:4px">'+c.name+'</div>'+(S.editMode?'<div style="font-size:11px;color:var(--teal2);margin-top:-4px;margin-bottom:4px">Tap avatar to change photo</div>':'')
++'<div style="font-size:14px;color:var(--text3);margin-bottom:12px">'+c.race+' '+c.class+' &middot; Level '+lvl+'</div>'
++'<div style="padding:0 16px 14px">'
++'<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:4px"><span style="font-weight:600;text-transform:uppercase;letter-spacing:.5px">Experience</span><span>'+exp.toLocaleString()+' / '+nextXP.toLocaleString()+' XP</span></div>'
++'<div style="height:8px;background:#e8e0ff;border-radius:4px;overflow:hidden"><div style="height:8px;background:linear-gradient(90deg,var(--purple),#a855f7);border-radius:4px;width:'+xpPct+'%;min-width:'+( xpPct>0?4:0)+'px;transition:width .5s ease"></div></div>'
++'<div style="font-size:11px;color:var(--text3);text-align:right;margin-top:3px">'+(xpLeft>0?xpLeft.toLocaleString()+' XP to level '+(lvl+1):'Ready to level up!')+'</div>'
++'</div>'
++'<div style="display:flex;border-top:1px solid var(--border);border-bottom:2px solid var(--border)">'
++['Information','EXP / Level Up','Quick Access'].map((lbl,i)=>'<div style="flex:1;padding:11px 4px;text-align:center;font-size:11px;font-weight:600;color:'+(S.activeInfoTab===i?'var(--teal)':'var(--text3)')+';cursor:pointer;border-bottom:2px solid '+(S.activeInfoTab===i?'var(--teal)':'transparent')+';margin-bottom:-2px;letter-spacing:.4px;text-transform:uppercase" onclick="openInfoSheet('+i+')">'+lbl+'</div>').join('')
++'</div></div>'
++'<div class="hp-wrap" style="border-top:none">'
++'<div class="hp-top"><div class="hp-lbl">Hit Points</div><div style="display:flex;align-items:baseline;gap:8px"><div class="hp-num" style="color:'+hpCol(pct)+'">'+c.hp+' / '+c.maxHp+'</div>'+(c.tempHp>0?'<div style="font-size:13px;color:var(--teal2)">+'+c.tempHp+' temp</div>':'')+'</div></div>'
++'<div class="hp-track"><div class="hp-fill" style="width:'+Math.round(pct*100)+'%;background:'+hpCol(pct)+'"></div></div>'
++'<div class="hp-adj"><button class="btn-icon minus" onclick="adjHP(-1)">-</button><input id="hp-amt" type="number" value="1" min="0"><button class="btn-icon" onclick="adjHP(1)">+</button><span class="muted" style="flex:1;text-align:right;font-size:12px">damage / healing</span></div>'
++'</div>'
++abBar(c)
++'<div style="background:var(--white);border:1px solid var(--border);border-top:none;border-bottom:none"><div class="tabs">'+tabs.map(t=>'<div class="tab '+(S.sheetTab===t?'on':'')+'" onclick="S.sheetTab=\''+t+'\';render()">'+tabLbls[t]+'</div>').join('')+'</div></div>'
++body
++'<div style="height:80px"></div>'
++'</div>';}
+
+function abBar(c){return '<div class="ab-bar">'+ABKEYS.map(ab=>'<div class="ab-col '+(S.activeAbEdit===ab&&S.editMode?'ed ':'')+( S.editMode?'clickable':'')+'" onclick="'+(S.editMode?'openAbEdit(\''+ab+'\')':'')+'">'+'<div class="ab-score">'+c[ab]+'</div><div class="ab-mod">'+modStr(c[ab])+'</div><div class="ab-lbl">'+ABLBL[ab]+'</div></div>').join('')+'</div>'+(S.activeAbEdit&&S.editMode?'<div class="ab-edit-row show"><span style="font-size:13px;color:var(--text2);min-width:90px">'+ABFULL[S.activeAbEdit]+'</span><input type="number" id="ab-edit-val" min="1" max="30" value="'+c[S.activeAbEdit]+'"><span class="muted" style="flex:1;font-size:12px">Updates all bonuses</span><button class="btn-sm btn btn-primary" style="margin:0" onclick="saveAbEdit()">Save</button></div>':'');}
+function promptPhotoUrl(){
+  const c=S.myChar;
+  const current=c.photoUrl||'';
+  openModal('Character Photo','Enter an image URL','<div class="modal-effect" style="margin-bottom:12px">Paste a direct link to a photo (JPG, PNG). Works with links from Google Photos, Imgur, or any direct image URL.</div>'+(current?'<div style="text-align:center;margin-bottom:12px"><img src="'+current+'" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid var(--teal)"></div>':'')+'<input id="photo-url-input" type="url" placeholder="https://..." value="'+current+'" style="width:100%;border:1px solid var(--border2);padding:10px;font-size:14px;font-family:inherit;border-radius:4px;outline:none">'+(current?'<button onclick="S.myChar.photoUrl=\'\';closeModal();render()" style="width:100%;padding:8px;margin-top:8px;background:none;border:1px solid var(--border2);border-radius:4px;font-size:13px;color:var(--text3);cursor:pointer;font-family:inherit">Remove photo</button>':''),'Save Photo',()=>{const val=(document.getElementById('photo-url-input')&&document.getElementById('photo-url-input').value||'').trim();S.myChar.photoUrl=val;toast(val?'Photo saved!':'Photo removed');});
+}
+function openAbEdit(ab){S.activeAbEdit=S.activeAbEdit===ab?null:ab;render();}
+function saveAbEdit(){const ab=S.activeAbEdit;const val=Math.max(1,Math.min(30,+(document.getElementById('ab-edit-val')&&document.getElementById('ab-edit-val').value)||10));S.myChar[ab]=val;S.myChar.passive=10+skillBonus(S.myChar,'Perception');S.activeAbEdit=null;render();toast('Updated '+ABFULL[ab]);}
+// ===== SHEET TABS =====
+function sheetInfo(c){const pb=profB(c.level);const rem=c.hitDiceTotal-c.hitDiceUsed;const isDown=c.hp<=0&&!c.isStable&&!c.isDead;return '<div class="stat-grid"><div class="stat-cell">'+(S.editMode?'<input class="stat-edit-input" type="number" value="'+c.ac+'" onchange="S.myChar.ac=+this.value;render()">':'<div class="stat-val">'+c.ac+'</div>')+'<div class="stat-lbl">Armor Class</div></div><div class="stat-cell">'+(S.editMode?'<input class="stat-edit-input" type="number" value="'+c.initiative+'" onchange="S.myChar.initiative=+this.value;render()">':'<div class="stat-val">'+fmtB(c.initiative)+'</div>')+'<div class="stat-lbl">Initiative</div></div><div class="stat-cell">'+(S.editMode?'<input class="stat-edit-input" type="number" value="'+c.speed+'" onchange="S.myChar.speed=+this.value;render()">':'<div class="stat-val">'+c.speed+'</div>')+'<div class="stat-lbl">Speed</div></div><div class="stat-cell"><div class="stat-val">'+c.passive+'</div><div class="stat-lbl">Passive WIS</div></div><div class="stat-cell"><div class="stat-val">+'+pb+'</div><div class="stat-lbl">Prof. Bonus</div></div><div class="stat-cell"><div class="stat-val">'+c.level+'</div><div class="stat-lbl">Level</div></div></div><div class="sec"><div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border)"><div><div style="font-size:14px;font-weight:500">Inspiration</div><div class="muted" style="font-size:12px">Granted by DM</div></div><div class="insp-toggle '+(c.inspiration?'on':'')+'" onclick="S.myChar.inspiration=!S.myChar.inspiration;render();toast(S.myChar.inspiration?\'Inspiration gained\':\'Inspiration used\')"></div></div><div class="sec-hdr"><span class="sec-title">Rest</span></div><div class="rest-row"><button class="rest-btn" onclick="askShortRest()"><div>Short Rest</div><div class="rest-sub">Spend Hit Dice to recover HP</div></button><button class="rest-btn" onclick="askLongRest()"><div>Long Rest</div><div class="rest-sub">Restore all HP and spell slots</div></button></div><div class="sec-hdr"><span class="sec-title">Hit Dice</span></div><div class="hd-row"><div><div style="font-size:14px;font-weight:500">d'+(CLASS_HD[c.class]||8)+' Hit Die</div><div class="muted" style="margin-top:2px">'+rem+' of '+c.hitDiceTotal+' remaining</div></div><div style="display:flex;align-items:center;gap:8px">'+(S.editMode?'<button class="btn-icon minus" onclick="askAdjHd(-1)" '+(rem<=0?'disabled':'')+'>-</button><span class="hd-count">'+rem+'</span><button class="btn-icon" onclick="askAdjHd(1)" '+(c.hitDiceUsed<=0?'disabled':'')+'>+</button>':'<span class="hd-count" style="margin-right:4px">'+rem+'</span>')+'<button class="use-hd-btn" onclick="askUseHitDie()" '+(rem<=0||c.hp>=c.maxHp?'disabled':'')+'>Use Hit Die</button></div></div><div class="temp-row"><label>Temp HP</label><input class="temp-input" type="number" min="0" value="'+(c.tempHp||0)+'" oninput="S.myChar.tempHp=Math.max(0,+this.value||0);render()"><span class="muted" style="flex:1;font-size:12px">Absorbs damage first</span></div><div class="sec-hdr"><span class="sec-title">Death Saving Throws</span>'+(c.hp===0&&!c.isStable&&!c.isDead?'<button class="sec-act" onclick="S.myChar.isStable=true;S.myChar.deathSuccesses=0;S.myChar.deathFailures=0;render();toast(\'Stabilized\')">Mark Stable</button>':'')+'</div><div class="death-wrap"><div class="death-row" style="opacity:'+(isDown?1:.4)+';pointer-events:'+(isDown?'auto':'none')+'"><div class="death-lbl" style="color:var(--green)">Successes</div><div class="death-circles">'+[0,1,2].map(i=>'<div class="death-circle '+(i<c.deathSuccesses?'success':'')+'" onclick="toggleDeathSave(\'success\','+i+')">'+(i<c.deathSuccesses?'&#10003;':'')+'</div>').join('')+'</div></div><div class="death-row" style="opacity:'+(isDown?1:.4)+';pointer-events:'+(isDown?'auto':'none')+'"><div class="death-lbl" style="color:var(--red)">Failures</div><div class="death-circles">'+[0,1,2].map(i=>'<div class="death-circle '+(i<c.deathFailures?'failure':'')+'" onclick="toggleDeathSave(\'failure\','+i+')">'+(i<c.deathFailures?'&#10007;':'')+'</div>').join('')+'</div></div>'+(c.isDead?'<div style="font-size:13px;font-weight:500;color:var(--red);margin-top:8px">&#10007; Character has died.</div>':c.isStable?'<div style="font-size:13px;font-weight:500;color:var(--green);margin-top:8px">&#10003; Stable</div>':c.hp===0?'<div style="font-size:13px;color:var(--orange);margin-top:8px">&#9888; At 0 HP - roll death saves</div>':'')+'<div class="death-note">3 successes = stable. 3 failures = death. Natural 20 = regain 1 HP.</div></div><div class="sec-hdr"><span class="sec-title">Conditions</span></div><div class="cond-wrap"><div class="cond-grid">'+CONDITIONS.map(cn=>'<button class="cond-btn '+((c.conditions||[]).includes(cn)?'on':'')+'" onclick="toggleCond(\''+cn+'\')">'+cn+'</button>').join('')+'</div></div><div class="sec-hdr"><span class="sec-title">Currency</span></div><div class="currency-row">'+[['PP','pp'],['GP','gp'],['EP','ep'],['SP','sp'],['CP','cp']].map(([lbl,key])=>'<div class="currency-cell">'+(S.editMode?'<input class="currency-input" type="number" min="0" value="'+(c[key]||0)+'" oninput="S.myChar[\''+key+'\']=Math.max(0,+this.value||0)">':'<div class="currency-val">'+(c[key]||0)+'</div>')+'<div class="currency-lbl">'+lbl+'</div></div>').join('')+'</div></div>';}
+
+function sheetSaves(c){let html='<div class="legend"><div class="leg-i"><div class="leg-dot" style="background:var(--purple)"></div>Proficient</div></div><div style="padding:8px 14px;background:var(--white);border:1px solid var(--border);border-top:none;border-bottom:1px solid var(--border);display:flex;justify-content:space-between"><span class="sec-title">Saving Throws</span><span class="muted">Prof +'+profB(c.level)+'</span></div><div class="tbl-wrap">';['STR','DEX','CON','INT','WIS','CHA'].forEach(ab=>{const isPr=c.saveProficiencies&&c.saveProficiencies.includes(ab);const isOv=c.saveOverrides&&c.saveOverrides[ab]!==undefined;const bonus=saveBonus(c,ab);html+='<div class="tbl-row">'+(S.editMode?'<input type="checkbox" class="prof-check" '+(isPr?'checked':'')+' onchange="toggleSaveProf(\''+ab+'\',this.checked)">':'<div class="prof-dot '+(isPr?'on':'')+'"></div>')+'<div class="tbl-name">'+ABFULL[S2AB[ab]]+'</div><div class="tbl-ab">'+ab+'</div>'+(S.editMode?'<input class="ov-input" type="number" value="'+(isOv?c.saveOverrides[ab]:bonus)+'" onchange="setSaveOv(\''+ab+'\',this.value)">'+(isOv?'<button class="reset-btn" onclick="clearSaveOv(\''+ab+'\')">reset</button>':''):'<div class="tbl-bonus '+(isPr?'prof':bonus<0?'neg':'')+'">'+fmtB(bonus)+'</div>')+'</div>';});html+='</div>';return html;}
+
+function sheetSkills(c){let html='<div class="legend"><div class="leg-i"><div class="leg-dot" style="background:var(--purple)"></div>Prof</div><div class="leg-i"><div class="leg-dot" style="background:var(--gold)"></div>Expertise</div></div><div class="sort-bar"><span class="muted" style="margin-right:4px;font-size:12px">Sort:</span><button class="sort-btn '+(S.sortAlpha?'':'on')+'" onclick="S.sortAlpha=false;render()">By Ability</button><button class="sort-btn '+(S.sortAlpha?'on':'')+'" onclick="S.sortAlpha=true;render()">A-Z</button></div><div class="tbl-wrap" style="border-top:none">';const rr=sk=>{const name=sk.name;const isPr=(c.skillProficiencies||[]).includes(name);const isEx=(c.skillExpertise||[]).includes(name);const isOv=(c.skillOverrides||{})[name]!==undefined;const bonus=skillBonus(c,name);return'<div class="tbl-row">'+(S.editMode?'<input type="checkbox" class="prof-check" '+(isPr||isEx?'checked':'')+' onchange="toggleSkillProf(\''+name+'\',this.checked)"><input type="checkbox" class="exp-check" '+(isEx?'checked':'')+' onchange="toggleSkillExp(\''+name+'\',this.checked)">':'<div class="prof-dot '+(isEx?'expert':isPr?'on':'')+'"></div><div style="width:4px"></div>')+'<div class="tbl-name '+(isEx?'expert':isPr?'prof':'')+'">'+name+'</div><div class="tbl-ab">'+sk.ab.toUpperCase()+'</div>'+(S.editMode?'<input class="ov-input" type="number" value="'+(isOv?(c.skillOverrides||{})[name]:bonus)+'" onchange="setSkillOv(\''+name+'\',this.value)">'+(isOv?'<button class="reset-btn" onclick="clearSkillOv(\''+name+'\')">reset</button>':''):'<div class="tbl-bonus '+(isEx?'expert':isPr?'prof':bonus<0?'neg':'')+'">'+fmtB(bonus)+'</div>')+'</div>';};if(S.sortAlpha)[...SKILL_LIST].sort((a,b)=>a.name.localeCompare(b.name)).forEach(sk=>{html+=rr(sk);});else SKILL_GROUPS.forEach(grp=>{html+='<div class="grp-hdr">'+grp.label+' ('+modStr(c[grp.ab])+')</div>';grp.skills.forEach(n=>{const sk=SKILL_LIST.find(s=>s.name===n);if(sk)html+=rr(sk);});});html+='</div>';return html;}
+
+function sheetSpells(c){const slots=getSlots(c);const atk=spellAtk(c);const dc=spellDC(c);const spellAb=CLASSES[c.class]&&CLASSES[c.class].spellcasting;const charSpells=c.spells||[];let html='';if(spellAb){html+='<div style="display:flex;background:var(--white);border:1px solid var(--border);border-top:none"><div style="flex:1;padding:10px;text-align:center;border-right:1px solid var(--border)"><div style="font-size:18px;font-weight:700;color:var(--purple)">'+dc+'</div><div class="muted" style="font-size:11px;margin-top:2px">Save DC</div></div><div style="flex:1;padding:10px;text-align:center;border-right:1px solid var(--border)"><div style="font-size:18px;font-weight:700;color:var(--purple)">'+(atk>=0?'+':'')+atk+'</div><div class="muted" style="font-size:11px;margin-top:2px">Spell Attack</div></div><div style="flex:1;padding:10px;text-align:center"><div style="font-size:18px;font-weight:700;color:var(--purple)">'+spellAb+'</div><div class="muted" style="font-size:11px;margin-top:2px">Ability</div></div></div>';}else{html+='<div style="padding:12px 14px;background:var(--white);border:1px solid var(--border);border-top:none"><div class="muted">'+c.class+' does not have spellcasting. Add custom abilities below.</div></div>';}if(slots.length){html+='<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--white);border:1px solid var(--border);border-top:none"><span class="sec-title">Spell Slots</span><button class="sec-act" onclick="resetSpellSlots()">Reset All</button></div><div class="spell-slot-grid">';slots.forEach((tot,i)=>{const used=(c.spellSlotsUsed||[])[i]||0;const avail=tot-used;const isEmpty=avail===0;html+='<div class="slot-cell"><div class="slot-lbl">'+SPELL_LVL_NAMES[i+1]+'</div><div style="display:flex;align-items:center;justify-content:center;gap:6px"><button class="btn-icon minus" style="width:22px;height:22px;font-size:13px" onclick="useSpellSlot('+i+')" '+(isEmpty?'disabled':'')+'>-</button><div style="font-size:20px;font-weight:700;color:'+(isEmpty?'var(--text3)':'var(--purple)')+'">'+avail+'</div><button class="btn-icon" style="width:22px;height:22px;font-size:13px" onclick="restoreSpellSlot('+i+')" '+(used===0?'disabled':'')+'>+</button></div><div class="slot-count">'+avail+'/'+tot+'</div></div>';});html+='</div>';}const byLvl={};charSpells.forEach(sp=>{const l=sp.level||0;if(!byLvl[l])byLvl[l]=[];byLvl[l].push(sp);});if(charSpells.length){Object.keys(byLvl).sort((a,b)=>+a-+b).forEach(l=>{html+='<div class="spell-lvl-hdr">'+(+l===0?'Cantrip':SPELL_LVL_NAMES[+l])+'<span style="color:var(--text3);font-weight:400;margin-left:4px">('+byLvl[l].length+')</span></div>';byLvl[l].forEach(sp=>{const dur=fmtDur(sp.duration||'');const dmg=getDmgDice(sp.desc||'');const esc=sp.name.replace(/"/g,'&quot;').replace(/'/g,'&#39;');html+='<div class="spell-row" onclick="openSpellDetail(\''+esc+'\')">'+'<div style="flex:1"><div class="spell-name">'+sp.name+(sp.concentration?'<span class="conc-badge">C</span>':'')+(sp.ritual?'<span class="ritual-badge">R</span>':'')+'</div>'+'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:2px"><span style="font-size:11px;color:var(--text3)">'+sp.school+'</span>'+(sp.castTime?'<span style="font-size:11px;color:var(--text3)">&bull; '+sp.castTime+'</span>':'')+(dur?'<span style="font-size:11px;color:var(--teal2)">&bull; '+dur+'</span>':'')+(dmg?'<span style="font-size:11px;color:var(--red);font-weight:600">&bull; '+dmg+'</span>':'')+'</div></div><div style="font-size:11px;color:var(--text3);min-width:50px;text-align:right">'+(sp.range||'')+'</div>'+(S.editMode?'<button class="btn-icon" style="width:22px;height:22px;font-size:11px" onclick="event.stopPropagation();removeSpell(\''+esc+'\')">x</button>':'')+'</div>';});});}else{html+='<div style="padding:20px 14px;text-align:center;color:var(--text3);background:var(--white);border:1px solid var(--border);border-top:none;font-size:13px">No spells added yet.</div>';}html+='<div style="background:var(--white);border:1px solid var(--border);border-top:none;padding:10px 14px;display:flex;align-items:center;justify-content:space-between"><span style="font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px">'+charSpells.length+' spell'+(charSpells.length!==1?'s':'')+'</span><div class="add-dropdown-wrap"><button class="add-dropdown-btn" onclick="openAddDropdown(\'spell-add-menu\')">+ Add &#9662;</button><div class="add-dropdown-menu" id="spell-add-menu"><div class="add-dropdown-item" onclick="this.closest(\'.add-dropdown-menu\').classList.remove(\'open\');openDbModal(\'spell\',\'db\')">+ Add from database</div><div class="add-dropdown-item" onclick="this.closest(\'.add-dropdown-menu\').classList.remove(\'open\');openDbModal(\'spell\',\'custom\')">+ Add custom spell</div></div></div></div>';return html;}
+
+function sheetWeapons(c){const cw=c.weapons||[];let html='';if(cw.length){cw.forEach(wname=>{const custom=c.customWeapons&&c.customWeapons.find(x=>x.name===wname);if(custom){const atk=custom.atkBonus!==null&&custom.atkBonus!==''?+custom.atkBonus:0;html+='<div class="weapon-row"><div style="display:flex;align-items:center;gap:10px"><div style="flex:1"><div style="font-size:15px;font-weight:500">'+custom.name+' <span style="font-size:11px;color:var(--text3)">Custom</span></div><div style="font-size:12px;color:var(--text3);margin-top:2px">'+custom.damage+' '+custom.damageType+(custom.range?' &bull; '+custom.range:'')+'</div></div><div style="text-align:center;min-width:48px"><div style="font-size:18px;font-weight:700;color:var(--purple)">'+fmtB(atk)+'</div><div style="font-size:10px;color:var(--text3)">Attack</div></div>'+(S.editMode?'<button class="btn-icon" style="width:24px;height:24px;font-size:11px" onclick="removeWeapon(\''+custom.name.replace(/'/g,"\\'")+'\')">x</button>':'')+'</div></div>';return;}const w=WEAPON_DB.find(x=>x.name===wname);if(!w)return;const atk=wAtkBonus(c,w);const dmgB=wDmgBonus(c,w);const fin=isFinesse(w);const fk=S.weaponFinesseChoice[w.name]||'str';const esc=w.name.replace(/"/g,'&quot;').replace(/'/g,'&#39;');html+='<div class="weapon-row" onclick="openWeaponDetail(\''+esc+'\')">'+'<div style="display:flex;align-items:center;gap:10px"><div style="flex:1"><div style="font-size:15px;font-weight:500">'+w.name+(isProfWeapon(c,w)?'':'<span style="font-size:11px;color:var(--orange)"> (not prof.)</span>')+'</div><div style="font-size:12px;color:var(--text3);margin-top:2px">'+w.category+' &bull; '+w.damage+' '+w.damageType+(w.range?' &bull; '+w.range:'')+'</div>'+(fin?'<div style="margin-top:6px;display:flex;gap:6px;align-items:center" onclick="event.stopPropagation()"><span style="font-size:11px;color:var(--text3)">Using:</span><button onclick="setFinesseChoice(\''+esc+'\',\'str\')" style="padding:2px 8px;font-size:11px;border-radius:2px;border:1px solid var(--border2);background:'+(fk==='str'?'var(--purple)':'var(--white)')+';color:'+(fk==='str'?'#fff':'var(--text2)')+';cursor:pointer;font-family:inherit">STR ('+modStr(c.str)+')</button><button onclick="setFinesseChoice(\''+esc+'\',\'dex\')" style="padding:2px 8px;font-size:11px;border-radius:2px;border:1px solid var(--border2);background:'+(fk==='dex'?'var(--purple)':'var(--white)')+';color:'+(fk==='dex'?'#fff':'var(--text2)')+';cursor:pointer;font-family:inherit">DEX ('+modStr(c.dex)+')</button></div>':'')+'</div><div style="text-align:center;min-width:52px"><div style="font-size:18px;font-weight:700;color:var(--purple)">'+fmtB(atk)+'</div><div style="font-size:10px;color:var(--text3)">Attack</div></div><div style="text-align:center;min-width:52px;border-left:1px solid var(--border);padding-left:10px"><div style="font-size:15px;font-weight:700;color:var(--red)">'+w.damage+(dmgB!==0?fmtB(dmgB):'')+'</div><div style="font-size:10px;color:var(--text3)">'+w.damageType+'</div></div>'+(S.editMode?'<button class="btn-icon" style="width:24px;height:24px;font-size:11px" onclick="event.stopPropagation();removeWeapon(\''+esc+'\')">x</button>':'')+'</div>'+(w.versatile?'<div style="font-size:12px;color:var(--teal2);margin-top:6px;padding-top:6px;border-top:1px solid var(--border)">Versatile: '+w.versatile+' '+w.damageType+(dmgB!==0?fmtB(dmgB):'')+'</div>':'')+'</div>';});}else{html+='<div style="padding:24px 14px;text-align:center;color:var(--text3);background:var(--white);border:1px solid var(--border);border-top:none;font-size:13px">No weapons added yet.</div>';}html+='<div style="background:var(--white);border:1px solid var(--border);border-top:none;padding:10px 14px;display:flex;align-items:center;justify-content:space-between"><span style="font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px">'+cw.length+' weapon'+(cw.length!==1?'s':'')+'</span><div class="add-dropdown-wrap"><button class="add-dropdown-btn" onclick="openAddDropdown(\'weapon-add-menu\')">+ Add &#9662;</button><div class="add-dropdown-menu" id="weapon-add-menu"><div class="add-dropdown-item" onclick="this.closest(\'.add-dropdown-menu\').classList.remove(\'open\');openDbModal(\'weapon\',\'db\')">+ Add from database</div><div class="add-dropdown-item" onclick="this.closest(\'.add-dropdown-menu\').classList.remove(\'open\');openDbModal(\'weapon\',\'custom\')">+ Add custom weapon</div></div></div></div>';return html;}
+
+function sheetGear(c){
+  const inv=c.inventory||[];
+  let html='<div style="background:var(--white);border:1px solid var(--border);border-top:none;padding:14px">'
+    +'<div class="sec-hdr" style="padding-top:0"><span class="sec-title">Inventory</span></div>';
+  if(inv.length){
+    inv.forEach((it,i)=>{
+      html+='<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">'
+        +'<div style="flex:1"><div style="font-size:14px;font-weight:500">'+it.name+'</div>'
+        +(it.desc?'<div style="font-size:12px;color:var(--text3);margin-top:1px">'+it.desc+'</div>':'')
+        +'</div>'
+        +'<div style="display:flex;gap:8px;align-items:center;margin-left:10px">'
+        +(it.cost&&it.cost!=='--'?'<span style="font-size:12px;color:var(--gold);font-weight:500">'+it.cost+'</span>':'')
+        +'<span class="muted">x'+it.qty+'</span>'
+        +(S.editMode?'<button class="btn-icon" style="width:22px;height:22px;font-size:11px" onclick="S.myChar.inventory.splice('+i+',1);render()">x</button>':'')
+        +'</div></div>';
+    });
+  }else{
+    html+='<div class="muted mb8">No items yet.</div>';
+  }
+  html+='</div>'
+    +'<div style="background:var(--white);border:1px solid var(--border);border-top:none;padding:10px 14px;display:flex;align-items:center;justify-content:space-between">'
+    +'<span style="font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px">'+inv.length+' item'+(inv.length!==1?'s':'')+'</span>'
+    +'<div class="add-dropdown-wrap"><button class="add-dropdown-btn" onclick="openAddDropdown(\'gear-add-menu\')">+ Add &#9662;</button>'
+    +'<div class="add-dropdown-menu" id="gear-add-menu">'
+    +'<div class="add-dropdown-item" onclick="closeAllDropdowns();openGearDb()">+ Add from database</div>'
+    +'<div class="add-dropdown-item" onclick="closeAllDropdowns();toggleCustomGearForm()">+ Add custom item</div>'
+    +'</div></div></div>'
+    +'<div id="custom-gear-form" style="display:none;background:var(--white);border:1px solid var(--border);border-top:none;padding:12px 14px">'
+    +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">'
+    +'<input id="inv-name" placeholder="Item name" style="flex:2;min-width:120px;border:1px solid var(--border2);padding:7px;font-size:14px;font-family:inherit;border-radius:2px;background:var(--white);color:var(--text);outline:none">'
+    +'<input id="inv-qty" type="number" value="1" min="1" style="width:54px;border:1px solid var(--border2);padding:7px;font-size:14px;font-family:inherit;border-radius:2px;background:var(--white);color:var(--text);text-align:center;outline:none">'
+    +'</div>'
+    +'<button class="btn btn-sm btn-primary" onclick="addInv()" style="margin:0">Add Item</button>'
+    +'</div>';
+  return html;
+}
+
+function toggleCustomGearForm(){const el=document.getElementById('custom-gear-form');if(el)el.style.display=el.style.display==='none'?'block':'none';}
+function openGearDb(){
+  // Reuse db modal infrastructure but for gear
+  S.dbModalType='gear';S.dbModalMode='db';S.dbModalFilter='All';S.dbModalQuery='';
+  const overlay=document.getElementById('db-modal-overlay');if(overlay)overlay.classList.remove('hidden');
+  const title=document.getElementById('db-modal-title');if(title)title.textContent='Add Item';
+  const dbSec=document.getElementById('db-modal-db-section');
+  const cusSec=document.getElementById('db-modal-custom-section');
+  if(dbSec)dbSec.style.display='flex';
+  if(cusSec)cusSec.style.display='none';
+  buildGearDbFilters();
+  renderGearDbList();
+  const srch=document.getElementById('db-modal-search');
+  if(srch){srch.value='';srch.oninput=()=>renderGearDbList();setTimeout(()=>srch.focus(),100);}
+}
+function buildGearDbFilters(){
+  const fc=document.getElementById('db-modal-filters');if(!fc)return;
+  const filters=['All',...GEAR_CATS];
+  fc.innerHTML=filters.map(f=>{
+    const on=S.dbModalFilter===f?'on':'';
+    const safeF=f.replace(/"/g,'&quot;');
+    return '<button class="db-modal-filter '+on+'" data-filter="'+safeF+'">'+f+'</button>';
+  }).join('');
+  fc.onclick=function(e){
+    const btn=e.target.closest('button[data-filter]');
+    if(!btn)return;
+    S.dbModalFilter=btn.getAttribute('data-filter');
+    buildGearDbFilters();
+    renderGearDbList();
+  };
+}
+function renderGearDbList(){
+  const list=document.getElementById('db-modal-list');if(!list)return;
+  const srch=document.getElementById('db-modal-search');
+  const q=(srch?srch.value:'').toLowerCase();
+  const f=S.dbModalFilter||'All';
+  const c=S.myChar;
+  const added=(c&&c.inventory||[]).map(i=>i.name);
+  const items=GEAR_DB.filter(it=>{
+    const mQ=!q||it.name.toLowerCase().includes(q)||it.category.toLowerCase().includes(q)||(it.desc&&it.desc.toLowerCase().includes(q));
+    const mF=f==='All'||it.category===f;
+    return mQ&&mF;
+  });
+  if(!items.length){list.innerHTML='<div style="padding:32px;text-align:center;color:var(--text3);font-size:13px">No items found</div>';return;}
+  let lastCat='';let html='';
+  items.forEach(it=>{
+    const isA=added.includes(it.name);
+    const safeN=it.name.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+    if(it.category!==lastCat){html+='<div class="db-modal-cat">'+it.category+'</div>';lastCat=it.category;}
+    html+='<div class="db-modal-row '+(isA?'added':'')+'" data-gearname="'+safeN+'">'
+      +'<div style="flex:1"><div class="db-modal-row-name">'+it.name+'</div>'
+      +'<div class="db-modal-row-sub">'+it.cost+(it.weight&&it.weight!=='0 lb'?' &bull; '+it.weight:'')+'</div></div>'
+      +'<div class="db-modal-row-add">'+(isA?'Added':'+ Add')+'</div></div>';
+  });
+  list.innerHTML=html;
+  list.onclick=function(e){
+    const row=e.target.closest('[data-gearname]');if(!row)return;
+    const name=row.getAttribute('data-gearname').replace(/&quot;/g,'"').replace(/&amp;/g,'&');
+    openGearDetailDb(name);
+  };
+}
+function openGearDetailDb(name){
+  const it=GEAR_DB.find(x=>x.name===name);if(!it)return;
+  const c=S.myChar;
+  const isAdded=c&&(c.inventory||[]).find(x=>x.name===name);
+  const body='<div style="margin-bottom:10px"><div style="font-size:17px;font-weight:600;margin-bottom:4px">'+it.name+'</div>'
+    +'<div style="font-size:13px;color:var(--text3);margin-bottom:12px">'+it.category+'</div></div>'
+    +'<div class="spell-detail-grid">'
+    +'<div class="spell-detail-item"><div class="spell-detail-lbl">Cost</div><div class="spell-detail-val">'+it.cost+'</div></div>'
+    +'<div class="spell-detail-item"><div class="spell-detail-lbl">Weight</div><div class="spell-detail-val">'+it.weight+'</div></div>'
+    +'</div>'
+    +'<div style="font-size:14px;line-height:1.6;color:var(--text2);margin-top:8px">'+it.desc+'</div>'
+    +(isAdded
+      ?'<div style="padding:8px 10px;background:var(--teal-light);border-radius:2px;font-size:13px;color:var(--teal2);margin-top:8px">Already in inventory</div>'
+      :'<button id="db-add-gear-btn" style="width:100%;padding:11px;background:var(--teal);color:#fff;border:none;border-radius:2px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:8px">+ Add to Inventory</button>'
+    );
+  openModal(it.name,'',body,'Close',()=>{},true);
+  setTimeout(()=>{
+    const btn=document.getElementById('db-add-gear-btn');
+    if(btn)btn.onclick=function(){
+      const c=S.myChar;c.inventory=c.inventory||[];
+      if(!c.inventory.find(x=>x.name===name)){
+        c.inventory.push({name:it.name,qty:1,cost:it.cost,desc:it.desc});
+        toast(it.name+' added');
+      }else{toast('Already in inventory');}
+      closeModal();renderGearDbList();render();
+    };
+  },50);
+}
+
+
+function adjHP(dir){const c=S.myChar;if(!c)return;const amt=+(document.getElementById('hp-amt')&&document.getElementById('hp-amt').value)||1;if(dir<0){let dmg=amt;if(c.tempHp>0){const abs=Math.min(c.tempHp,dmg);c.tempHp-=abs;dmg-=abs;}c.hp=Math.max(0,c.hp-dmg);if(c.hp===0&&!c.isStable){c.deathSuccesses=0;c.deathFailures=0;}}else{c.hp=Math.min(c.maxHp,c.hp+amt);if(c.hp>0){c.deathSuccesses=0;c.deathFailures=0;c.isStable=false;c.isDead=false;}}const p=pid(c.name);if(S.players[p])S.players[p].hp=c.hp;render();toast(dir>0?'+'+amt+' healing':'-'+amt+' damage');}
+function toggleDeathSave(type,index){const c=S.myChar;if(c.hp>0||c.isStable||c.isDead)return;if(type==='success')c.deathSuccesses=c.deathSuccesses>index?index:index+1;else c.deathFailures=c.deathFailures>index?index:index+1;if(c.deathFailures>=3){c.isDead=true;toast('Character has died.');}else if(c.deathSuccesses>=3){c.isStable=true;toast('Stable!');}render();}
+function toggleCond(cn){const c=S.myChar;c.conditions=c.conditions||[];const i=c.conditions.indexOf(cn);if(i>=0)c.conditions.splice(i,1);else c.conditions.push(cn);render();toast(i>=0?cn+' removed':cn+' applied');}
+function addInv(){const n=(document.getElementById('inv-name')&&document.getElementById('inv-name').value||'').trim();if(!n)return;const q=+(document.getElementById('inv-qty')&&document.getElementById('inv-qty').value)||1;const ex=(S.myChar.inventory||[]).find(i=>i.name===n);if(ex)ex.qty+=q;else{S.myChar.inventory=S.myChar.inventory||[];S.myChar.inventory.push({name:n,qty:q});}render();}
+function toggleSaveProf(ab,checked){const c=S.myChar;c.saveProficiencies=c.saveProficiencies||[];if(checked){if(!c.saveProficiencies.includes(ab))c.saveProficiencies.push(ab);}else{c.saveProficiencies=c.saveProficiencies.filter(s=>s!==ab);}delete(c.saveOverrides||{})[ab];render();}
+function setSaveOv(ab,val){S.myChar.saveOverrides=S.myChar.saveOverrides||{};if(val==='')delete S.myChar.saveOverrides[ab];else S.myChar.saveOverrides[ab]=parseInt(val)||0;render();}
+function clearSaveOv(ab){delete(S.myChar.saveOverrides||{})[ab];render();}
+function toggleSkillProf(name,checked){const c=S.myChar;c.skillProficiencies=c.skillProficiencies||[];if(checked){if(!c.skillProficiencies.includes(name))c.skillProficiencies.push(name);}else{c.skillProficiencies=c.skillProficiencies.filter(s=>s!==name);c.skillExpertise=(c.skillExpertise||[]).filter(s=>s!==name);}delete(c.skillOverrides||{})[name];render();}
+function toggleSkillExp(name,checked){const c=S.myChar;c.skillExpertise=c.skillExpertise||[];if(checked){if(!(c.skillProficiencies||[]).includes(name)){c.skillProficiencies=c.skillProficiencies||[];c.skillProficiencies.push(name);}if(!c.skillExpertise.includes(name))c.skillExpertise.push(name);}else{c.skillExpertise=c.skillExpertise.filter(s=>s!==name);}delete(c.skillOverrides||{})[name];render();}
+function setSkillOv(name,val){S.myChar.skillOverrides=S.myChar.skillOverrides||{};if(val==='')delete S.myChar.skillOverrides[name];else S.myChar.skillOverrides[name]=parseInt(val)||0;render();}
+function clearSkillOv(name){delete(S.myChar.skillOverrides||{})[name];render();}
+
+// ===== DM =====
+function rDMStart(){return hdr('Dungeon Master','&#8592;',"go('landing')")+'<div class="scr on"><div class="f mt8"><label>Campaign Name (optional)</label><input id="camp-name" placeholder="e.g. The Lost Mine"></div><button class="btn btn-primary" onclick="startSession()">Start Session</button></div>';}
+function startSession(){S.session=(['SWORD','TORCH','RAVEN','STORM','EMBER','FROST','BLADE','FLAME'])[Math.floor(Math.random()*8)];S.role='dm';S.campName=(document.getElementById('camp-name')&&document.getElementById('camp-name').value)||'Session';go('dm-dash');}
+function rDMDash(){const tabs=['players','combat','shop','notes'];const lbls={players:'Players',combat:'Combat',shop:'Shop',notes:'Notes'};let body='';if(S.dmTab==='players')body=dmPlayers();else if(S.dmTab==='combat')body=dmCombat();else if(S.dmTab==='shop')body=dmShop();else if(S.dmTab==='notes')body=dmNotes();return '<div class="hdr"><div style="font-size:13px;opacity:.9">'+S.campName+'</div><div class="hdr-title" style="font-size:13px;letter-spacing:3px">'+S.session+'</div><button class="hdr-btn" onclick="endSession()">End</button></div><div style="max-width:600px;margin:0 auto"><div style="background:var(--white);border:1px solid var(--border)"><div class="tabs">'+tabs.map(t=>'<div class="tab '+(S.dmTab===t?'on':'')+'" onclick="S.dmTab=\''+t+'\';render()">'+lbls[t]+'</div>').join('')+'</div></div><div style="padding-bottom:80px">'+body+'</div></div>';}
+function dmPlayers(){const pids=Object.keys(S.players);if(!pids.length)return '<div class="waiting"><h3>Waiting for players...</h3><p>Share code <b>'+S.session+'</b></p></div>';return pids.map(p=>{const pl=S.players[p];const pct=Math.max(0,pl.hp/pl.maxHp);return'<div class="pc"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="font-size:15px;font-weight:600">'+pl.name+'</div><div class="muted" style="margin:2px 0 8px">'+(pl.race||'')+' '+(pl.class||'')+' &middot; Lvl '+(pl.level||1)+'</div></div><div style="text-align:right"><div style="font-size:18px;font-weight:700;color:'+hpCol(pct)+'">'+pl.hp+'/'+pl.maxHp+'</div><div class="muted">HP</div></div></div><div class="hp-track" style="margin:8px 0"><div class="hp-fill" style="width:'+Math.round(pct*100)+'%;background:'+hpCol(pct)+'"></div></div><div style="display:flex;gap:8px;align-items:center"><button class="btn-icon minus" onclick="dmAdj(\''+p+'\',-1)">-</button><input type="number" id="da-'+p+'" value="1" min="0" style="width:48px;border:1px solid var(--border2);padding:5px;text-align:center;font-family:inherit;border-radius:2px;background:var(--white);color:var(--text)"><button class="btn-icon" onclick="dmAdj(\''+p+'\',1)">+</button><span style="flex:1"></span><span class="muted">AC '+(pl.ac||10)+'</span>'+((pl.conditions||[]).length?'<span style="font-size:11px;background:#fde8e8;color:var(--red);padding:2px 7px;border-radius:2px">'+pl.conditions.join(', ')+'</span>':'')+'</div></div>';}).join('');}
+function dmAdj(p,dir){const pl=S.players[p];if(!pl)return;const el=document.getElementById('da-'+p);const amt=el?+el.value||1:1;pl.hp=Math.max(0,Math.min(pl.maxHp,pl.hp+(dir*amt)));if(S.myChar&&S.myChar.name===pl.name)S.myChar.hp=pl.hp;S.initiative.forEach(c=>{if(c.name===pl.name)c.hp=pl.hp;});render();toast(pl.name+': '+(dir>0?'+':'')+dir*amt+' HP');}
+function dmCombat(){const rows=!S.initiative.length?'<div class="waiting" style="border-top:none"><h3>No active combat</h3><p>Add enemies and press Start Combat</p></div>':S.initiative.map((c,i)=>{const pct=Math.max(0,c.hp/c.maxHp);const act=i===S.currentTurn&&S.combatActive;return'<div class="init-item'+(act?' active-turn':'')+(c.hp<=0?' dead':'')+'"><div class="init-roll">'+c.roll+'</div><div style="flex:1"><div class="init-name">'+c.name+(c.type==='enemy'?'<span class="enemy-badge">ENEMY</span>':'')+'</div><div class="mini-bar"><div class="mini-fill" style="width:'+Math.round(pct*100)+'%;background:'+hpCol(pct)+'"></div></div></div><div style="font-size:13px;color:var(--text3);white-space:nowrap">'+c.hp+'/'+c.maxHp+'</div><div style="display:flex;gap:4px"><button class="btn-icon minus" style="width:26px;height:26px;font-size:14px" onclick="initAdj('+i+',-1)">-</button><button class="btn-icon" style="width:26px;height:26px;font-size:14px" onclick="initAdj('+i+',1)">+</button></div></div>';}).join('');return '<div style="background:var(--white);border:1px solid var(--border);border-top:none;padding:14px"><div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap"><button class="btn btn-sm btn-primary" onclick="startCombat()">Start Combat</button><button class="btn btn-sm" onclick="nextTurn()">Next Turn</button><button class="btn btn-sm btn-danger" onclick="endCombat()">End Combat</button></div><div class="sec-hdr" style="padding-top:0"><span class="sec-title">Add Enemy</span></div><div class="row3"><div class="f"><label>Name</label><input id="en-n" placeholder="Goblin"></div><div class="f"><label>HP</label><input id="en-h" type="number" value="20"></div><div class="f"><label>Initiative</label><input id="en-i" type="number" value="12"></div></div><button class="btn btn-sm btn-primary mb12" onclick="addEnemy()">Add Enemy</button></div>'+rows;}
+function startCombat(){S.initiative=[];S.currentTurn=0;S.combatActive=true;Object.values(S.players).forEach(p=>{S.initiative.push({type:'player',name:p.name,hp:p.hp,maxHp:p.maxHp,roll:Math.floor(Math.random()*20)+1+(p.initiative||0)});});S.enemies.forEach(e=>{S.initiative.push({type:'enemy',name:e.name,hp:e.hp,maxHp:e.maxHp,roll:e.initiative});});S.initiative.sort((a,b)=>b.roll-a.roll);render();toast('Combat started!');}
+function addEnemy(){const n=(document.getElementById('en-n')&&document.getElementById('en-n').value||'').trim();if(!n)return;const hp=+(document.getElementById('en-h')&&document.getElementById('en-h').value)||10;const init=+(document.getElementById('en-i')&&document.getElementById('en-i').value)||5;S.enemies.push({name:n,hp,maxHp:hp,initiative:init});if(document.getElementById('en-n'))document.getElementById('en-n').value='';render();toast(n+' added');}
+function nextTurn(){if(!S.combatActive||!S.initiative.length)return;S.currentTurn=(S.currentTurn+1)%S.initiative.length;render();toast(S.initiative[S.currentTurn].name+"'s turn!");}
+function endCombat(){S.combatActive=false;S.initiative=[];S.enemies=[];S.currentTurn=0;render();toast('Combat ended');}
+function initAdj(i,dir){const c=S.initiative[i];if(!c)return;c.hp=Math.max(0,Math.min(c.maxHp,c.hp+dir));const p=pid(c.name);if(S.players[p])S.players[p].hp=c.hp;if(S.myChar&&S.myChar.name===c.name)S.myChar.hp=c.hp;render();}
+function dmShop(){return '<div style="background:var(--white);border:1px solid var(--border);border-top:none;padding:14px"><div class="sec-hdr" style="padding-top:0"><span class="sec-title">Add Item</span></div><div class="f"><label>Name</label><input id="sh-n" placeholder="Potion of Healing"></div><div class="row2"><div class="f"><label>Price (GP)</label><input id="sh-p" type="number" value="50"></div><div class="f"><label>Category</label><select id="sh-c"><option>Potion</option><option>Weapon</option><option>Armor</option><option>Magic Item</option><option>Scroll</option><option>Misc</option></select></div></div><div class="f"><label>Description</label><input id="sh-d" placeholder="Short description..."></div><button class="btn btn-sm btn-primary mb12" onclick="addShopItem()">Add to Shop</button>'+(S.shopItems.length?S.shopItems.map((it,i)=>'<div class="shop-item" style="border-top:none"><div><div style="font-weight:500">'+it.name+'</div><div class="muted">'+it.category+(it.desc?' - '+it.desc:'')+'</div></div><div style="display:flex;gap:8px;align-items:center"><span style="font-weight:600;color:var(--gold)">'+it.price+' GP</span><button class="btn-icon" style="width:22px;height:22px;font-size:12px" onclick="S.shopItems.splice('+i+',1);render()">x</button></div></div>').join(''):'<div class="muted">No items yet.</div>')+'</div><div style="padding:14px;background:var(--white);border:1px solid var(--border);border-top:none"><button class="btn '+(S.shopOpen?'btn-danger':'')+'" onclick="S.shopOpen=!S.shopOpen;render();toast(\'Shop \'+(S.shopOpen?\'opened\':\'closed\'))">'+(S.shopOpen?'Close Shop':'Open Shop for Players')+'</button></div>';}
+function addShopItem(){const n=(document.getElementById('sh-n')&&document.getElementById('sh-n').value||'').trim();if(!n)return;S.shopItems.push({name:n,price:+(document.getElementById('sh-p')&&document.getElementById('sh-p').value)||1,category:(document.getElementById('sh-c')&&document.getElementById('sh-c').value)||'Misc',desc:(document.getElementById('sh-d')&&document.getElementById('sh-d').value)||''});if(document.getElementById('sh-n'))document.getElementById('sh-n').value='';if(document.getElementById('sh-d'))document.getElementById('sh-d').value='';render();toast(n+' added');}
+function dmNotes(){const pids=Object.keys(S.players);return '<div style="background:var(--white);border:1px solid var(--border);border-top:none;padding:14px"><div class="sec-hdr" style="padding-top:0"><span class="sec-title">Session Notes</span></div><textarea class="notes-area" oninput="S.notes=this.value" placeholder="Write session notes here...">'+S.notes+'</textarea><div class="sec-hdr mt12"><span class="sec-title">Give Item to Player</span></div><div class="f"><label>Player</label><select id="gv-p">'+(pids.length?pids.map(p=>'<option value="'+p+'">'+S.players[p].name+'</option>').join(''):'<option>No players</option>')+'</select></div><div class="row2"><div class="f"><label>Item</label><input id="gv-n" placeholder="Item name"></div><div class="f"><label>Qty</label><input id="gv-q" type="number" value="1"></div></div><button class="btn btn-sm btn-primary" onclick="giveItem()">Give Item</button></div>';}
+function giveItem(){const p=(document.getElementById('gv-p')&&document.getElementById('gv-p').value)||'';const n=(document.getElementById('gv-n')&&document.getElementById('gv-n').value||'').trim();const q=+(document.getElementById('gv-q')&&document.getElementById('gv-q').value)||1;if(!p||!n){toast('Select player and enter item name');return;}const pl=S.players[p];if(!pl)return;pl.inventory=pl.inventory||[];const ex=pl.inventory.find(i=>i.name===n);if(ex)ex.qty+=q;else pl.inventory.push({name:n,qty:q});if(S.myChar&&S.myChar.name===pl.name)S.myChar.inventory=[...pl.inventory];if(document.getElementById('gv-n'))document.getElementById('gv-n').value='';render();toast(n+' given to '+pl.name+'!');}
+function endSession(){if(!confirm('End session?'))return;Object.assign(S,{session:null,role:null,players:{},enemies:[],initiative:[],combatActive:false,campName:''});go('landing');}
+
+// ===== DICE ROLLER =====
+let diceCount=1;
+let diceHistory=[];
+function toggleDicePanel(){const p=document.getElementById('dice-panel');if(p)p.classList.toggle('hidden');}
+function adjDiceCount(dir){diceCount=Math.max(1,Math.min(20,diceCount+dir));const el=document.getElementById('dice-count');if(el)el.textContent=diceCount;}
+function rollDie(sides){
+  const count=diceCount;
+  const mod=+(document.getElementById('dice-mod')&&document.getElementById('dice-mod').value)||0;
+  const rolls=[];
+  for(let i=0;i<count;i++)rolls.push(Math.floor(Math.random()*sides)+1);
+  const sum=rolls.reduce((a,b)=>a+b,0);
+  const total=sum+mod;
+  const isCrit=sides===20&&count===1&&rolls[0]===20;
+  const isFail=sides===20&&count===1&&rolls[0]===1;
+  const resultEl=document.getElementById('dice-result');
+  if(resultEl){
+    resultEl.innerHTML='<div class="dice-result-total" style="color:'+(isCrit?'var(--green)':isFail?'var(--red)':'var(--purple)')+'">'+total+(isCrit?' <span style="font-size:14px">CRIT!</span>':isFail?' <span style="font-size:14px">FAIL</span>':'')+'</div>'
+      +'<div class="dice-result-detail">'+count+'d'+sides+(mod!==0?(mod>0?'+':'')+mod:'')+(count>1?' ('+rolls.join(', ')+'='+sum+')':'')+'</div>';
+  }
+  const entry=count+'d'+sides+(mod!==0?(mod>0?'+':'')+mod:'')+' = <b>'+total+'</b>'+(isCrit?' CRIT':isFail?' FAIL':'');
+  diceHistory.unshift(entry);
+  if(diceHistory.length>8)diceHistory.pop();
+  const histEl=document.getElementById('dice-history');
+  if(histEl)histEl.innerHTML=diceHistory.map(h=>'<div style="font-size:12px;color:var(--text2);padding:2px 0;border-bottom:1px solid var(--border)">'+h+'</div>').join('');
+  // Animate the button
+  const btn=event&&event.target&&event.target.closest('.die-btn');
+  if(btn){btn.classList.add('rolling');setTimeout(()=>btn.classList.remove('rolling'),300);}
+}
+function rollCustom(){
+  const sides=+prompt('How many sides? (e.g. 100)');
+  if(!sides||sides<2)return;
+  rollDie(sides);
+}
+function clearDiceHistory(){diceHistory=[];const el=document.getElementById('dice-history');if(el)el.innerHTML='';}
+// Close dice panel when clicking outside
+document.addEventListener('click',function(e){
+  const panel=document.getElementById('dice-panel');
+  const fab=document.getElementById('dice-fab');
+  if(panel&&fab&&!panel.contains(e.target)&&!fab.contains(e.target)){
+    panel.classList.add('hidden');
+  }
+});
+
+render();
+
+</script>
+</body>
+</html>
