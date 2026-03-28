@@ -1,1 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D&D 5e Companion</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#3a9e8e;--teal2:#2d8070;--teal-light:#e8f5f3;
+  --purple:#7c3aed;--purple-light:#ede9fe;
+  --text:#1a1a1a;--text2:#555;--text3:#999;
+  --border:#e0e0e0;--border2:#ccc;
+  --bg:#f7f7f7;--white:#fff;
+  --green:#28a745;--red:#dc3545;--orange:#e07b00;--gold:#b38a00;
+}
+body{font-family:'Inter',system-ui,sans-serif;font-size:15px;color:var(--text);background:var(--bg);min-height:100vh}
+.hdr{background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:48px;position:sticky;top:0;z-index:100}
+.hdr-title{font-size:16px;font-weight:600;flex:1;text-align:center}
+.hdr-btn{background:none;border:none;color:#fff;font-size:14px;font-weight:500;cursor:pointer;padding:8px 4px;white-space:nowrap}
+.hdr-btn:hover{opacity:.8}
+.prog{background:var(--teal2);height:3px}
+.prog-fill{background:rgba(255,255,255,.5);height:3px;transition:width .3s}
+.scr{display:none;max-width:600px;margin:0 auto;padding:16px 16px 80px}
+.scr.on{display:block}
+.land-logo{text-align:center;padding:60px 0 8px;font-size:28px;font-weight:700;color:var(--teal2)}
+.land-sub{text-align:center;color:var(--text3);font-size:14px;margin-bottom:40px}
+.land-card{background:var(--white);border:1px solid var(--border);padding:22px;margin-bottom:12px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;border-radius:2px}
+.land-card:hover{border-color:var(--teal);background:var(--teal-light)}
+.land-card h3{font-size:17px;font-weight:600;margin-bottom:4px}
+.land-card p{font-size:13px;color:var(--text3)}
+.f{margin-bottom:16px}
+.f label{display:block;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.f input,.f select,.f textarea{width:100%;border:none;border-bottom:1px solid var(--border2);background:transparent;padding:7px 4px;font-size:15px;color:var(--text);outline:none;font-family:inherit}
+.f input:focus,.f select:focus,.f textarea:focus{border-bottom-color:var(--teal)}
 
