@@ -1,0 +1,2159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>DM Module v0.2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #0d9488;
+    --teal-light: #f0fdfa;
+    --teal-dark: #0f766e;
+    --purple: #7c3aed;
+    --purple-light: #ede9fe;
+    --red: #dc2626;
+    --red-light: #fef2f2;
+    --green: #16a34a;
+    --green-light: #f0fdf4;
+    --yellow: #ca8a04;
+    --yellow-light: #fefce8;
+    --orange: #ea580c;
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --border: #e2e8f0;
+    --border-strong: #cbd5e1;
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --text-light: #94a3b8;
+    --header-h: 48px;
+    --nav-h: 44px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+    padding-bottom: 88px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* HEADER */
+  .app-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--teal);
+    height: var(--header-h);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    gap: 8px;
+  }
+
+  .header-left { display: flex; align-items: center; gap: 10px; }
+
+  .header-title { color: white; font-size: 16px; font-weight: 600; }
+
+  .session-name-label {
+    color: rgba(255,255,255,0.75);
+    font-size: 12px;
+    font-weight: 400;
+  }
+
+  .header-right { display: flex; align-items: center; gap: 8px; }
+
+  .round-badge {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+  }
+
+  /* NAV TABS */
+  .nav-tabs {
+    position: sticky;
+    top: var(--header-h);
+    z-index: 90;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    height: var(--nav-h);
+  }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+
+  .nav-tab {
+    flex: 0 0 auto;
+    padding: 0 16px;
+    height: var(--nav-h);
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    transition: color 0.15s;
+    font-family: inherit;
+  }
+  .nav-tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+
+  /* TURN STRIP */
+  .turn-strip {
+    background: var(--teal-dark);
+    color: white;
+    padding: 6px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .turn-strip-name { flex: 1; }
+  .turn-strip .btn-sm {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border-color: transparent;
+  }
+
+  /* SECTIONS */
+  .section { display: none; padding: 16px; }
+  .section.active { display: block; }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 2px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid transparent;
+    font-family: inherit;
+    transition: opacity 0.15s, background 0.15s;
+    white-space: nowrap;
+  }
+  .btn:active { opacity: 0.82; }
+  .btn-primary { background: var(--teal); color: white; border-color: var(--teal); }
+  .btn-secondary { background: transparent; color: var(--teal); border-color: var(--teal); }
+  .btn-danger { background: var(--red); color: white; border-color: var(--red); }
+  .btn-danger-outline { background: transparent; color: var(--red); border-color: var(--red); }
+  .btn-ghost { background: transparent; color: var(--text-muted); border-color: var(--border); }
+  .btn-purple { background: var(--purple); color: white; border-color: var(--purple); }
+  .btn-sm { padding: 4px 10px; font-size: 12px; }
+  .btn-icon { width: 32px; height: 32px; padding: 0; font-size: 16px; }
+  .btn-full { width: 100%; }
+
+  /* FORM */
+  .form-group { margin-bottom: 12px; }
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--border-strong);
+    border-radius: 2px;
+    font-size: 14px;
+    font-family: inherit;
+    background: var(--surface);
+    color: var(--text);
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  input:focus, select:focus { outline: none; border-color: var(--teal); }
+  input[type="number"] { text-align: center; }
+
+  /* INITIATIVE LIST */
+  .init-list { list-style: none; }
+
+  .init-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 8px;
+    padding: 12px;
+    border-left: 3px solid transparent;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .init-item.active-turn { border-left-color: var(--teal); background: var(--teal-light); }
+  .init-item.dead { opacity: 0.45; }
+  .init-item.unconscious { border-left-color: var(--text-muted); }
+
+  .init-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .init-number {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-muted);
+    min-width: 28px;
+    text-align: center;
+  }
+  .active-turn .init-number { color: var(--teal); }
+  .creature-name { font-weight: 600; font-size: 15px; flex: 1; }
+
+  .enemy-badge {
+    background: var(--red);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .player-badge {
+    background: var(--teal);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .init-stats { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+  .hp-bar-wrap { width: 60px; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .hp-bar { height: 100%; border-radius: 3px; transition: width 0.3s, background 0.3s; }
+  .hp-text { font-size: 12px; font-weight: 600; white-space: nowrap; }
+
+  .stat-chip {
+    font-size: 11px;
+    color: var(--text-muted);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+
+  .temp-hp-badge {
+    font-size: 11px;
+    color: var(--purple);
+    background: var(--purple-light);
+    padding: 1px 6px;
+    border-radius: 2px;
+    font-weight: 600;
+  }
+
+  .init-actions { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+
+  /* CONDITIONS */
+  .condition-list { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .condition-tag {
+    font-size: 11px;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .condition-tag .remove-condition {
+    cursor: pointer;
+    font-size: 10px;
+    opacity: 0.7;
+    background: none;
+    border: none;
+    padding: 0;
+    color: inherit;
+    line-height: 1;
+    font-family: inherit;
+  }
+  .cond-blinded { background: #e2e8f0; color: #475569; }
+  .cond-charmed { background: #fce7f3; color: #be185d; }
+  .cond-deafened { background: #f3e8ff; color: #7e22ce; }
+  .cond-exhaustion { background: #fef3c7; color: #92400e; }
+  .cond-frightened { background: #fff7ed; color: #9a3412; }
+  .cond-grappled { background: #e0f2fe; color: #075985; }
+  .cond-incapacitated { background: #fef2f2; color: #991b1b; }
+  .cond-invisible { background: #f8fafc; color: #334155; border: 1px solid #e2e8f0; }
+  .cond-paralyzed { background: #fef2f2; color: #7f1d1d; }
+  .cond-petrified { background: #f1f5f9; color: #475569; }
+  .cond-poisoned { background: #f0fdf4; color: #14532d; }
+  .cond-prone { background: #fffbeb; color: #78350f; }
+  .cond-restrained { background: #fdf4ff; color: #701a75; }
+  .cond-stunned { background: #fff1f2; color: #881337; }
+  .cond-unconscious { background: #1e293b; color: #f8fafc; }
+  .cond-concentration { background: var(--purple-light); color: var(--purple); }
+  .cond-surprised { background: var(--yellow-light); color: var(--yellow); }
+
+  /* TURN ALERT */
+  .turn-alert {
+    background: var(--yellow-light);
+    border: 1px solid #fde68a;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: var(--yellow);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  /* SECTION HEADER */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 40px 16px;
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  /* SEPARATOR */
+  .separator { height: 1px; background: var(--border); margin: 12px 0; }
+
+  /* COMBAT CONTROLS */
+  .combat-controls {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  /* ENCOUNTER BUILDER */
+  .encounter-table { width: 100%; border-collapse: collapse; }
+  .encounter-table th {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 6px 8px;
+    text-align: left;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+  .encounter-table th.num { text-align: center; }
+  .encounter-table td { padding: 6px 4px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .encounter-table tr:last-child td { border-bottom: none; }
+  .encounter-table td.num input { text-align: center; }
+  .encounter-table input {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid var(--border-strong);
+    border-radius: 2px;
+    font-size: 13px;
+    font-family: inherit;
+    background: var(--surface);
+    color: var(--text);
+  }
+  .encounter-table input:focus { outline: none; border-color: var(--teal); }
+  .encounter-table input[type="number"] { text-align: center; }
+
+  /* MONSTER SEARCH */
+  .monster-search-wrap { position: relative; margin-bottom: 12px; }
+  .monster-search-wrap input { padding-right: 32px; }
+  .monster-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 50;
+    display: none;
+  }
+  .monster-results.open { display: block; }
+  .monster-result-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .monster-result-item:last-child { border-bottom: none; }
+  .monster-result-item:hover { background: var(--teal-light); }
+  .monster-result-meta { font-size: 11px; color: var(--text-muted); }
+
+  /* DASHBOARD PLAYER CARDS */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .dashboard-player-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    border-left: 3px solid var(--teal);
+  }
+  .dashboard-player-card:hover { border-color: var(--teal); box-shadow: 0 2px 8px rgba(13,148,136,0.1); }
+  .dashboard-player-card.danger { border-left-color: var(--red); }
+  .dashboard-player-card.warning { border-left-color: var(--yellow); }
+  .dashboard-player-card.unconscious-card { border-left-color: var(--text-muted); opacity: 0.7; }
+  .dpc-name { font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .dpc-hp-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+  .dpc-stats { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  /* DASHBOARD CONCENTRATION */
+  .conc-section { margin-top: 8px; }
+  .conc-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .conc-item:last-child { border-bottom: none; }
+
+  /* SESSION DASHBOARD */
+  .session-code-display {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--teal);
+    text-align: center;
+    padding: 16px;
+    background: var(--teal-light);
+    border: 2px dashed var(--teal);
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+  .session-status-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .status-dot.online { background: var(--green); }
+  .status-dot.offline { background: var(--text-light); }
+  .status-dot.waiting { background: var(--yellow); }
+
+  .invited-player-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .invited-player-row:last-child { border-bottom: none; }
+
+  /* DICE ROLLER FAB */
+  .fab {
+    position: fixed;
+    bottom: 24px;
+    right: 16px;
+    z-index: 200;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--teal);
+    color: white;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    font-family: inherit;
+  }
+  .fab:active { transform: scale(0.95); }
+
+  /* BOTTOM SHEET */
+  .sheet-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 300;
+    display: none;
+    align-items: flex-end;
+  }
+  .sheet-overlay.open { display: flex; }
+  .sheet {
+    background: var(--surface);
+    border-radius: 16px 16px 0 0;
+    padding: 0 16px 32px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .sheet-handle {
+    width: 36px;
+    height: 4px;
+    background: var(--border-strong);
+    border-radius: 2px;
+    margin: 12px auto 16px;
+  }
+  .sheet-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; text-align: center; }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 400;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 20px;
+    width: 100%;
+    max-width: 400px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+  .modal-actions { display: flex; gap: 8px; margin-top: 16px; justify-content: flex-end; }
+
+  /* DICE */
+  .dice-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 16px; }
+  .dice-btn {
+    background: var(--bg);
+    border: 1px solid var(--border-strong);
+    border-radius: 2px;
+    padding: 12px 4px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s;
+  }
+  .dice-btn:active { background: var(--teal-light); }
+  .dice-result { text-align: center; font-size: 40px; font-weight: 700; color: var(--teal); min-height: 56px; display: flex; align-items: center; justify-content: center; }
+  .dice-result-detail { text-align: center; font-size: 12px; color: var(--text-muted); margin-bottom: 16px; min-height: 18px; }
+
+  /* TOAST */
+  .toast-container {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 500;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    pointer-events: none;
+    width: calc(100% - 32px);
+    max-width: 360px;
+  }
+  .toast {
+    background: #1e293b;
+    color: white;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    animation: toastIn 0.2s ease;
+    text-align: center;
+  }
+  .toast.success { background: var(--green); }
+  .toast.error { background: var(--red); }
+  .toast.warning { background: var(--yellow); }
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* EDIT PLAYERS GRID */
+  .edit-player-grid {
+    display: grid;
+    grid-template-columns: 1fr 56px 56px 72px;
+    gap: 6px;
+    align-items: end;
+    margin-bottom: 6px;
+  }
+
+  /* INFO ROWS */
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-label { color: var(--text-muted); }
+  .info-value { font-weight: 600; }
+
+  .hidden { display: none !important; }
+
+  /* TODO BADGE */
+  .todo-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 2px;
+    background: var(--yellow-light);
+    color: var(--yellow);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border: 1px solid #fde68a;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="app-header">
+  <div class="header-left">
+    <span class="header-title">DM Module</span>
+    <span class="session-name-label" id="headerSessionName"></span>
+  </div>
+  <div class="header-right">
+    <span id="headerRoundBadge" class="round-badge hidden">Round 1</span>
+  </div>
+</header>
+
+<!-- NAV TABS -->
+<nav class="nav-tabs">
+  <button class="nav-tab active" data-tab="dashboard">Dashboard</button>
+  <button class="nav-tab" data-tab="combat">Combat</button>
+  <button class="nav-tab" data-tab="encounter">Encounter</button>
+  <button class="nav-tab" data-tab="session">Sessie</button>
+</nav>
+
+<!-- TURN STRIP -->
+<div id="turnStrip" class="turn-strip hidden">
+  <span class="turn-strip-name" id="turnStripName">-</span>
+  <button class="btn btn-sm" data-action="nextTurn">Volgende beurt</button>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ======================================================= -->
+<!-- DASHBOARD TAB -->
+<!-- ======================================================= -->
+<section id="tab-dashboard" class="section active">
+
+  <div class="section-header">
+    <span class="section-title">Spelers</span>
+    <button class="btn btn-ghost btn-sm" data-action="editPlayers">Bewerken</button>
+  </div>
+
+  <div class="dashboard-grid" id="dashboardGrid">
+    <div class="empty-state" style="grid-column:1/-1;">Geen spelers geconfigureerd. Tik op Bewerken.</div>
+  </div>
+
+  <div class="separator"></div>
+
+  <div class="section-header">
+    <span class="section-title">Concentratie</span>
+    <button class="btn btn-ghost btn-sm" data-action="addConcentration">+ Toevoegen</button>
+  </div>
+
+  <div id="concentrationList">
+    <div class="empty-state" style="padding:16px;">Geen actieve concentratie-spells.</div>
+  </div>
+
+</section>
+
+<!-- ======================================================= -->
+<!-- COMBAT TAB -->
+<!-- ======================================================= -->
+<section id="tab-combat" class="section">
+
+  <div class="combat-controls">
+    <div style="flex:1;min-width:100px;">
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;">Ronde</div>
+      <div style="font-size:24px;font-weight:700;color:var(--teal);" id="roundCounter">-</div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;">
+      <button class="btn btn-primary btn-sm" data-action="startCombat" id="startCombatBtn">Start Combat</button>
+      <button class="btn btn-ghost btn-sm hidden" data-action="endCombat" id="endCombatBtn">Einde Combat</button>
+      <button class="btn btn-ghost btn-sm" data-action="addCreature">+ Toevoegen</button>
+      <button class="btn btn-ghost btn-sm" data-action="sortByInit">Sorteren</button>
+    </div>
+  </div>
+
+  <div id="turnAlertArea"></div>
+
+  <ul class="init-list" id="initList"></ul>
+
+</section>
+
+<!-- ======================================================= -->
+<!-- ENCOUNTER TAB -->
+<!-- ======================================================= -->
+<section id="tab-encounter" class="section">
+
+  <div class="section-header">
+    <span class="section-title">Monster zoeken</span>
+  </div>
+
+  <div class="monster-search-wrap">
+    <input type="text" id="monsterSearchInput" placeholder="Zoek op naam, bijv. Goblin...">
+    <div class="monster-results" id="monsterResults"></div>
+  </div>
+
+  <div class="section-header" style="margin-top:8px;">
+    <span class="section-title">Encounter</span>
+    <div style="display:flex;gap:6px;">
+      <button class="btn btn-ghost btn-sm" data-action="rollAllInit">Roll Init</button>
+      <button class="btn btn-ghost btn-sm" data-action="clearEncounter">Leegmaken</button>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <table class="encounter-table">
+      <thead>
+        <tr>
+          <th>Naam</th>
+          <th class="num" style="width:64px;">Max HP</th>
+          <th class="num" style="width:56px;">AC</th>
+          <th class="num" style="width:56px;">Init</th>
+          <th style="width:36px;"></th>
+        </tr>
+      </thead>
+      <tbody id="encounterRows"></tbody>
+    </table>
+  </div>
+
+  <button class="btn btn-secondary btn-sm" data-action="addMonsterRow" style="margin-bottom:16px;">+ Handmatig toevoegen</button>
+
+  <button class="btn btn-primary btn-full" data-action="loadEncounter">Laad in Initiative Tracker</button>
+
+</section>
+
+<!-- ======================================================= -->
+<!-- SESSION TAB -->
+<!-- ======================================================= -->
+<section id="tab-session" class="section">
+
+  <div class="section-header">
+    <span class="section-title">Sessie Beheer</span>
+  </div>
+
+  <!-- Sessie aanmaken / actief -->
+  <div class="card" id="sessionNoActive" style="padding:16px;text-align:center;">
+    <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Er is nog geen actieve sessie. Maak er een aan om spelers uit te nodigen.</div>
+    <button class="btn btn-primary" data-action="createSession">Sessie aanmaken</button>
+  </div>
+
+  <div id="sessionActive" class="hidden">
+    <div class="form-group">
+      <label>Sessienaam</label>
+      <div style="display:flex;gap:6px;">
+        <input type="text" id="sessionNameInput" placeholder="bijv. De Vloek van Strahd - Sessie 7">
+        <button class="btn btn-secondary btn-sm" data-action="saveSessionName" style="white-space:nowrap;">Opslaan</button>
+      </div>
+    </div>
+
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:0.04em;">Sessiecode</div>
+    <div class="session-code-display" id="sessionCodeDisplay">------</div>
+    <div style="display:flex;gap:8px;margin-bottom:16px;">
+      <button class="btn btn-secondary btn-sm" data-action="copySessionCode" style="flex:1;">Kopieer code</button>
+      <button class="btn btn-ghost btn-sm" data-action="regenerateCode">Nieuwe code</button>
+    </div>
+
+    <div class="separator"></div>
+
+    <div class="section-header">
+      <span class="section-title">Uitgenodigde spelers</span>
+      <button class="btn btn-ghost btn-sm" data-action="invitePlayer">+ Uitnodigen</button>
+    </div>
+
+    <div class="card" id="invitedPlayersList">
+      <div style="padding:16px;text-align:center;font-size:13px;color:var(--text-muted);">Nog geen spelers uitgenodigd.</div>
+    </div>
+
+    <div class="separator"></div>
+
+    <div class="section-header">
+      <span class="section-title">Sessie instellingen</span>
+    </div>
+
+    <div class="card" style="padding:12px;">
+      <div class="info-row">
+        <span class="info-label">Verbinding</span>
+        <span style="display:flex;align-items:center;gap:6px;">
+          <span class="status-dot waiting"></span>
+          <span style="font-size:13px;font-weight:500;color:var(--yellow);">Wacht op PocketBase</span>
+        </span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Spelers online</span>
+        <span class="info-value">0 / <span id="sessionPlayerCount">0</span></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Realtime sync</span>
+        <span style="display:flex;align-items:center;gap:6px;">
+          <span class="todo-tag">TODO</span>
+          <span style="font-size:12px;color:var(--text-muted);">via PocketBase</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="separator"></div>
+    <button class="btn btn-danger-outline btn-sm" data-action="endSession">Sessie beeindigen</button>
+  </div>
+
+</section>
+
+<!-- ======================================================= -->
+<!-- DICE FAB -->
+<!-- ======================================================= -->
+<button class="fab" data-action="openDice" aria-label="Dice Roller">&#9670;</button>
+
+<!-- ======================================================= -->
+<!-- DICE SHEET -->
+<!-- ======================================================= -->
+<div class="sheet-overlay" id="diceSheet">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Dobbelstenen</div>
+    <div class="dice-result" id="diceResult">-</div>
+    <div class="dice-result-detail" id="diceResultDetail"></div>
+    <div class="dice-grid">
+      <button class="dice-btn" data-die="4">d4</button>
+      <button class="dice-btn" data-die="6">d6</button>
+      <button class="dice-btn" data-die="8">d8</button>
+      <button class="dice-btn" data-die="10">d10</button>
+      <button class="dice-btn" data-die="12">d12</button>
+      <button class="dice-btn" data-die="20">d20</button>
+      <button class="dice-btn" data-die="100">d100</button>
+      <button class="dice-btn" data-die="2">Munt</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:16px;">
+      <div class="form-group" style="flex:1;margin-bottom:0;">
+        <label>Aantal</label>
+        <input type="number" id="diceCount" value="1" min="1" max="20">
+      </div>
+      <div class="form-group" style="flex:1;margin-bottom:0;">
+        <label>Modifier</label>
+        <input type="number" id="diceMod" value="0" min="-20" max="20">
+      </div>
+    </div>
+    <button class="btn btn-ghost btn-full" data-action="closeDice">Sluiten</button>
+  </div>
+</div>
+
+<!-- ======================================================= -->
+<!-- ADD CREATURE MODAL -->
+<!-- ======================================================= -->
+<div class="modal-overlay" id="addCreatureModal">
+  <div class="modal">
+    <div class="modal-title">Toevoegen aan initiative</div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;">
+      <button class="btn btn-secondary btn-sm" data-creaturetype="enemy" id="typeEnemy" style="flex:1;">Vijand</button>
+      <button class="btn btn-ghost btn-sm" data-creaturetype="player" id="typePlayer" style="flex:1;">Speler</button>
+    </div>
+    <div class="form-group">
+      <label>Naam</label>
+      <input type="text" id="addName" placeholder="bijv. Goblin">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+      <div class="form-group">
+        <label>Initiative</label>
+        <input type="number" id="addInit" placeholder="15">
+      </div>
+      <div class="form-group">
+        <label>Max HP</label>
+        <input type="number" id="addMaxHp" placeholder="10">
+      </div>
+      <div class="form-group">
+        <label>AC</label>
+        <input type="number" id="addAC" placeholder="13">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <input type="checkbox" id="addSurprised" style="width:auto;">
+      <label for="addSurprised" style="text-transform:none;font-size:13px;letter-spacing:0;margin-bottom:0;cursor:pointer;">Markeer als verrast</label>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-action="closeAddCreature">Annuleren</button>
+      <button class="btn btn-primary" data-action="confirmAddCreature">Toevoegen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================================= -->
+<!-- DMG / HEAL MODAL -->
+<!-- ======================================================= -->
+<div class="modal-overlay" id="dmgHealModal">
+  <div class="modal">
+    <div class="modal-title" id="dmgHealModalTitle">Schade / Genezing</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+      <div class="form-group" style="margin-bottom:0;">
+        <label>Hoeveelheid</label>
+        <input type="number" id="dmgHealAmount" placeholder="0" min="0">
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label>Tijdelijke HP</label>
+        <input type="number" id="dmgHealTemp" placeholder="0" min="0">
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <button class="btn btn-danger" data-action="applyDamage">Schade</button>
+      <button class="btn btn-primary" data-action="applyHeal" style="background:var(--green);border-color:var(--green);">Genees</button>
+    </div>
+    <div class="separator"></div>
+    <button class="btn btn-ghost btn-sm btn-full" data-action="closeDmgHeal">Annuleren</button>
+  </div>
+</div>
+
+<!-- ======================================================= -->
+<!-- CONDITIONS MODAL -->
+<!-- ======================================================= -->
+<div class="modal-overlay" id="conditionsModal">
+  <div class="modal">
+    <div class="modal-title">Condities</div>
+    <div id="conditionButtons" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;"></div>
+    <button class="btn btn-ghost btn-full" data-action="closeConditions">Klaar</button>
+  </div>
+</div>
+
+<!-- ======================================================= -->
+<!-- EDIT PLAYERS MODAL -->
+<!-- ======================================================= -->
+<div class="modal-overlay" id="editPlayersModal">
+  <div class="modal">
+    <div class="modal-title">Spelers bewerken</div>
+    <div style="display:grid;grid-template-columns:1fr 56px 56px 72px;gap:6px;margin-bottom:4px;">
+      <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;">Naam</div>
+      <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;text-align:center;">HP</div>
+      <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;text-align:center;">AC</div>
+      <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;text-align:center;">Pass.Perc.</div>
+    </div>
+    <div id="editPlayersRows"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-action="closeEditPlayers">Annuleren</button>
+      <button class="btn btn-primary" data-action="savePlayers">Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================================= -->
+<!-- PLAYER DETAIL MODAL -->
+<!-- ======================================================= -->
+<div class="modal-overlay" id="playerDetailModal">
+  <div class="modal">
+    <div class="modal-title" id="playerDetailName">Speler</div>
+
+    <div id="playerDetailBody"></div>
+
+    <!-- TODO: Geef items aan speler - implementeren na PocketBase koppeling -->
+    <div style="margin-top:12px;padding:10px 12px;background:var(--yellow-light);border:1px solid #fde68a;border-radius:4px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="todo-tag">TODO</span>
+        <span style="font-size:12px;color:var(--yellow);">Items/spells geven aan speler - na PocketBase koppeling</span>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-action="closePlayerDetail">Sluiten</button>
+      <button class="btn btn-secondary btn-sm" data-action="openEditFromDetail">Bewerken</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================================= -->
+<!-- ADD CONCENTRATION MODAL -->
+<!-- ======================================================= -->
+<div class="modal-overlay" id="addConcentrationModal">
+  <div class="modal">
+    <div class="modal-title">Concentratie bijhouden</div>
+    <div class="form-group">
+      <label>Speler / Caster</label>
+      <input type="text" id="concCaster" placeholder="bijv. Aria">
+    </div>
+    <div class="form-group">
+      <label>Spreuk</label>
+      <input type="text" id="concSpell" placeholder="bijv. Hold Person">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-action="closeAddConcentration">Annuleren</button>
+      <button class="btn btn-primary" data-action="confirmAddConcentration">Bijhouden</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================================= -->
+<!-- SURPRISE MODAL -->
+<!-- ======================================================= -->
+<div class="modal-overlay" id="surpriseModal">
+  <div class="modal">
+    <div class="modal-title">Surprise round</div>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Wie is verrast aan het begin van het gevecht?</p>
+    <div id="surpriseCheckboxes" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-action="closeSurprise">Overslaan</button>
+      <button class="btn btn-primary" data-action="confirmSurprise">Bevestigen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================================= -->
+<!-- INVITE PLAYER MODAL -->
+<!-- ======================================================= -->
+<div class="modal-overlay" id="invitePlayerModal">
+  <div class="modal">
+    <div class="modal-title">Speler uitnodigen</div>
+    <div class="form-group">
+      <label>Naam</label>
+      <input type="text" id="inviteName" placeholder="bijv. Joris">
+    </div>
+    <div class="form-group">
+      <label>E-mailadres (optioneel)</label>
+      <input type="email" id="inviteEmail" placeholder="joris@example.com">
+    </div>
+    <div style="padding:10px 12px;background:var(--yellow-light);border:1px solid #fde68a;border-radius:4px;margin-bottom:12px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="todo-tag">TODO</span>
+        <span style="font-size:12px;color:var(--yellow);">E-mail versturen via PocketBase - nog niet actief</span>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-action="closeInvitePlayer">Annuleren</button>
+      <button class="btn btn-primary" data-action="confirmInvitePlayer">Toevoegen</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// =====================================================
+// MONSTER DATABASE
+// =====================================================
+var MONSTER_DB = [
+  { name: 'Bandit', hp: 11, ac: 12, cr: '1/8' },
+  { name: 'Bandit Captain', hp: 65, ac: 15, cr: '2' },
+  { name: 'Bear, Black', hp: 19, ac: 11, cr: '1/2' },
+  { name: 'Bear, Brown', hp: 34, ac: 11, cr: '1' },
+  { name: 'Bear, Polar', hp: 42, ac: 12, cr: '2' },
+  { name: 'Bugbear', hp: 27, ac: 16, cr: '1' },
+  { name: 'Bugbear Chief', hp: 65, ac: 17, cr: '3' },
+  { name: 'Cult Fanatic', hp: 33, ac: 13, cr: '2' },
+  { name: 'Cultist', hp: 9, ac: 12, cr: '1/8' },
+  { name: 'Death Dog', hp: 39, ac: 12, cr: '1' },
+  { name: 'Dire Wolf', hp: 37, ac: 14, cr: '1' },
+  { name: 'Dragon, Adult Black', hp: 195, ac: 19, cr: '14' },
+  { name: 'Dragon, Adult Blue', hp: 225, ac: 19, cr: '16' },
+  { name: 'Dragon, Adult Green', hp: 207, ac: 19, cr: '15' },
+  { name: 'Dragon, Adult Red', hp: 256, ac: 19, cr: '17' },
+  { name: 'Dragon, Adult White', hp: 200, ac: 18, cr: '13' },
+  { name: 'Dragon, Young Black', hp: 127, ac: 18, cr: '7' },
+  { name: 'Dragon, Young Blue', hp: 152, ac: 18, cr: '9' },
+  { name: 'Dragon, Young Red', hp: 178, ac: 18, cr: '10' },
+  { name: 'Drow', hp: 13, ac: 15, cr: '1/4' },
+  { name: 'Drow Elite Warrior', hp: 71, ac: 18, cr: '5' },
+  { name: 'Duergar', hp: 26, ac: 16, cr: '1' },
+  { name: 'Ettin', hp: 85, ac: 12, cr: '4' },
+  { name: 'Gargoyle', hp: 52, ac: 15, cr: '2' },
+  { name: 'Ghost', hp: 45, ac: 11, cr: '4' },
+  { name: 'Giant, Cloud', hp: 200, ac: 14, cr: '9' },
+  { name: 'Giant, Fire', hp: 162, ac: 18, cr: '9' },
+  { name: 'Giant, Frost', hp: 138, ac: 15, cr: '8' },
+  { name: 'Giant, Hill', hp: 105, ac: 13, cr: '5' },
+  { name: 'Giant, Stone', hp: 126, ac: 17, cr: '7' },
+  { name: 'Giant, Storm', hp: 230, ac: 16, cr: '13' },
+  { name: 'Gnoll', hp: 22, ac: 15, cr: '1/2' },
+  { name: 'Gnoll Pack Lord', hp: 49, ac: 15, cr: '2' },
+  { name: 'Goblin', hp: 7, ac: 15, cr: '1/4' },
+  { name: 'Goblin Boss', hp: 21, ac: 17, cr: '1' },
+  { name: 'Golem, Clay', hp: 133, ac: 14, cr: '9' },
+  { name: 'Golem, Iron', hp: 210, ac: 20, cr: '16' },
+  { name: 'Golem, Stone', hp: 178, ac: 17, cr: '10' },
+  { name: 'Gorgon', hp: 114, ac: 19, cr: '5' },
+  { name: 'Griffon', hp: 59, ac: 12, cr: '2' },
+  { name: 'Guard', hp: 11, ac: 16, cr: '1/8' },
+  { name: 'Harpy', hp: 38, ac: 11, cr: '1' },
+  { name: 'Hell Hound', hp: 45, ac: 15, cr: '3' },
+  { name: 'Hobgoblin', hp: 11, ac: 18, cr: '1/2' },
+  { name: 'Hobgoblin Captain', hp: 52, ac: 17, cr: '3' },
+  { name: 'Hobgoblin Warlord', hp: 97, ac: 20, cr: '6' },
+  { name: 'Homunculus', hp: 5, ac: 13, cr: '0' },
+  { name: 'Hydra', hp: 172, ac: 15, cr: '8' },
+  { name: 'Imp', hp: 10, ac: 13, cr: '1' },
+  { name: 'Kobold', hp: 5, ac: 12, cr: '1/8' },
+  { name: 'Kobold Dragonshield', hp: 44, ac: 13, cr: '1' },
+  { name: 'Kraken', hp: 472, ac: 18, cr: '23' },
+  { name: 'Lich', hp: 135, ac: 17, cr: '21' },
+  { name: 'Lizardfolk', hp: 22, ac: 15, cr: '1/2' },
+  { name: 'Lizard King/Queen', hp: 78, ac: 15, cr: '4' },
+  { name: 'Manticore', hp: 68, ac: 14, cr: '3' },
+  { name: 'Medusa', hp: 127, ac: 15, cr: '6' },
+  { name: 'Merrow', hp: 45, ac: 13, cr: '2' },
+  { name: 'Mimic', hp: 58, ac: 12, cr: '2' },
+  { name: 'Mind Flayer', hp: 71, ac: 15, cr: '7' },
+  { name: 'Minotaur', hp: 114, ac: 14, cr: '3' },
+  { name: 'Mummy', hp: 58, ac: 11, cr: '3' },
+  { name: 'Mummy Lord', hp: 97, ac: 17, cr: '15' },
+  { name: 'Nothic', hp: 45, ac: 15, cr: '2' },
+  { name: 'Ochre Jelly', hp: 45, ac: 8, cr: '2' },
+  { name: 'Orc', hp: 15, ac: 13, cr: '1/2' },
+  { name: 'Orc Eye of Gruumsh', hp: 45, ac: 16, cr: '2' },
+  { name: 'Orc War Chief', hp: 93, ac: 16, cr: '4' },
+  { name: 'Ogre', hp: 59, ac: 11, cr: '2' },
+  { name: 'Oni', hp: 110, ac: 16, cr: '7' },
+  { name: 'Owlbear', hp: 59, ac: 13, cr: '3' },
+  { name: 'Pegasus', hp: 59, ac: 12, cr: '2' },
+  { name: 'Peryton', hp: 33, ac: 13, cr: '2' },
+  { name: 'Phase Spider', hp: 32, ac: 13, cr: '3' },
+  { name: 'Pirate', hp: 11, ac: 12, cr: '1/8' },
+  { name: 'Pseudodragon', hp: 7, ac: 13, cr: '1/4' },
+  { name: 'Purple Worm', hp: 247, ac: 18, cr: '15' },
+  { name: 'Rakshasa', hp: 110, ac: 16, cr: '13' },
+  { name: 'Remorhaz', hp: 195, ac: 17, cr: '11' },
+  { name: 'Roc', hp: 248, ac: 15, cr: '11' },
+  { name: 'Roper', hp: 93, ac: 20, cr: '5' },
+  { name: 'Rust Monster', hp: 27, ac: 14, cr: '1/2' },
+  { name: 'Sahuagin', hp: 22, ac: 12, cr: '1/2' },
+  { name: 'Sahuagin Baron', hp: 76, ac: 16, cr: '5' },
+  { name: 'Salamander', hp: 90, ac: 15, cr: '5' },
+  { name: 'Satyr', hp: 31, ac: 14, cr: '1/2' },
+  { name: 'Shadow', hp: 16, ac: 12, cr: '1/2' },
+  { name: 'Shambling Mound', hp: 136, ac: 15, cr: '5' },
+  { name: 'Shield Guardian', hp: 142, ac: 17, cr: '7' },
+  { name: 'Skeleton', hp: 13, ac: 13, cr: '1/4' },
+  { name: 'Skeleton, Minotaur', hp: 67, ac: 12, cr: '2' },
+  { name: 'Specter', hp: 22, ac: 12, cr: '1' },
+  { name: 'Sphinx, Androsphinx', hp: 199, ac: 17, cr: '17' },
+  { name: 'Sphinx, Gynosphinx', hp: 136, ac: 17, cr: '11' },
+  { name: 'Stirge', hp: 2, ac: 14, cr: '1/8' },
+  { name: 'Stone Giant Dreamwalker', hp: 161, ac: 18, cr: '10' },
+  { name: 'Succubus/Incubus', hp: 66, ac: 13, cr: '4' },
+  { name: 'Swarm of Bats', hp: 22, ac: 12, cr: '1/4' },
+  { name: 'Swarm of Rats', hp: 24, ac: 10, cr: '1/4' },
+  { name: 'Swarm of Spiders', hp: 22, ac: 12, cr: '1/2' },
+  { name: 'Tiger', hp: 37, ac: 12, cr: '1' },
+  { name: 'Troll', hp: 84, ac: 15, cr: '5' },
+  { name: 'Unicorn', hp: 67, ac: 12, cr: '5' },
+  { name: 'Vampire', hp: 144, ac: 16, cr: '13' },
+  { name: 'Vampire Spawn', hp: 82, ac: 15, cr: '5' },
+  { name: 'Warhorse', hp: 19, ac: 11, cr: '1/2' },
+  { name: 'Werewolf', hp: 58, ac: 11, cr: '3' },
+  { name: 'Wight', hp: 45, ac: 14, cr: '3' },
+  { name: 'Will-o-Wisp', hp: 22, ac: 19, cr: '2' },
+  { name: 'Winter Wolf', hp: 75, ac: 13, cr: '3' },
+  { name: 'Wolf', hp: 11, ac: 13, cr: '1/4' },
+  { name: 'Worg', hp: 26, ac: 13, cr: '1/2' },
+  { name: 'Wraith', hp: 67, ac: 13, cr: '5' },
+  { name: 'Wyvern', hp: 110, ac: 13, cr: '6' },
+  { name: 'Xorn', hp: 73, ac: 19, cr: '5' },
+  { name: 'Yeti', hp: 51, ac: 12, cr: '3' },
+  { name: 'Yuan-ti Pureblood', hp: 40, ac: 11, cr: '1' },
+  { name: 'Yuan-ti Malison', hp: 66, ac: 12, cr: '3' },
+  { name: 'Yuan-ti Abomination', hp: 127, ac: 15, cr: '7' },
+  { name: 'Zombie', hp: 22, ac: 8, cr: '1/4' },
+  { name: 'Zombie, Ogre', hp: 85, ac: 8, cr: '2' }
+];
+
+var CONDITIONS = [
+  'Blinded','Charmed','Deafened','Exhaustion','Frightened','Grappled',
+  'Incapacitated','Invisible','Paralyzed','Petrified','Poisoned','Prone',
+  'Restrained','Stunned','Unconscious'
+];
+
+// =====================================================
+// STATE
+// =====================================================
+var state = {
+  combatActive: false,
+  round: 0,
+  currentTurnIndex: 0,
+  creatures: [],
+  // { id, name, type, initRoll, maxHp, hp, tempHp, ac, conditions, surprised, dead, unconscious }
+  players: [],
+  // { id, name, maxHp, hp, ac, passivePerception, conditions }
+  encounterMonsters: [],
+  // { id, name, maxHp, ac, initRoll }
+  concentrations: [],
+  // { id, caster, spell }
+  session: null,
+  // { name, code, invitedPlayers: [{id, name, email}] }
+  nextId: 1
+};
+
+function genId() { return state.nextId++; }
+function rollDie(sides) { return Math.floor(Math.random() * sides) + 1; }
+
+function hpColor(current, max) {
+  if (!max) return '#94a3b8';
+  var pct = current / max;
+  if (pct > 0.6) return 'var(--green)';
+  if (pct > 0.25) return 'var(--yellow)';
+  return 'var(--red)';
+}
+function hpPercent(current, max) {
+  if (!max) return 0;
+  return Math.max(0, Math.min(100, Math.round((current / max) * 100)));
+}
+
+function condClass(cond) { return 'cond-' + cond.toLowerCase(); }
+
+function escapeHtml(str) {
+  var d = document.createElement('div');
+  d.appendChild(document.createTextNode(String(str || '')));
+  return d.innerHTML;
+}
+
+function showToast(msg, type) {
+  var c = document.getElementById('toastContainer');
+  var t = document.createElement('div');
+  t.className = 'toast' + (type ? ' ' + type : '');
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(function() { if (t.parentNode) t.parentNode.removeChild(t); }, 2800);
+}
+
+// =====================================================
+// RENDER DASHBOARD
+// =====================================================
+function renderDashboard() {
+  renderDashboardPlayers();
+  renderConcentration();
+}
+
+function renderDashboardPlayers() {
+  var grid = document.getElementById('dashboardGrid');
+  if (state.players.length === 0) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">Geen spelers geconfigureerd. Tik op Bewerken.</div>';
+    return;
+  }
+  grid.innerHTML = '';
+  state.players.forEach(function(p) {
+    var pct = hpPercent(p.hp, p.maxHp);
+    var color = hpColor(p.hp, p.maxHp);
+    var cardClass = 'dashboard-player-card';
+    if (p.hp === 0) cardClass += ' unconscious-card';
+    else if (pct <= 25) cardClass += ' danger';
+    else if (pct <= 60) cardClass += ' warning';
+
+    var card = document.createElement('div');
+    card.className = cardClass;
+    card.setAttribute('data-action', 'openPlayerDetail');
+    card.setAttribute('data-player-id', p.id);
+
+    var condHtml = '';
+    if (p.conditions && p.conditions.length > 0) {
+      condHtml = '<div class="condition-list" style="margin-top:6px;">' +
+        p.conditions.slice(0,3).map(function(c) {
+          return '<span class="condition-tag ' + condClass(c) + '" style="font-size:10px;padding:1px 5px;">' + c + '</span>';
+        }).join('') +
+        (p.conditions.length > 3 ? '<span class="condition-tag cond-blinded" style="font-size:10px;padding:1px 5px;">+' + (p.conditions.length - 3) + '</span>' : '') +
+        '</div>';
+    }
+
+    // concentration indicator
+    var conc = state.concentrations.find(function(c) { return c.caster === p.name; });
+    var concHtml = conc ? '<div style="margin-top:4px;"><span class="condition-tag cond-concentration" style="font-size:10px;padding:1px 5px;">Conc: ' + escapeHtml(conc.spell) + '</span></div>' : '';
+
+    card.innerHTML =
+      '<div class="dpc-name">' + escapeHtml(p.name) + '</div>' +
+      '<div class="dpc-hp-row">' +
+        '<div class="hp-bar-wrap" style="flex:1;"><div class="hp-bar" style="width:' + pct + '%;background:' + color + ';"></div></div>' +
+        '<span class="hp-text" style="color:' + color + ';">' + p.hp + '/' + p.maxHp + '</span>' +
+      '</div>' +
+      '<div class="dpc-stats">' +
+        (p.ac ? '<span class="stat-chip">AC ' + p.ac + '</span>' : '') +
+        (p.passivePerception ? '<span class="stat-chip">PP ' + p.passivePerception + '</span>' : '') +
+      '</div>' +
+      condHtml + concHtml;
+
+    grid.appendChild(card);
+  });
+}
+
+function renderConcentration() {
+  var list = document.getElementById('concentrationList');
+  if (state.concentrations.length === 0) {
+    list.innerHTML = '<div class="empty-state" style="padding:16px;">Geen actieve concentratie-spells.</div>';
+    return;
+  }
+  var card = document.createElement('div');
+  card.className = 'card';
+  state.concentrations.forEach(function(conc) {
+    var row = document.createElement('div');
+    row.className = 'conc-item';
+    row.innerHTML =
+      '<span class="condition-tag cond-concentration">' + escapeHtml(conc.spell) + '</span>' +
+      '<span style="flex:1;font-size:13px;font-weight:500;">' + escapeHtml(conc.caster) + '</span>' +
+      '<button class="btn btn-sm btn-danger-outline" data-action="removeConcentration" data-conc-id="' + conc.id + '">Stoppen</button>';
+    card.appendChild(row);
+  });
+  list.innerHTML = '';
+  list.appendChild(card);
+}
+
+// =====================================================
+// RENDER INITIATIVE LIST
+// =====================================================
+function renderInitList() {
+  var list = document.getElementById('initList');
+  list.innerHTML = '';
+
+  if (state.creatures.length === 0) {
+    list.innerHTML = '<li class="empty-state"><div style="font-size:28px;margin-bottom:8px;">&#9876;</div><div>Geen creatures in initiative.</div><div style="margin-top:4px;">Voeg creatures toe of laad een encounter.</div></li>';
+    return;
+  }
+
+  state.creatures.forEach(function(c, idx) {
+    var isActive = state.combatActive && idx === state.currentTurnIndex;
+    var li = document.createElement('li');
+    li.className = 'init-item' +
+      (isActive ? ' active-turn' : '') +
+      (c.dead ? ' dead' : '') +
+      (!c.dead && c.unconscious ? ' unconscious' : '');
+    li.setAttribute('data-id', c.id);
+
+    var condHTML = '';
+    if (c.conditions && c.conditions.length > 0) {
+      condHTML = '<div class="condition-list">' + c.conditions.map(function(cond) {
+        return '<span class="condition-tag ' + condClass(cond) + '">' + escapeHtml(cond) +
+          '<button class="remove-condition" data-remove-condition="' + escapeHtml(cond) + '" data-creature-id="' + c.id + '" aria-label="Verwijder">x</button></span>';
+      }).join('') + '</div>';
+    }
+
+    var tempHpHtml = c.tempHp > 0 ? '<span class="temp-hp-badge">+' + c.tempHp + ' temp</span>' : '';
+    var statusLabel = '';
+    if (c.dead) statusLabel = '<span style="font-size:11px;color:var(--red);font-weight:600;">DOOD</span>';
+    else if (c.unconscious) statusLabel = '<span style="font-size:11px;color:var(--text-muted);font-weight:600;">BEWUSTELOOS</span>';
+    var surprisedLabel = (c.surprised && !state.combatActive) ? '<span class="condition-tag cond-surprised" style="font-size:10px;">Surprised</span>' : '';
+
+    li.innerHTML =
+      '<div class="init-header">' +
+        '<div class="init-number">' + c.initRoll + '</div>' +
+        '<div class="creature-name">' + escapeHtml(c.name) + '</div>' +
+        (c.type === 'enemy' ? '<span class="enemy-badge">Vijand</span>' : '<span class="player-badge">Speler</span>') +
+      '</div>' +
+      '<div class="init-stats">' +
+        '<div style="display:flex;align-items:center;gap:4px;">' +
+          '<div class="hp-bar-wrap"><div class="hp-bar" style="width:' + hpPercent(c.hp, c.maxHp) + '%;background:' + hpColor(c.hp, c.maxHp) + ';"></div></div>' +
+          '<span class="hp-text" style="color:' + hpColor(c.hp, c.maxHp) + ';">' + c.hp + '/' + c.maxHp + '</span>' +
+        '</div>' +
+        (c.ac ? '<span class="stat-chip">AC ' + c.ac + '</span>' : '') +
+        tempHpHtml + statusLabel + surprisedLabel +
+      '</div>' +
+      condHTML +
+      '<div class="init-actions">' +
+        '<button class="btn btn-sm btn-danger-outline" data-action="openDmgHeal" data-creature-id="' + c.id + '">Schade/Genees</button>' +
+        '<button class="btn btn-sm btn-ghost" data-action="openConditions" data-creature-id="' + c.id + '">Condities</button>' +
+        (c.dead ? '<button class="btn btn-sm btn-ghost" data-action="revive" data-creature-id="' + c.id + '">Revive</button>' :
+          (c.unconscious ? '<button class="btn btn-sm btn-ghost" data-action="stabilize" data-creature-id="' + c.id + '">Stabiliseer</button>' : '')) +
+        '<button class="btn btn-sm btn-ghost" style="margin-left:auto;" data-action="removeCreature" data-creature-id="' + c.id + '">Verwijder</button>' +
+      '</div>';
+
+    list.appendChild(li);
+  });
+}
+
+function renderCombatHeader() {
+  var roundEl = document.getElementById('roundCounter');
+  var roundBadge = document.getElementById('headerRoundBadge');
+  var strip = document.getElementById('turnStrip');
+  var stripName = document.getElementById('turnStripName');
+  var startBtn = document.getElementById('startCombatBtn');
+  var endBtn = document.getElementById('endCombatBtn');
+
+  if (state.combatActive) {
+    roundEl.textContent = state.round;
+    roundBadge.textContent = 'Ronde ' + state.round;
+    roundBadge.classList.remove('hidden');
+    strip.classList.remove('hidden');
+    startBtn.classList.add('hidden');
+    endBtn.classList.remove('hidden');
+    var current = state.creatures[state.currentTurnIndex];
+    if (current) stripName.textContent = current.name + '\'s beurt';
+  } else {
+    roundEl.textContent = '-';
+    roundBadge.classList.add('hidden');
+    strip.classList.add('hidden');
+    startBtn.classList.remove('hidden');
+    endBtn.classList.add('hidden');
+  }
+}
+
+function renderAll() {
+  renderInitList();
+  renderCombatHeader();
+  renderDashboard();
+}
+
+// =====================================================
+// COMBAT
+// =====================================================
+function startCombat() {
+  if (state.creatures.length === 0) { showToast('Voeg eerst creatures toe', 'error'); return; }
+  state.combatActive = true;
+  state.round = 1;
+  state.currentTurnIndex = 0;
+  sortCreaturesByInit();
+  renderAll();
+  onTurnStart();
+  showToast('Combat gestart - Ronde 1', 'success');
+}
+
+function endCombat() {
+  state.combatActive = false;
+  state.round = 0;
+  state.currentTurnIndex = 0;
+  state.creatures.forEach(function(c) { c.surprised = false; });
+  document.getElementById('turnAlertArea').innerHTML = '';
+  renderAll();
+  showToast('Combat beeindigd');
+}
+
+function nextTurn() {
+  if (!state.combatActive) return;
+  var prev = state.creatures[state.currentTurnIndex];
+  if (prev) prev.surprised = false;
+  state.currentTurnIndex++;
+  if (state.currentTurnIndex >= state.creatures.length) {
+    state.currentTurnIndex = 0;
+    state.round++;
+    showToast('Ronde ' + state.round + ' begint');
+  }
+  renderAll();
+  onTurnStart();
+}
+
+function onTurnStart() {
+  var area = document.getElementById('turnAlertArea');
+  area.innerHTML = '';
+  if (!state.combatActive) return;
+  var c = state.creatures[state.currentTurnIndex];
+  if (!c) return;
+  if (c.conditions && c.conditions.length > 0) {
+    var div = document.createElement('div');
+    div.className = 'turn-alert';
+    div.textContent = c.name + ' heeft actieve condities: ' + c.conditions.join(', ');
+    area.appendChild(div);
+  }
+}
+
+function sortCreaturesByInit() {
+  state.creatures.sort(function(a, b) { return b.initRoll - a.initRoll; });
+}
+
+// =====================================================
+// CREATURE MANAGEMENT
+// =====================================================
+var addingCreatureType = 'enemy';
+
+function openAddCreatureModal() {
+  addingCreatureType = 'enemy';
+  document.getElementById('addName').value = '';
+  document.getElementById('addInit').value = '';
+  document.getElementById('addMaxHp').value = '';
+  document.getElementById('addAC').value = '';
+  document.getElementById('addSurprised').checked = false;
+  setCreatureType('enemy');
+  document.getElementById('addCreatureModal').classList.add('open');
+  setTimeout(function() { document.getElementById('addName').focus(); }, 100);
+}
+
+function setCreatureType(type) {
+  addingCreatureType = type;
+  document.getElementById('typeEnemy').className = type === 'enemy' ? 'btn btn-secondary btn-sm' : 'btn btn-ghost btn-sm';
+  document.getElementById('typePlayer').className = type === 'player' ? 'btn btn-secondary btn-sm' : 'btn btn-ghost btn-sm';
+}
+
+function confirmAddCreature() {
+  var name = document.getElementById('addName').value.trim();
+  var initRoll = parseInt(document.getElementById('addInit').value) || 0;
+  var maxHp = parseInt(document.getElementById('addMaxHp').value) || 0;
+  var ac = parseInt(document.getElementById('addAC').value) || 0;
+  var surprised = document.getElementById('addSurprised').checked;
+  if (!name) { showToast('Vul een naam in', 'error'); return; }
+  state.creatures.push({
+    id: genId(), name: name, type: addingCreatureType,
+    initRoll: initRoll, maxHp: maxHp, hp: maxHp, tempHp: 0,
+    ac: ac, conditions: [], surprised: surprised, dead: false, unconscious: false
+  });
+  document.getElementById('addCreatureModal').classList.remove('open');
+  renderAll();
+  showToast(name + ' toegevoegd');
+}
+
+function removeCreature(id) {
+  state.creatures = state.creatures.filter(function(c) { return c.id !== id; });
+  if (state.combatActive && state.currentTurnIndex >= state.creatures.length) {
+    state.currentTurnIndex = Math.max(0, state.creatures.length - 1);
+  }
+  renderAll();
+}
+
+// =====================================================
+// DMG / HEAL
+// =====================================================
+var dmgHealTargetId = null;
+
+function openDmgHeal(id) {
+  dmgHealTargetId = id;
+  var c = state.creatures.find(function(x) { return x.id === id; });
+  if (!c) return;
+  document.getElementById('dmgHealModalTitle').textContent = c.name;
+  document.getElementById('dmgHealAmount').value = '';
+  document.getElementById('dmgHealTemp').value = '';
+  document.getElementById('dmgHealModal').classList.add('open');
+  setTimeout(function() { document.getElementById('dmgHealAmount').focus(); }, 100);
+}
+
+function applyDamage() {
+  var c = state.creatures.find(function(x) { return x.id === dmgHealTargetId; });
+  if (!c) return;
+  var amount = parseInt(document.getElementById('dmgHealAmount').value) || 0;
+  var temp = parseInt(document.getElementById('dmgHealTemp').value) || 0;
+  if (c.tempHp > 0 && amount > 0) {
+    var absorbed = Math.min(c.tempHp, amount);
+    c.tempHp -= absorbed;
+    amount -= absorbed;
+  }
+  c.hp = Math.max(0, c.hp - amount);
+  if (temp > 0) c.tempHp = Math.max(c.tempHp, temp);
+  if (c.hp === 0 && c.type === 'enemy') {
+    c.dead = true;
+    showToast(c.name + ' is dood!', 'error');
+  } else if (c.hp === 0) {
+    c.unconscious = true;
+    if (!c.conditions.includes('Unconscious')) c.conditions.push('Unconscious');
+    showToast(c.name + ' is neergevallen!', 'warning');
+  } else {
+    showToast('Schade toegepast op ' + c.name);
+  }
+  // concentration check
+  if (amount > 0) {
+    var conc = state.concentrations.find(function(x) { return x.caster === c.name; });
+    if (conc) {
+      var dc = Math.max(10, Math.floor(amount / 2));
+      showToast(c.name + ' - Con save DC ' + dc + ' voor ' + conc.spell + '!', 'warning');
+    }
+  }
+  document.getElementById('dmgHealModal').classList.remove('open');
+  renderAll();
+}
+
+function applyHeal() {
+  var c = state.creatures.find(function(x) { return x.id === dmgHealTargetId; });
+  if (!c) return;
+  var amount = parseInt(document.getElementById('dmgHealAmount').value) || 0;
+  var temp = parseInt(document.getElementById('dmgHealTemp').value) || 0;
+  c.hp = Math.min(c.maxHp, c.hp + amount);
+  if (temp > 0) c.tempHp = Math.max(c.tempHp, temp);
+  if (c.hp > 0 && c.unconscious) {
+    c.unconscious = false;
+    c.conditions = c.conditions.filter(function(x) { return x !== 'Unconscious'; });
+  }
+  if (c.hp > 0) c.dead = false;
+  showToast(c.name + ' genezen voor ' + amount, 'success');
+  document.getElementById('dmgHealModal').classList.remove('open');
+  renderAll();
+}
+
+function revive(id) {
+  var c = state.creatures.find(function(x) { return x.id === id; });
+  if (!c) return;
+  c.dead = false; c.hp = 1;
+  renderAll(); showToast(c.name + ' gereanimeerd');
+}
+
+function stabilize(id) {
+  var c = state.creatures.find(function(x) { return x.id === id; });
+  if (!c) return;
+  c.unconscious = false; c.hp = 1;
+  c.conditions = c.conditions.filter(function(x) { return x !== 'Unconscious'; });
+  renderAll(); showToast(c.name + ' gestabiliseerd');
+}
+
+// =====================================================
+// CONDITIONS
+// =====================================================
+var conditionsTargetId = null;
+
+function openConditions(id) {
+  conditionsTargetId = id;
+  var c = state.creatures.find(function(x) { return x.id === id; });
+  if (!c) return;
+  var container = document.getElementById('conditionButtons');
+  container.innerHTML = '';
+  CONDITIONS.forEach(function(cond) {
+    var active = c.conditions.includes(cond);
+    var btn = document.createElement('button');
+    btn.className = 'condition-tag ' + condClass(cond);
+    btn.style.cursor = 'pointer';
+    btn.style.border = active ? '2px solid currentColor' : '1px dashed currentColor';
+    btn.style.opacity = active ? '1' : '0.5';
+    btn.textContent = cond;
+    btn.setAttribute('data-condition', cond);
+    btn.setAttribute('data-action', 'toggleCondition');
+    container.appendChild(btn);
+  });
+  document.getElementById('conditionsModal').classList.add('open');
+}
+
+function toggleCondition(cond) {
+  var c = state.creatures.find(function(x) { return x.id === conditionsTargetId; });
+  if (!c) return;
+  var idx = c.conditions.indexOf(cond);
+  if (idx === -1) c.conditions.push(cond);
+  else c.conditions.splice(idx, 1);
+  openConditions(conditionsTargetId);
+}
+
+function removeConditionFromCreature(creatureId, cond) {
+  var c = state.creatures.find(function(x) { return x.id === creatureId; });
+  if (!c) return;
+  c.conditions = c.conditions.filter(function(x) { return x !== cond; });
+  renderInitList();
+}
+
+// =====================================================
+// ENCOUNTER BUILDER
+// =====================================================
+function renderEncounterRows() {
+  var tbody = document.getElementById('encounterRows');
+  tbody.innerHTML = '';
+  if (state.encounterMonsters.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px;">Geen monsters toegevoegd. Zoek hierboven of voeg handmatig toe.</td></tr>';
+    return;
+  }
+  state.encounterMonsters.forEach(function(m) {
+    var tr = document.createElement('tr');
+    tr.setAttribute('data-monster-id', m.id);
+    tr.innerHTML =
+      '<td><input type="text" placeholder="Naam" value="' + escapeHtml(m.name) + '" data-field="name"></td>' +
+      '<td class="num"><input type="number" placeholder="HP" value="' + (m.maxHp || '') + '" data-field="maxHp"></td>' +
+      '<td class="num"><input type="number" placeholder="AC" value="' + (m.ac || '') + '" data-field="ac"></td>' +
+      '<td class="num"><input type="number" placeholder="-" value="' + (m.initRoll || '') + '" data-field="initRoll"></td>' +
+      '<td style="text-align:center;"><button class="btn btn-icon btn-danger-outline" data-action="removeMonsterRow" data-monster-id="' + m.id + '" style="font-size:13px;border:none;color:var(--red);background:none;cursor:pointer;">x</button></td>';
+    tbody.appendChild(tr);
+  });
+}
+
+function addMonsterRow(name, hp, ac) {
+  state.encounterMonsters.push({
+    id: genId(),
+    name: name || '',
+    maxHp: hp || null,
+    ac: ac || null,
+    initRoll: null
+  });
+  renderEncounterRows();
+}
+
+function removeMonsterRow(id) {
+  state.encounterMonsters = state.encounterMonsters.filter(function(m) { return m.id !== id; });
+  renderEncounterRows();
+}
+
+function syncEncounterFromDOM() {
+  var rows = document.querySelectorAll('#encounterRows tr[data-monster-id]');
+  rows.forEach(function(row) {
+    var id = parseInt(row.getAttribute('data-monster-id'));
+    var m = state.encounterMonsters.find(function(x) { return x.id === id; });
+    if (!m) return;
+    m.name = row.querySelector('[data-field="name"]').value.trim();
+    m.maxHp = parseInt(row.querySelector('[data-field="maxHp"]').value) || 0;
+    m.ac = parseInt(row.querySelector('[data-field="ac"]').value) || 0;
+    m.initRoll = parseInt(row.querySelector('[data-field="initRoll"]').value) || 0;
+  });
+}
+
+function rollAllInit() {
+  syncEncounterFromDOM();
+  state.encounterMonsters.forEach(function(m) { m.initRoll = rollDie(20); });
+  renderEncounterRows();
+  showToast('Initiative gerold voor alle monsters');
+}
+
+function clearEncounter() {
+  state.encounterMonsters = [];
+  renderEncounterRows();
+}
+
+function loadEncounter() {
+  syncEncounterFromDOM();
+  var valid = state.encounterMonsters.filter(function(m) { return m.name; });
+  if (valid.length === 0) { showToast('Voeg eerst monsters toe aan de encounter', 'error'); return; }
+  var checkboxes = document.getElementById('surpriseCheckboxes');
+  checkboxes.innerHTML = '';
+  valid.forEach(function(m) {
+    var label = document.createElement('label');
+    label.style.cssText = 'display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;';
+    var cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.style.width = 'auto';
+    cb.setAttribute('data-encounter-monster-id', m.id);
+    label.appendChild(cb);
+    label.appendChild(document.createTextNode(m.name));
+    checkboxes.appendChild(label);
+  });
+  document.getElementById('surpriseModal').classList.add('open');
+}
+
+function confirmSurprise() {
+  syncEncounterFromDOM();
+  var valid = state.encounterMonsters.filter(function(m) { return m.name; });
+  var surprisedIds = [];
+  document.querySelectorAll('#surpriseCheckboxes input[type="checkbox"]').forEach(function(cb) {
+    if (cb.checked) surprisedIds.push(parseInt(cb.getAttribute('data-encounter-monster-id')));
+  });
+  valid.forEach(function(m) {
+    state.creatures.push({
+      id: genId(), name: m.name, type: 'enemy',
+      initRoll: m.initRoll || rollDie(20),
+      maxHp: m.maxHp || 1, hp: m.maxHp || 1, tempHp: 0,
+      ac: m.ac || 0, conditions: [],
+      surprised: surprisedIds.includes(m.id),
+      dead: false, unconscious: false
+    });
+  });
+  document.getElementById('surpriseModal').classList.remove('open');
+  activateTab('combat');
+  renderAll();
+  showToast(valid.length + ' monsters geladen in initiative');
+}
+
+// =====================================================
+// MONSTER SEARCH
+// =====================================================
+var monsterSearchInput = document.getElementById('monsterSearchInput');
+var monsterResults = document.getElementById('monsterResults');
+
+monsterSearchInput.addEventListener('input', function() {
+  var q = this.value.trim().toLowerCase();
+  if (q.length < 1) { monsterResults.classList.remove('open'); return; }
+  var matches = MONSTER_DB.filter(function(m) { return m.name.toLowerCase().indexOf(q) !== -1; }).slice(0, 8);
+  if (matches.length === 0) { monsterResults.classList.remove('open'); return; }
+  monsterResults.innerHTML = '';
+  matches.forEach(function(m) {
+    var div = document.createElement('div');
+    div.className = 'monster-result-item';
+    div.innerHTML = '<span>' + escapeHtml(m.name) + '</span><span class="monster-result-meta">HP ' + m.hp + ' | AC ' + m.ac + ' | CR ' + m.cr + '</span>';
+    div.addEventListener('click', function() {
+      addMonsterRow(m.name, m.hp, m.ac);
+      monsterSearchInput.value = '';
+      monsterResults.classList.remove('open');
+      showToast(m.name + ' toegevoegd aan encounter');
+    });
+    monsterResults.appendChild(div);
+  });
+  monsterResults.classList.add('open');
+});
+
+document.addEventListener('click', function(e) {
+  if (!monsterResults.contains(e.target) && e.target !== monsterSearchInput) {
+    monsterResults.classList.remove('open');
+  }
+});
+
+// =====================================================
+// PLAYERS
+// =====================================================
+function openEditPlayers() {
+  var container = document.getElementById('editPlayersRows');
+  container.innerHTML = '';
+  for (var i = 0; i < 6; i++) {
+    var p = state.players[i] || { name: '', maxHp: '', ac: '', passivePerception: '' };
+    var row = document.createElement('div');
+    row.className = 'edit-player-grid';
+    row.setAttribute('data-player-index', i);
+    row.innerHTML =
+      '<input type="text" placeholder="Speler ' + (i+1) + '" value="' + escapeHtml(p.name) + '" data-pfield="name">' +
+      '<input type="number" placeholder="HP" value="' + (p.maxHp || '') + '" data-pfield="maxHp">' +
+      '<input type="number" placeholder="AC" value="' + (p.ac || '') + '" data-pfield="ac">' +
+      '<input type="number" placeholder="PP" value="' + (p.passivePerception || '') + '" data-pfield="passivePerception">';
+    container.appendChild(row);
+  }
+  document.getElementById('editPlayersModal').classList.add('open');
+}
+
+function savePlayers() {
+  var rows = document.querySelectorAll('#editPlayersRows .edit-player-grid');
+  var newPlayers = [];
+  rows.forEach(function(row) {
+    var name = row.querySelector('[data-pfield="name"]').value.trim();
+    if (!name) return;
+    var maxHp = parseInt(row.querySelector('[data-pfield="maxHp"]').value) || 0;
+    var ac = parseInt(row.querySelector('[data-pfield="ac"]').value) || 0;
+    var pp = parseInt(row.querySelector('[data-pfield="passivePerception"]').value) || 0;
+    // preserve existing player id and hp if name matches
+    var existing = state.players.find(function(p) { return p.name === name; });
+    if (existing) {
+      existing.maxHp = maxHp;
+      existing.ac = ac;
+      existing.passivePerception = pp;
+      if (!existing.conditions) existing.conditions = [];
+      newPlayers.push(existing);
+    } else {
+      newPlayers.push({ id: genId(), name: name, maxHp: maxHp, hp: maxHp, ac: ac, passivePerception: pp, conditions: [] });
+    }
+  });
+  state.players = newPlayers;
+  document.getElementById('editPlayersModal').classList.remove('open');
+  renderDashboard();
+  showToast('Spelers opgeslagen', 'success');
+}
+
+// =====================================================
+// PLAYER DETAIL
+// =====================================================
+var playerDetailId = null;
+
+function openPlayerDetail(id) {
+  playerDetailId = id;
+  var p = state.players.find(function(x) { return x.id === id; });
+  if (!p) return;
+  document.getElementById('playerDetailName').textContent = p.name;
+  var conc = state.concentrations.find(function(c) { return c.caster === p.name; });
+  var condHtml = (p.conditions && p.conditions.length > 0)
+    ? '<div class="condition-list" style="margin-top:4px;">' + p.conditions.map(function(c) { return '<span class="condition-tag ' + condClass(c) + '">' + escapeHtml(c) + '</span>'; }).join('') + '</div>'
+    : '<span style="font-size:12px;color:var(--text-muted);">Geen</span>';
+
+  document.getElementById('playerDetailBody').innerHTML =
+    '<div class="info-row"><span class="info-label">HP</span><span class="info-value" style="color:' + hpColor(p.hp, p.maxHp) + ';">' + p.hp + ' / ' + p.maxHp + '</span></div>' +
+    '<div class="info-row"><span class="info-label">AC</span><span class="info-value">' + (p.ac || '-') + '</span></div>' +
+    '<div class="info-row"><span class="info-label">Passive Perception</span><span class="info-value">' + (p.passivePerception || '-') + '</span></div>' +
+    '<div class="info-row"><span class="info-label">Concentratie</span><span class="info-value">' + (conc ? escapeHtml(conc.spell) : 'Geen') + '</span></div>' +
+    '<div style="margin-top:8px;"><div style="font-size:12px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px;">Condities</div>' + condHtml + '</div>';
+
+  document.getElementById('playerDetailModal').classList.add('open');
+}
+
+// =====================================================
+// CONCENTRATION
+// =====================================================
+function addConcentration() {
+  document.getElementById('concCaster').value = '';
+  document.getElementById('concSpell').value = '';
+  document.getElementById('addConcentrationModal').classList.add('open');
+  setTimeout(function() { document.getElementById('concCaster').focus(); }, 100);
+}
+
+function confirmAddConcentration() {
+  var caster = document.getElementById('concCaster').value.trim();
+  var spell = document.getElementById('concSpell').value.trim();
+  if (!caster || !spell) { showToast('Vul caster en spreuk in', 'error'); return; }
+  state.concentrations = state.concentrations.filter(function(c) { return c.caster !== caster; });
+  state.concentrations.push({ id: genId(), caster: caster, spell: spell });
+  document.getElementById('addConcentrationModal').classList.remove('open');
+  renderDashboard();
+  showToast(caster + ' concentreert op ' + spell, 'success');
+}
+
+function removeConcentration(id) {
+  state.concentrations = state.concentrations.filter(function(c) { return c.id !== id; });
+  renderDashboard();
+}
+
+// =====================================================
+// SESSION
+// =====================================================
+function generateSessionCode() {
+  var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  var code = '';
+  for (var i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  return code;
+}
+
+function createSession() {
+  state.session = {
+    name: '',
+    code: generateSessionCode(),
+    invitedPlayers: []
+  };
+  document.getElementById('sessionNoActive').classList.add('hidden');
+  document.getElementById('sessionActive').classList.remove('hidden');
+  document.getElementById('sessionCodeDisplay').textContent = state.session.code;
+  document.getElementById('sessionNameInput').value = '';
+  document.getElementById('headerSessionName').textContent = '';
+  renderInvitedPlayers();
+  showToast('Sessie aangemaakt', 'success');
+}
+
+function saveSessionName() {
+  var name = document.getElementById('sessionNameInput').value.trim();
+  if (!state.session) return;
+  state.session.name = name;
+  document.getElementById('headerSessionName').textContent = name ? '- ' + name : '';
+  showToast('Sessienaam opgeslagen', 'success');
+}
+
+function copySessionCode() {
+  if (!state.session) return;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(state.session.code).then(function() {
+      showToast('Code gekopieerd: ' + state.session.code, 'success');
+    });
+  } else {
+    showToast('Code: ' + state.session.code);
+  }
+}
+
+function regenerateCode() {
+  if (!state.session) return;
+  state.session.code = generateSessionCode();
+  document.getElementById('sessionCodeDisplay').textContent = state.session.code;
+  showToast('Nieuwe code gegenereerd');
+}
+
+function invitePlayer() {
+  document.getElementById('inviteName').value = '';
+  document.getElementById('inviteEmail').value = '';
+  document.getElementById('invitePlayerModal').classList.add('open');
+  setTimeout(function() { document.getElementById('inviteName').focus(); }, 100);
+}
+
+function confirmInvitePlayer() {
+  var name = document.getElementById('inviteName').value.trim();
+  var email = document.getElementById('inviteEmail').value.trim();
+  if (!name) { showToast('Vul een naam in', 'error'); return; }
+  if (!state.session) return;
+  state.session.invitedPlayers.push({ id: genId(), name: name, email: email, status: 'invited' });
+  document.getElementById('sessionPlayerCount').textContent = state.session.invitedPlayers.length;
+  document.getElementById('invitePlayerModal').classList.remove('open');
+  renderInvitedPlayers();
+  showToast(name + ' uitgenodigd');
+}
+
+function renderInvitedPlayers() {
+  var list = document.getElementById('invitedPlayersList');
+  if (!state.session || state.session.invitedPlayers.length === 0) {
+    list.innerHTML = '<div style="padding:16px;text-align:center;font-size:13px;color:var(--text-muted);">Nog geen spelers uitgenodigd.</div>';
+    return;
+  }
+  list.innerHTML = '';
+  state.session.invitedPlayers.forEach(function(ip) {
+    var row = document.createElement('div');
+    row.className = 'invited-player-row';
+    row.innerHTML =
+      '<span class="status-dot offline"></span>' +
+      '<div style="flex:1;">' +
+        '<div style="font-size:13px;font-weight:500;">' + escapeHtml(ip.name) + '</div>' +
+        (ip.email ? '<div style="font-size:11px;color:var(--text-muted);">' + escapeHtml(ip.email) + '</div>' : '') +
+      '</div>' +
+      '<button class="btn btn-ghost btn-sm" data-action="removeInvitedPlayer" data-invited-id="' + ip.id + '">Verwijder</button>';
+    list.appendChild(row);
+  });
+}
+
+function removeInvitedPlayer(id) {
+  if (!state.session) return;
+  state.session.invitedPlayers = state.session.invitedPlayers.filter(function(p) { return p.id !== id; });
+  document.getElementById('sessionPlayerCount').textContent = state.session.invitedPlayers.length;
+  renderInvitedPlayers();
+}
+
+function endSession() {
+  state.session = null;
+  document.getElementById('sessionNoActive').classList.remove('hidden');
+  document.getElementById('sessionActive').classList.add('hidden');
+  document.getElementById('headerSessionName').textContent = '';
+  showToast('Sessie beeindigd');
+}
+
+// =====================================================
+// DICE
+// =====================================================
+function rollDice(sides) {
+  var count = parseInt(document.getElementById('diceCount').value) || 1;
+  var mod = parseInt(document.getElementById('diceMod').value) || 0;
+  var rolls = [];
+  for (var i = 0; i < count; i++) rolls.push(rollDie(sides));
+  var sum = rolls.reduce(function(a, b) { return a + b; }, 0) + mod;
+  document.getElementById('diceResult').textContent = sum;
+  var detail = count + 'd' + sides;
+  if (mod !== 0) detail += (mod > 0 ? '+' : '') + mod;
+  detail += ' = [' + rolls.join(', ') + ']';
+  document.getElementById('diceResultDetail').textContent = detail;
+}
+
+// =====================================================
+// TAB NAVIGATION
+// =====================================================
+function activateTab(tabName) {
+  document.querySelectorAll('.nav-tab').forEach(function(t) {
+    t.classList.toggle('active', t.getAttribute('data-tab') === tabName);
+  });
+  document.querySelectorAll('.section').forEach(function(s) {
+    s.classList.toggle('active', s.id === 'tab-' + tabName);
+  });
+}
+
+// =====================================================
+// EVENT DELEGATION
+// =====================================================
+document.addEventListener('click', function(e) {
+  var target = e.target;
+
+  if (target.classList.contains('nav-tab')) {
+    activateTab(target.getAttribute('data-tab'));
+    return;
+  }
+  if (target.hasAttribute('data-creaturetype')) {
+    setCreatureType(target.getAttribute('data-creaturetype'));
+    return;
+  }
+  if (target.hasAttribute('data-die')) {
+    rollDice(parseInt(target.getAttribute('data-die')));
+    return;
+  }
+  if (target.hasAttribute('data-remove-condition')) {
+    removeConditionFromCreature(
+      parseInt(target.getAttribute('data-creature-id')),
+      target.getAttribute('data-remove-condition')
+    );
+    return;
+  }
+  if (target.getAttribute('data-action') === 'toggleCondition') {
+    toggleCondition(target.getAttribute('data-condition'));
+    return;
+  }
+
+  var action = target.getAttribute('data-action');
+  if (!action) return;
+
+  switch (action) {
+    // combat
+    case 'startCombat': startCombat(); break;
+    case 'endCombat': endCombat(); break;
+    case 'nextTurn': nextTurn(); break;
+    case 'addCreature': openAddCreatureModal(); break;
+    case 'sortByInit': sortCreaturesByInit(); renderInitList(); break;
+    case 'confirmAddCreature': confirmAddCreature(); break;
+    case 'closeAddCreature': document.getElementById('addCreatureModal').classList.remove('open'); break;
+    // dmg/heal
+    case 'openDmgHeal': openDmgHeal(parseInt(target.getAttribute('data-creature-id'))); break;
+    case 'applyDamage': applyDamage(); break;
+    case 'applyHeal': applyHeal(); break;
+    case 'closeDmgHeal': document.getElementById('dmgHealModal').classList.remove('open'); break;
+    // conditions
+    case 'openConditions': openConditions(parseInt(target.getAttribute('data-creature-id'))); break;
+    case 'closeConditions':
+      document.getElementById('conditionsModal').classList.remove('open');
+      renderInitList();
+      break;
+    // creature actions
+    case 'revive': revive(parseInt(target.getAttribute('data-creature-id'))); break;
+    case 'stabilize': stabilize(parseInt(target.getAttribute('data-creature-id'))); break;
+    case 'removeCreature': removeCreature(parseInt(target.getAttribute('data-creature-id'))); break;
+    // encounter
+    case 'addMonsterRow': addMonsterRow(); break;
+    case 'removeMonsterRow': removeMonsterRow(parseInt(target.getAttribute('data-monster-id'))); break;
+    case 'rollAllInit': rollAllInit(); break;
+    case 'clearEncounter': clearEncounter(); break;
+    case 'loadEncounter': loadEncounter(); break;
+    case 'confirmSurprise': confirmSurprise(); break;
+    case 'closeSurprise': document.getElementById('surpriseModal').classList.remove('open'); break;
+    // players
+    case 'editPlayers': openEditPlayers(); break;
+    case 'savePlayers': savePlayers(); break;
+    case 'closeEditPlayers': document.getElementById('editPlayersModal').classList.remove('open'); break;
+    case 'openPlayerDetail': openPlayerDetail(parseInt(target.getAttribute('data-player-id'))); break;
+    case 'closePlayerDetail': document.getElementById('playerDetailModal').classList.remove('open'); break;
+    case 'openEditFromDetail':
+      document.getElementById('playerDetailModal').classList.remove('open');
+      openEditPlayers();
+      break;
+    // concentration
+    case 'addConcentration': addConcentration(); break;
+    case 'confirmAddConcentration': confirmAddConcentration(); break;
+    case 'closeAddConcentration': document.getElementById('addConcentrationModal').classList.remove('open'); break;
+    case 'removeConcentration': removeConcentration(parseInt(target.getAttribute('data-conc-id'))); break;
+    // session
+    case 'createSession': createSession(); break;
+    case 'saveSessionName': saveSessionName(); break;
+    case 'copySessionCode': copySessionCode(); break;
+    case 'regenerateCode': regenerateCode(); break;
+    case 'invitePlayer': invitePlayer(); break;
+    case 'confirmInvitePlayer': confirmInvitePlayer(); break;
+    case 'closeInvitePlayer': document.getElementById('invitePlayerModal').classList.remove('open'); break;
+    case 'removeInvitedPlayer': removeInvitedPlayer(parseInt(target.getAttribute('data-invited-id'))); break;
+    case 'endSession': endSession(); break;
+    // dice
+    case 'openDice': document.getElementById('diceSheet').classList.add('open'); break;
+    case 'closeDice': document.getElementById('diceSheet').classList.remove('open'); break;
+  }
+});
+
+// Close overlays on backdrop click
+document.querySelectorAll('.sheet-overlay, .modal-overlay').forEach(function(overlay) {
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) {
+      overlay.classList.remove('open');
+      if (overlay.id === 'conditionsModal') renderInitList();
+    }
+  });
+});
+
+// =====================================================
+// INIT
+// =====================================================
+renderEncounterRows();
+renderAll();
+</script>
+</body>
+</html>
