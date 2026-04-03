@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>DM Module v0.5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#0d9488;--teal-light:#f0fdfa;--teal-dark:#0f766e;
+  --purple:#7c3aed;--purple-light:#ede9fe;
+  --red:#dc2626;--red-light:#fef2f2;
+  --green:#16a34a;--green-light:#f0fdf4;
+  --yellow:#ca8a04;--yellow-light:#fefce8;
+  --blue:#2563eb;--blue-light:#eff6ff;
+  --bg:#f1f5f9;--surface:#fff;
+  --border:#e2e8f0;--border-strong:#cbd5e1;
+  --text:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;
+  --header-h:48px;--nav-h:44px;--strip-h:36px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;min-height:100vh;padding-bottom:90px;-webkit-text-size-adjust:100%;}
+
+.app-header{position:sticky;top:0;z-index:100;background:var(--teal);height:var(--header-h);display:flex;align-items:center;justify-content:space-between;padding:0 16px;gap:8px;}
+.header-left{display:flex;align-items:center;gap:10px;}
+.header-title{color:#fff;font-size:16px;font-weight:700;letter-spacing:-0.01em;}
+.session-name-label{color:rgba(255,255,255,.7);font-size:12px;}
+.header-right{display:flex;align-items:center;gap:8px;}
+.round-badge{background:rgba(255,255,255,.2);color:#fff;font-size:12px;font-weight:600;padding:2px 8px;border-radius:12px;}
+.settings-btn{background:rgba(255,255,255,.15);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;font-family:inherit;}
+.settings-btn:active{opacity:.8;}
+
+.nav-tabs{position:sticky;top:var(--header-h);z-index:90;background:var(--surface);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;height:var(--nav-h);}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.nav-tab{flex:0 0 auto;padding:0 16px;height:var(--nav-h);display:flex;align-items:center;font-size:13px;font-weight:500;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;transition:color .15s;}
+.nav-tab.active{color:var(--teal);border-bottom-color:var(--teal);}
+
+.turn-strip{position:sticky;top:calc(var(--header-h) + var(--nav-h));z-index:85;background:var(--teal-dark);color:#fff;padding:0 16px;height:var(--strip-h);font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.turn-strip-name{flex:1;}
+.turn-strip .t-btn{background:rgba(255,255,255,.2);color:#fff;border:none;border-radius:2px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;}
+
+.section{display:none;padding:16px;}
+.section.active{display:block;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;margin-bottom:8px;}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 16px;border-radius:2px;font-size:14px;font-weight:500;cursor:pointer;border:1px solid transparent;font-family:inherit;transition:opacity .15s,background .15s;white-space:nowrap;}
+.btn:active{opacity:.82;}
+.btn-primary{background:var(--teal);color:#fff;border-color:var(--teal);}
+.btn-secondary{background:transparent;color:var(--teal);border-color:var(--teal);}
+.btn-danger{background:var(--red);color:#fff;border-color:var(--red);}
+.btn-danger-outline{background:transparent;color:var(--red);border-color:var(--red);}
+.btn-ghost{background:transparent;color:var(--text-muted);border-color:var(--border);}
+.btn-blue{background:var(--blue);color:#fff;border-color:var(--blue);}
+.btn-sm{padding:4px 10px;font-size:12px;}
+.btn-full{width:100%;}
+.toggle-btn{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:2px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border);font-family:inherit;background:var(--surface);color:var(--text-muted);transition:all .15s;}
+.toggle-btn.active{background:var(--yellow-light);color:var(--yellow);border-color:var(--yellow);}
+.toggle-dot{width:10px;height:10px;border-radius:50%;background:currentColor;flex-shrink:0;}
+
+.form-group{margin-bottom:12px;}
+label{display:block;font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em;}
+input[type="text"],input[type="number"],input[type="email"],select{width:100%;padding:8px 10px;border:1px solid var(--border-strong);border-radius:2px;font-size:14px;font-family:inherit;background:var(--surface);color:var(--text);-webkit-appearance:none;appearance:none;}
+input:focus,select:focus{outline:none;border-color:var(--teal);}
+input[type="number"]{text-align:center;}
+
+/* DROPDOWN */
+.search-dropdown-wrap{position:relative;margin-bottom:12px;}
+.search-clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:18px;line-height:1;padding:0;font-family:inherit;}
+.dropdown-list{position:absolute;top:100%;left:0;right:0;background:var(--surface);border:1px solid var(--border-strong);border-top:none;border-radius:0 0 4px 4px;max-height:240px;overflow-y:auto;z-index:60;display:none;box-shadow:0 4px 12px rgba(0,0,0,.1);}
+.dropdown-list.open{display:block;}
+.dropdown-item{padding:9px 12px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
+.dropdown-item:last-child{border-bottom:none;}
+.dropdown-item:hover{background:var(--teal-light);}
+.dropdown-meta{font-size:11px;color:var(--text-muted);}
+
+/* INITIATIVE */
+.init-list{list-style:none;}
+.init-item{background:var(--surface);border:1px solid var(--border);border-radius:4px;margin-bottom:8px;padding:12px;border-left:3px solid transparent;transition:background .15s,border-color .15s;}
+.init-item.active-turn{border-left-color:var(--teal);background:var(--teal-light);}
+.init-item.dead{opacity:.38;pointer-events:none;}
+.init-item.dead .dmg-heal-inline,.init-item.dead .init-actions{pointer-events:none;}
+.init-item.dead .btn-ghost{color:var(--text-light);}
+.init-item.unconscious-state{border-left-color:var(--text-muted);}
+.init-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.init-number{font-size:18px;font-weight:700;color:var(--text-muted);min-width:28px;text-align:center;}
+.active-turn .init-number{color:var(--teal);}
+.creature-name{font-weight:600;font-size:15px;flex:1;}
+.enemy-badge{background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:2px;text-transform:uppercase;letter-spacing:.05em;}
+.player-badge{background:var(--teal);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:2px;text-transform:uppercase;letter-spacing:.05em;}
+.npc-badge{background:var(--blue);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:2px;text-transform:uppercase;letter-spacing:.05em;}
+.init-stats{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+.hp-bar-wrap{width:56px;height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.hp-bar{height:100%;border-radius:3px;transition:width .3s,background .3s;}
+.hp-text{font-size:12px;font-weight:600;white-space:nowrap;}
+.stat-chip{font-size:11px;color:var(--text-muted);background:var(--bg);border:1px solid var(--border);padding:2px 6px;border-radius:2px;white-space:nowrap;}
+.temp-hp-badge{font-size:11px;color:var(--purple);background:var(--purple-light);padding:1px 6px;border-radius:2px;font-weight:600;}
+
+.dmg-heal-inline{display:flex;align-items:center;gap:6px;margin-bottom:8px;}
+.dmg-heal-inline input{width:64px;padding:5px 6px;font-size:13px;border:1px solid var(--border-strong);border-radius:2px;text-align:center;font-family:inherit;background:var(--surface);}
+.dmg-heal-inline input:focus{outline:none;border-color:var(--teal);}
+.dmg-btn{padding:5px 12px;font-size:12px;font-weight:600;border-radius:2px;cursor:pointer;border:1px solid;font-family:inherit;display:inline-flex;align-items:center;gap:3px;}
+.dmg-btn.minus{background:var(--red-light);color:var(--red);border-color:var(--red);}
+.dmg-btn.plus{background:var(--green-light);color:var(--green);border-color:var(--green);}
+.dmg-btn:active{opacity:.8;}
+
+.condition-list{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;}
+.condition-tag{font-size:11px;padding:2px 7px;border-radius:10px;font-weight:500;display:inline-flex;align-items:center;gap:4px;}
+.condition-tag .remove-condition{cursor:pointer;font-size:10px;opacity:.7;background:none;border:none;padding:0;color:inherit;line-height:1;font-family:inherit;}
+.cond-blinded{background:#e2e8f0;color:#475569;}
+.cond-charmed{background:#fce7f3;color:#be185d;}
+.cond-concentration{background:var(--purple-light);color:var(--purple);}
+.cond-deafened{background:#f3e8ff;color:#7e22ce;}
+.cond-exhaustion{background:#fef3c7;color:#92400e;}
+.cond-frightened{background:#fff7ed;color:#9a3412;}
+.cond-grappled{background:#e0f2fe;color:#075985;}
+.cond-incapacitated{background:#fef2f2;color:#991b1b;}
+.cond-invisible{background:#f8fafc;color:#334155;border:1px solid #e2e8f0;}
+.cond-paralyzed{background:#fef2f2;color:#7f1d1d;}
+.cond-petrified{background:#f1f5f9;color:#475569;}
+.cond-poisoned{background:#f0fdf4;color:#14532d;}
+.cond-prone{background:#fffbeb;color:#78350f;}
+.cond-restrained{background:#fdf4ff;color:#701a75;}
+.cond-stunned{background:#fff1f2;color:#881337;}
+.cond-unconscious{background:#1e293b;color:#f8fafc;}
+.cond-surprised{background:var(--yellow-light);color:var(--yellow);}
+.init-actions{display:flex;gap:6px;flex-wrap:wrap;}
+
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.section-title{font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;}
+.turn-alert{background:var(--yellow-light);border:1px solid #fde68a;border-radius:4px;padding:8px 12px;font-size:12px;color:var(--yellow);margin-bottom:8px;font-weight:500;}
+.empty-state{text-align:center;padding:32px 16px;color:var(--text-muted);font-size:13px;}
+.separator{height:1px;background:var(--border);margin:12px 0;}
+.combat-controls{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:12px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+
+/* DASHBOARD */
+.dashboard-banner{background:linear-gradient(135deg,var(--teal-dark) 0%,var(--teal) 100%);border-radius:8px;padding:16px;margin-bottom:16px;color:#fff;display:flex;align-items:center;justify-content:space-between;}
+.dashboard-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
+.dashboard-stat-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:10px 12px;text-align:center;}
+.dashboard-stat-label{font-size:11px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;}
+.dashboard-stat-value{font-size:20px;font-weight:700;color:var(--teal);}
+.player-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:8px;margin-bottom:16px;}
+.player-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:12px;border-left:3px solid var(--teal);transition:box-shadow .15s;-webkit-tap-highlight-color:transparent;cursor:pointer;user-select:none;-webkit-user-select:none;}
+.player-card:active{opacity:.85;}
+.player-card.hp-warning{border-left-color:var(--yellow);}
+.player-card.hp-danger{border-left-color:var(--red);}
+.player-card.hp-dead{border-left-color:var(--text-light);opacity:.65;}
+.player-card-name{font-weight:700;font-size:14px;margin-bottom:6px;display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
+.player-card-hp-row{display:flex;align-items:center;gap:6px;margin-bottom:5px;}
+.player-card-stats{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:4px;}
+
+/* COMBAT LOG */
+.combat-log-wrap{background:#0f172a;border-radius:4px;padding:8px;max-height:200px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.log-entry{font-size:11px;font-family:'Courier New',monospace;line-height:1.6;color:#94a3b8;padding:1px 0;display:flex;align-items:flex-start;gap:6px;}
+.log-entry.pinned{background:rgba(250,204,21,.08);border-radius:2px;padding:2px 4px;margin:1px 0;}
+.log-time{color:#475569;white-space:nowrap;flex-shrink:0;}
+.log-msg{flex:1;}
+.log-dmg{color:#f87171;}
+.log-heal{color:#4ade80;}
+.log-event{color:#a78bfa;}
+.log-system{color:#38bdf8;}
+.log-pin-btn{background:none;border:none;cursor:pointer;color:#475569;font-size:11px;padding:0 2px;flex-shrink:0;font-family:inherit;line-height:1;}
+.log-pin-btn:hover{color:#fbbf24;}
+.log-pin-btn.pinned-active{color:#fbbf24;}
+
+/* PINNED LOG SECTION */
+.pinned-log-wrap{background:#1e293b;border-radius:4px;padding:8px;margin-bottom:8px;}
+.pinned-log-entry{font-size:11px;font-family:'Courier New',monospace;line-height:1.6;color:#fde68a;display:flex;align-items:center;gap:6px;padding:1px 0;}
+.pin-unpin-btn{background:none;border:none;cursor:pointer;color:#94a3b8;font-size:11px;padding:0;font-family:inherit;}
+
+/* ENCOUNTER CARDS */
+.encounter-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:12px;}
+.enc-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:12px;cursor:pointer;border-left:3px solid var(--red);transition:box-shadow .15s;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;}
+.enc-card:active{opacity:.85;}
+.enc-card.npc-card{border-left-color:var(--blue);}
+.enc-card-name{font-weight:700;font-size:13px;margin-bottom:4px;}
+.enc-card-stats{display:flex;gap:4px;flex-wrap:wrap;}
+
+/* ENCOUNTER GROUP CARDS */
+.group-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:12px;cursor:pointer;border-left:3px solid var(--purple);transition:box-shadow .15s;-webkit-tap-highlight-color:transparent;}
+.group-card:active{opacity:.85;}
+.group-card-name{font-weight:700;font-size:13px;margin-bottom:2px;}
+.group-card-count{font-size:11px;color:var(--text-muted);}
+.group-card-monsters{display:flex;flex-wrap:wrap;gap:3px;margin-top:6px;}
+
+/* INFO ROWS */
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.info-row:last-child{border-bottom:none;}
+.info-label{color:var(--text-muted);}
+.info-value{font-weight:600;}
+
+/* SESSION */
+.session-code-display{font-size:32px;font-weight:700;letter-spacing:.15em;color:var(--teal);text-align:center;padding:16px;background:var(--teal-light);border:2px dashed var(--teal);border-radius:4px;margin-bottom:12px;font-family:'Courier New',monospace;}
+.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.status-dot.offline{background:var(--text-light);}
+.status-dot.waiting{background:var(--yellow);}
+.invited-player-row{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--border);}
+.invited-player-row:last-child{border-bottom:none;}
+
+/* ATTACKS */
+.attack-row{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:2px;}
+.attack-row:last-child{border-bottom:none;}
+.attack-name{font-weight:600;font-size:13px;}
+.attack-meta{font-size:12px;color:var(--text-muted);}
+.attack-edit-row{display:flex;gap:6px;align-items:center;margin-bottom:6px;}
+.attack-edit-row input:first-child{flex:1;}
+.attack-edit-row input:nth-child(2){width:110px;}
+
+/* MODAL TABS */
+.modal-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:14px;}
+.modal-tab{flex:1;padding:8px 4px;text-align:center;font-size:13px;font-weight:500;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;}
+.modal-tab.active{color:var(--teal);border-bottom-color:var(--teal);}
+.modal-tab-panel{display:none;}
+.modal-tab-panel.active{display:block;}
+.type-toggle{display:flex;gap:6px;margin-bottom:12px;}
+.type-btn{flex:1;padding:6px 4px;font-size:12px;font-weight:600;border-radius:2px;cursor:pointer;border:1px solid var(--border);font-family:inherit;background:var(--surface);color:var(--text-muted);transition:all .15s;text-align:center;}
+.type-btn.active-enemy{background:var(--red-light);color:var(--red);border-color:var(--red);}
+.type-btn.active-npc{background:var(--blue-light);color:var(--blue);border-color:var(--blue);}
+
+/* FAB */
+.fab{position:fixed;bottom:24px;right:16px;z-index:200;width:52px;height:52px;border-radius:50%;background:var(--teal);color:#fff;border:none;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(13,148,136,.35);font-family:inherit;}
+.fab:active{transform:scale(.95);}
+
+/* SHEET */
+.sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:none;align-items:flex-end;}
+.sheet-overlay.open{display:flex;}
+.sheet{background:var(--surface);border-radius:16px 16px 0 0;padding:0 16px 32px;width:100%;max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.sheet-handle{width:36px;height:4px;background:var(--border-strong);border-radius:2px;margin:12px auto 16px;}
+.sheet-title{font-size:16px;font-weight:600;margin-bottom:16px;text-align:center;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:400;display:none;align-items:center;justify-content:center;padding:16px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border-radius:12px;padding:20px;width:100%;max-width:420px;max-height:90vh;overflow-y:auto;}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:14px;}
+.modal-actions{display:flex;gap:8px;margin-top:16px;justify-content:flex-end;}
+
+/* DICE */
+.dice-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
+.dice-btn{background:var(--bg);border:1px solid var(--border-strong);border-radius:2px;padding:12px 4px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;}
+.dice-btn:active{background:var(--teal-light);}
+.dice-result{text-align:center;font-size:44px;font-weight:700;color:var(--teal);min-height:60px;display:flex;align-items:center;justify-content:center;}
+.dice-result-detail{text-align:center;font-size:12px;color:var(--text-muted);margin-bottom:16px;min-height:18px;}
+
+/* TOAST */
+.toast-container{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:500;display:flex;flex-direction:column;gap:6px;pointer-events:none;width:calc(100% - 32px);max-width:360px;}
+.toast{background:#1e293b;color:#fff;padding:10px 14px;border-radius:4px;font-size:13px;font-weight:500;animation:toastIn .2s ease;text-align:center;}
+.toast.success{background:var(--green);}
+.toast.error{background:var(--red);}
+.toast.warning{background:var(--yellow);}
+@keyframes toastIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* VICTORY */
+.victory-overlay{position:fixed;inset:0;z-index:600;display:none;background:rgba(15,23,42,.92);align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:24px;}
+.victory-overlay.open{display:flex;}
+.victory-title{font-size:36px;font-weight:700;color:#fde68a;margin-bottom:8px;letter-spacing:-.02em;}
+.victory-sub{font-size:16px;color:rgba(255,255,255,.7);margin-bottom:32px;}
+
+.todo-tag{display:inline-block;font-size:10px;font-weight:700;padding:1px 5px;border-radius:2px;background:var(--yellow-light);color:var(--yellow);text-transform:uppercase;letter-spacing:.04em;border:1px solid #fde68a;}
+.edit-player-grid{display:grid;grid-template-columns:1fr 56px 56px 72px;gap:6px;align-items:end;margin-bottom:6px;}
+.hidden{display:none!important;}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="header-left">
+    <span class="header-title">DM Module</span>
+    <span class="session-name-label" id="headerSessionName"></span>
+  </div>
+  <div class="header-right">
+    <span id="headerRoundBadge" class="round-badge hidden">Round 1</span>
+    <button class="settings-btn" data-action="openSession" title="Session Settings">&#9881;</button>
+  </div>
+</header>
+
+<nav class="nav-tabs">
+  <button class="nav-tab active" data-tab="dashboard">Dashboard</button>
+  <button class="nav-tab" data-tab="combat">Combat</button>
+  <button class="nav-tab" data-tab="encounter">Encounter</button>
+</nav>
+
+<div id="turnStrip" class="turn-strip hidden">
+  <span class="turn-strip-name" id="turnStripName">-</span>
+  <button class="t-btn" data-action="nextTurn">Next Turn</button>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<div class="victory-overlay" id="victoryOverlay">
+  <div style="font-size:56px;margin-bottom:8px;">&#127942;</div>
+  <div class="victory-title">Victory!</div>
+  <div class="victory-sub">The players have won the battle.</div>
+  <button class="btn btn-primary" data-action="closeVictory" style="font-size:16px;padding:12px 32px;">Continue</button>
+</div>
+
+<!-- ═══ DASHBOARD ═══ -->
+<section id="tab-dashboard" class="section active">
+  <div class="dashboard-banner">
+    <div>
+      <div style="font-size:13px;font-weight:500;opacity:.8;margin-bottom:2px;">Current Session</div>
+      <div style="font-size:22px;font-weight:700;" id="dashSessionName">No Session</div>
+    </div>
+    <div style="text-align:right;">
+      <div style="font-size:11px;opacity:.7;margin-bottom:2px;">Combat</div>
+      <div style="font-size:17px;font-weight:700;" id="dashCombatStatus">Inactive</div>
+    </div>
+  </div>
+  <div class="dashboard-stats-row">
+    <div class="dashboard-stat-card"><div class="dashboard-stat-label">Players</div><div class="dashboard-stat-value" id="dashPlayerCount">0</div></div>
+    <div class="dashboard-stat-card"><div class="dashboard-stat-label">Round</div><div class="dashboard-stat-value" id="dashRound">-</div></div>
+    <div class="dashboard-stat-card"><div class="dashboard-stat-label">Enemies</div><div class="dashboard-stat-value" id="dashEnemyCount">0</div></div>
+  </div>
+  <div class="section-header">
+    <span class="section-title">Players</span>
+    <div style="display:flex;gap:6px;">
+      <button class="btn btn-ghost btn-sm" data-action="addConcentration">+ Concentration</button>
+      <button class="btn btn-ghost btn-sm" data-action="editPlayers">Edit</button>
+    </div>
+  </div>
+  <div class="player-grid" id="dashboardGrid">
+    <div class="empty-state" style="grid-column:1/-1;padding:20px;">No players configured. Tap Edit.</div>
+  </div>
+  <div class="separator"></div>
+  <div class="section-header">
+    <span class="section-title">Pinned Notes</span>
+  </div>
+  <div id="pinnedLogWrap" class="hidden">
+    <div class="pinned-log-wrap" id="pinnedLogList"></div>
+  </div>
+  <div class="section-header" style="margin-top:8px;">
+    <span class="section-title">Combat Log</span>
+    <button class="btn btn-ghost btn-sm" data-action="clearLog">Clear</button>
+  </div>
+  <div class="combat-log-wrap" id="combatLog">
+    <div class="log-entry"><span class="log-msg log-system">-- Combat log ready --</span></div>
+  </div>
+</section>
+
+<!-- ═══ COMBAT ═══ -->
+<section id="tab-combat" class="section">
+  <div class="combat-controls">
+    <div style="flex:1;min-width:80px;">
+      <div style="font-size:11px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;">Round</div>
+      <div style="font-size:24px;font-weight:700;color:var(--teal);" id="roundCounter">-</div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;">
+      <button class="btn btn-primary btn-sm" data-action="startCombat" id="startCombatBtn">Start Combat</button>
+      <button class="btn btn-ghost btn-sm hidden" data-action="endCombat" id="endCombatBtn">End Combat</button>
+      <button class="btn btn-ghost btn-sm" data-action="openAddCombat">+ Add</button>
+      <button class="btn btn-ghost btn-sm" data-action="sortByInit">Sort</button>
+    </div>
+  </div>
+  <div id="turnAlertArea"></div>
+  <ul class="init-list" id="initList"></ul>
+</section>
+
+<!-- ═══ ENCOUNTER ═══ -->
+<section id="tab-encounter" class="section">
+
+  <div class="section-header">
+    <span class="section-title">Encounter Groups</span>
+    <button class="btn btn-ghost btn-sm" data-action="openSaveGroup">Save Current</button>
+  </div>
+  <div id="groupGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:16px;"></div>
+
+  <div class="separator"></div>
+
+  <div class="section-header">
+    <span class="section-title">Add Monsters</span>
+  </div>
+  <div class="search-dropdown-wrap" id="encSearchWrap">
+    <input type="text" id="monsterSearchInput" placeholder="Search or browse monsters..." autocomplete="off">
+    <button class="search-clear hidden" id="encSearchClear" data-action="clearEncSearch">&#215;</button>
+    <div class="dropdown-list" id="monsterResults"></div>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+    <button class="btn btn-secondary btn-sm" data-action="openAddManualModal">+ Add manually</button>
+    <button class="btn btn-ghost btn-sm" data-action="rollAllInit">Roll all init</button>
+    <button class="btn btn-ghost btn-sm" data-action="clearEncounter">Clear all</button>
+  </div>
+
+  <div class="section-header">
+    <span class="section-title">Current Encounter <span id="encMonsterCount" style="font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0;"></span></span>
+  </div>
+  <div class="encounter-grid" id="encounterGrid"></div>
+
+  <button class="btn btn-primary btn-full" data-action="loadEncounter" style="margin-top:4px;">Load into Combat</button>
+</section>
+
+<!-- ═══ FAB ═══ -->
+<button class="fab" data-action="openDice">&#9670;</button>
+
+<!-- DICE -->
+<div class="sheet-overlay" id="diceSheet">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Dice Roller</div>
+    <div class="dice-result" id="diceResult">-</div>
+    <div class="dice-result-detail" id="diceResultDetail"></div>
+    <div class="dice-grid">
+      <button class="dice-btn" data-die="4">d4</button>
+      <button class="dice-btn" data-die="6">d6</button>
+      <button class="dice-btn" data-die="8">d8</button>
+      <button class="dice-btn" data-die="10">d10</button>
+      <button class="dice-btn" data-die="12">d12</button>
+      <button class="dice-btn" data-die="20">d20</button>
+      <button class="dice-btn" data-die="100">d100</button>
+      <button class="dice-btn" data-die="2">Coin</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:16px;">
+      <div class="form-group" style="flex:1;margin-bottom:0;"><label>Count</label><input type="number" id="diceCount" value="1" min="1" max="20"></div>
+      <div class="form-group" style="flex:1;margin-bottom:0;"><label>Modifier</label><input type="number" id="diceMod" value="0" min="-20" max="20"></div>
+    </div>
+    <button class="btn btn-ghost btn-full" data-action="closeDice">Close</button>
+  </div>
+</div>
+
+<!-- ADD TO COMBAT MODAL -->
+<div class="modal-overlay" id="addCombatModal">
+  <div class="modal">
+    <div class="modal-title">Add to Combat</div>
+    <div class="modal-tabs">
+      <button class="modal-tab active" data-modal-tab="db">Database</button>
+      <button class="modal-tab" data-modal-tab="custom">Custom</button>
+      <button class="modal-tab" data-modal-tab="players">Players</button>
+    </div>
+    <div class="modal-tab-panel active" id="mtp-db">
+      <div class="search-dropdown-wrap" style="margin-bottom:8px;">
+        <input type="text" id="addCombatSearch" placeholder="Click to browse or type..." autocomplete="off">
+        <button class="search-clear hidden" id="addCombatSearchClear">&#215;</button>
+        <div class="dropdown-list" id="addCombatResults"></div>
+      </div>
+      <div id="addCombatSelected" style="min-height:48px;margin-bottom:8px;"><div style="font-size:12px;color:var(--text-muted);">Select a monster above.</div></div>
+      <div class="form-group">
+        <label>Initiative Roll</label>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input type="number" id="addCombatInit" placeholder="15" style="width:80px;">
+          <button class="btn btn-ghost btn-sm" data-action="rollAddCombatInit">Roll d20</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
+        <input type="checkbox" id="addCombatSurprised" style="width:auto;">
+        <label for="addCombatSurprised" style="text-transform:none;font-size:13px;letter-spacing:0;margin-bottom:0;cursor:pointer;">Mark as surprised</label>
+      </div>
+      <button class="btn btn-primary btn-full" data-action="confirmAddCombatDB">Add to Combat</button>
+    </div>
+    <div class="modal-tab-panel" id="mtp-custom">
+      <div style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Type</div>
+      <div class="type-toggle">
+        <button class="type-btn active-enemy" data-customtype="enemy" id="customTypeEnemy">Monster</button>
+        <button class="type-btn" data-customtype="npc" id="customTypeNpc">NPC (friendly)</button>
+      </div>
+      <div class="form-group"><label>Name</label><input type="text" id="customName" placeholder="e.g. Goblin Shaman"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+        <div class="form-group"><label>Initiative</label><input type="number" id="customInit" placeholder="12"></div>
+        <div class="form-group"><label>Max HP</label><input type="number" id="customHp" placeholder="20"></div>
+        <div class="form-group"><label>AC</label><input type="number" id="customAC" placeholder="13"></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">
+        <input type="checkbox" id="customSurprised" style="width:auto;">
+        <label for="customSurprised" style="text-transform:none;font-size:13px;letter-spacing:0;margin-bottom:0;cursor:pointer;">Mark as surprised</label>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Attacks / Spells <span style="font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></div>
+      <div id="customAttackRows"></div>
+      <button class="btn btn-ghost btn-sm" data-action="addCustomAttackRow" style="margin-bottom:12px;">+ Add attack</button>
+      <button class="btn btn-primary btn-full" data-action="confirmAddCustom">Add to Combat</button>
+    </div>
+    <div class="modal-tab-panel" id="mtp-players">
+      <div id="addCombatPlayersList"></div>
+    </div>
+    <div class="separator"></div>
+    <button class="btn btn-ghost btn-full" data-action="closeAddCombat">Cancel</button>
+  </div>
+</div>
+
+<!-- ADD MANUALLY TO ENCOUNTER MODAL -->
+<div class="modal-overlay" id="addManualModal">
+  <div class="modal">
+    <div class="modal-title">Add to Encounter</div>
+    <div class="form-group"><label>Name</label><input type="text" id="manualName" placeholder="e.g. Bandit"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+      <div class="form-group"><label>Max HP</label><input type="number" id="manualHp" placeholder="20"></div>
+      <div class="form-group"><label>AC</label><input type="number" id="manualAC" placeholder="13"></div>
+      <div class="form-group"><label>Init</label><input type="number" id="manualInit" placeholder="-"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-action="closeAddManual">Cancel</button>
+      <button class="btn btn-primary" data-action="confirmAddManual">Add</button>
+    </div>
+  </div>
+</div>
+
+<!-- ENCOUNTER MONSTER DETAIL MODAL -->
+<div class="modal-overlay" id="encMonsterDetailModal">
+  <div class="modal">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+      <div class="modal-title" id="encDetailName" style="margin-bottom:0;flex:1;">Monster</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+      <div class="form-group" style="margin-bottom:0;"><label>Max HP</label><input type="number" id="encDetailHp" placeholder="HP"></div>
+      <div class="form-group" style="margin-bottom:0;"><label>AC</label><input type="number" id="encDetailAC" placeholder="AC"></div>
+      <div class="form-group" style="margin-bottom:0;"><label>Init</label><input type="number" id="encDetailInit" placeholder="-"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-danger-outline btn-sm" data-action="removeEncMonster">Remove</button>
+      <button class="btn btn-ghost" data-action="closeEncDetail">Cancel</button>
+      <button class="btn btn-primary" data-action="saveEncDetail">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- SAVE GROUP MODAL -->
+<div class="modal-overlay" id="saveGroupModal">
+  <div class="modal">
+    <div class="modal-title">Save as Group</div>
+    <div class="form-group"><label>Group Name</label><input type="text" id="groupNameInput" placeholder="e.g. Goblin Ambush"></div>
+    <div id="saveGroupPreview" style="font-size:12px;color:var(--text-muted);margin-bottom:12px;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-action="closeSaveGroup">Cancel</button>
+      <button class="btn btn-primary" data-action="confirmSaveGroup">Save Group</button>
+    </div>
+  </div>
+</div>
+
+<!-- GROUP DETAIL MODAL -->
+<div class="modal-overlay" id="groupDetailModal">
+  <div class="modal">
+    <div class="modal-title" id="groupDetailName">Group</div>
+    <div id="groupDetailMonsters" style="margin-bottom:12px;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-danger-outline btn-sm" data-action="deleteGroup">Delete</button>
+      <button class="btn btn-ghost" data-action="closeGroupDetail">Close</button>
+      <button class="btn btn-primary" data-action="loadGroup">Load into Encounter</button>
+    </div>
+  </div>
+</div>
+
+<!-- CREATURE DETAIL MODAL -->
+<div class="modal-overlay" id="creatureDetailModal">
+  <div class="modal">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+      <div style="flex:1;">
+        <div class="modal-title" id="creatureDetailName" style="margin-bottom:2px;">Creature</div>
+        <span id="creatureDetailBadge" class="enemy-badge">Enemy</span>
+      </div>
+    </div>
+    <div id="creatureDetailStats" style="margin-bottom:12px;"></div>
+    <div style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Attacks &amp; Spells</div>
+    <div class="card" id="creatureDetailAttacks" style="margin-bottom:12px;"></div>
+    <div class="modal-actions"><button class="btn btn-ghost" data-action="closeCreatureDetail">Close</button></div>
+  </div>
+</div>
+
+<!-- CONDITIONS MODAL -->
+<div class="modal-overlay" id="conditionsModal">
+  <div class="modal">
+    <div class="modal-title">Conditions</div>
+    <div id="conditionButtons" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;"></div>
+    <button class="btn btn-ghost btn-full" data-action="closeConditions">Done</button>
+  </div>
+</div>
+
+<!-- EDIT PLAYERS MODAL -->
+<div class="modal-overlay" id="editPlayersModal">
+  <div class="modal">
+    <div class="modal-title">Edit Players</div>
+    <div style="display:grid;grid-template-columns:1fr 56px 56px 72px;gap:6px;margin-bottom:4px;">
+      <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;">Name</div>
+      <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;text-align:center;">HP</div>
+      <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;text-align:center;">AC</div>
+      <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;text-align:center;">Pass.Perc.</div>
+    </div>
+    <div id="editPlayersRows"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-action="closeEditPlayers">Cancel</button>
+      <button class="btn btn-primary" data-action="savePlayers">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- PLAYER DETAIL MODAL -->
+<div class="modal-overlay" id="playerDetailModal">
+  <div class="modal">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+      <div class="modal-title" id="playerDetailName" style="margin-bottom:0;flex:1;">Player</div>
+      <button class="toggle-btn" id="inspirationToggle" data-action="toggleInspiration">
+        <span class="toggle-dot"></span><span id="inspirationLabel">Inspiration</span>
+      </button>
+    </div>
+    <div id="playerDetailBody"></div>
+    <div style="margin-top:12px;padding:10px 12px;background:var(--yellow-light);border:1px solid #fde68a;border-radius:4px;">
+      <span class="todo-tag">TODO</span>
+      <span style="font-size:12px;color:var(--yellow);margin-left:6px;">Give items + inspiration auto-sync after PocketBase</span>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-action="closePlayerDetail">Close</button>
+      <button class="btn btn-secondary btn-sm" data-action="openEditFromDetail">Edit</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD CONCENTRATION MODAL -->
+<div class="modal-overlay" id="addConcentrationModal">
+  <div class="modal">
+    <div class="modal-title">Track Concentration</div>
+    <div class="form-group">
+      <label>Caster</label>
+      <select id="concCasterSelect"><option value="">-- Select player --</option></select>
+    </div>
+    <div class="form-group hidden" id="concCasterCustomWrap"><label>Or type name</label><input type="text" id="concCasterCustom" placeholder="Custom name..."></div>
+    <button class="btn btn-ghost btn-sm" data-action="toggleConcCustom" id="concCustomToggle" style="margin-bottom:12px;">Enter name manually</button>
+    <div class="form-group"><label>Spell</label><input type="text" id="concSpell" placeholder="e.g. Hold Person"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-action="closeAddConcentration">Cancel</button>
+      <button class="btn btn-primary" data-action="confirmAddConcentration">Track</button>
+    </div>
+  </div>
+</div>
+
+<!-- SURPRISE MODAL -->
+<div class="modal-overlay" id="surpriseModal">
+  <div class="modal">
+    <div class="modal-title">Surprise Round</div>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Who is surprised at the start of combat?</p>
+    <div id="surpriseCheckboxes" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-action="closeSurprise">Skip</button>
+      <button class="btn btn-primary" data-action="confirmSurprise">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- SESSION MODAL -->
+<div class="modal-overlay" id="sessionModal">
+  <div class="modal">
+    <div class="modal-title">&#9881; Session Settings</div>
+    <div id="sessionNoActive"><p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">No active session. Create one to invite players.</p><button class="btn btn-primary btn-full" data-action="createSession">Create Session</button></div>
+    <div id="sessionActive" class="hidden">
+      <div class="form-group"><label>Session Name</label><div style="display:flex;gap:6px;"><input type="text" id="sessionNameInput" placeholder="e.g. Curse of Strahd - Session 7"><button class="btn btn-secondary btn-sm" data-action="saveSessionName" style="white-space:nowrap;">Save</button></div></div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Session Code</div>
+      <div class="session-code-display" id="sessionCodeDisplay">------</div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;"><button class="btn btn-secondary btn-sm" data-action="copySessionCode" style="flex:1;">Copy Code</button><button class="btn btn-ghost btn-sm" data-action="regenerateCode">New Code</button></div>
+      <div class="separator"></div>
+      <div class="section-header"><span class="section-title">Players</span><button class="btn btn-ghost btn-sm" data-action="invitePlayer">+ Add</button></div>
+      <div class="card" id="invitedPlayersList"><div style="padding:14px;text-align:center;font-size:13px;color:var(--text-muted);">No players added yet.</div></div>
+      <div class="separator"></div>
+      <div class="card" style="padding:12px;margin-bottom:12px;">
+        <div class="info-row"><span class="info-label">Connection</span><span style="display:flex;align-items:center;gap:6px;"><span class="status-dot waiting"></span><span style="font-size:13px;font-weight:500;color:var(--yellow);">Waiting for PocketBase</span></span></div>
+        <div class="info-row"><span class="info-label">Realtime sync</span><span style="display:flex;align-items:center;gap:6px;"><span class="todo-tag">TODO</span><span style="font-size:12px;color:var(--text-muted);">via PocketBase</span></span></div>
+      </div>
+      <button class="btn btn-danger-outline btn-sm" data-action="endSession">End Session</button>
+    </div>
+    <div class="modal-actions"><button class="btn btn-ghost" data-action="closeSession">Close</button></div>
+  </div>
+</div>
+
+<!-- INVITE PLAYER MODAL -->
+<div class="modal-overlay" id="invitePlayerModal">
+  <div class="modal">
+    <div class="modal-title">Add Player</div>
+    <div class="form-group"><label>Name</label><input type="text" id="inviteName" placeholder="e.g. Joris"></div>
+    <div class="form-group"><label>Email (optional)</label><input type="email" id="inviteEmail" placeholder="joris@example.com"></div>
+    <div style="padding:10px 12px;background:var(--yellow-light);border:1px solid #fde68a;border-radius:4px;margin-bottom:12px;"><span class="todo-tag">TODO</span><span style="font-size:12px;color:var(--yellow);margin-left:6px;">Email invite via PocketBase - not active yet</span></div>
+    <div class="modal-actions"><button class="btn btn-ghost" data-action="closeInvitePlayer">Cancel</button><button class="btn btn-primary" data-action="confirmInvitePlayer">Add</button></div>
+  </div>
+</div>
+
+<script>
+// ═══════════ MONSTER DB ═══════════
+var MONSTER_DB=[
+  {name:'Bandit',hp:11,ac:12,cr:'1/8',attacks:[{name:'Scimitar',roll:'1d6+2 slashing'},{name:'Light Crossbow',roll:'1d8+2 piercing'}]},
+  {name:'Bandit Captain',hp:65,ac:15,cr:'2',attacks:[{name:'Multiattack',roll:'2x Scimitar + Dagger'},{name:'Scimitar',roll:'1d6+4 slashing'},{name:'Dagger',roll:'1d4+4 piercing'}]},
+  {name:'Bear, Black',hp:19,ac:11,cr:'1/2',attacks:[{name:'Claws',roll:'2d6+3 slashing'},{name:'Bite',roll:'1d6+3 piercing'}]},
+  {name:'Bear, Brown',hp:34,ac:11,cr:'1',attacks:[{name:'Bite',roll:'1d8+5 piercing'},{name:'Claws',roll:'2d6+5 slashing'}]},
+  {name:'Bugbear',hp:27,ac:16,cr:'1',attacks:[{name:'Morningstar',roll:'2d8+2 piercing'},{name:'Javelin',roll:'2d6+2 piercing'}]},
+  {name:'Cultist',hp:9,ac:12,cr:'1/8',attacks:[{name:'Scimitar',roll:'1d6+2 slashing'}]},
+  {name:'Death Dog',hp:39,ac:12,cr:'1',attacks:[{name:'Bite',roll:'1d6+2 piercing + DC11 Con or poisoned'}]},
+  {name:'Dire Wolf',hp:37,ac:14,cr:'1',attacks:[{name:'Bite',roll:'2d6+3 + DC13 Str or prone'}]},
+  {name:'Drow',hp:13,ac:15,cr:'1/4',attacks:[{name:'Shortsword',roll:'1d6+2 + 3d6 poison'},{name:'Hand Crossbow',roll:'1d6+2 + 3d6 poison'}]},
+  {name:'Ettin',hp:85,ac:12,cr:'4',attacks:[{name:'Morningstar',roll:'2d8+5 piercing'},{name:'Greataxe',roll:'1d12+5 slashing'}]},
+  {name:'Ghost',hp:45,ac:11,cr:'4',attacks:[{name:'Withering Touch',roll:'4d6+3 necrotic'},{name:'Horrifying Visage',roll:'DC13 Wis or frightened'},{name:'Possession',roll:'DC13 Cha or possessed'}]},
+  {name:'Gnoll',hp:22,ac:15,cr:'1/2',attacks:[{name:'Bite',roll:'1d4+2 piercing'},{name:'Spear',roll:'1d6+2 piercing'}]},
+  {name:'Goblin',hp:7,ac:15,cr:'1/4',attacks:[{name:'Scimitar',roll:'1d6+2 slashing'},{name:'Shortbow',roll:'1d6+2 piercing'}]},
+  {name:'Goblin Boss',hp:21,ac:17,cr:'1',attacks:[{name:'Scimitar x2',roll:'1d6+2 slashing'},{name:'Javelin',roll:'1d6+2 piercing'}]},
+  {name:'Guard',hp:11,ac:16,cr:'1/8',attacks:[{name:'Spear',roll:'1d6+1 piercing'}]},
+  {name:'Hell Hound',hp:45,ac:15,cr:'3',attacks:[{name:'Bite',roll:'1d8+3 + 2d6 fire'},{name:'Fire Breath',roll:'6d6 fire, DC12 Dex half'}]},
+  {name:'Hobgoblin',hp:11,ac:18,cr:'1/2',attacks:[{name:'Longsword',roll:'1d8+1 slashing'},{name:'Longbow',roll:'1d8+1 piercing'}]},
+  {name:'Hobgoblin Captain',hp:52,ac:17,cr:'3',attacks:[{name:'Greatsword x2',roll:'2d6+3 slashing'}]},
+  {name:'Imp',hp:10,ac:13,cr:'1',attacks:[{name:'Sting',roll:'1d4+3 + 3d6 poison, DC11 Con half'}]},
+  {name:'Kobold',hp:5,ac:12,cr:'1/8',attacks:[{name:'Dagger',roll:'1d4+2 piercing'},{name:'Sling',roll:'1d4+2 bludgeoning'}]},
+  {name:'Lich',hp:135,ac:17,cr:'21',attacks:[{name:'Paralyzing Touch',roll:'3d6 cold, DC18 Con or paralyzed'},{name:'Fireball',roll:'8d6 fire DC20 Dex half'}]},
+  {name:'Lizardfolk',hp:22,ac:15,cr:'1/2',attacks:[{name:'Bite',roll:'1d6+2 piercing'},{name:'Heavy Club',roll:'1d6+2 bludgeoning'}]},
+  {name:'Manticore',hp:68,ac:14,cr:'3',attacks:[{name:'Bite',roll:'1d8+3 piercing'},{name:'Claw',roll:'1d6+3 slashing'},{name:'Tail Spike',roll:'1d8+3, range 100/200'}]},
+  {name:'Medusa',hp:127,ac:15,cr:'6',attacks:[{name:'Snake Hair',roll:'1d4+4 + 4d6 poison, DC14 Con half'},{name:'Petrifying Gaze',roll:'DC14 Con or petrified'}]},
+  {name:'Mind Flayer',hp:71,ac:15,cr:'7',attacks:[{name:'Tentacles',roll:'2d10+4 psychic + DC15 Int or stunned'},{name:'Mind Blast',roll:'5d8+4 psychic 60ft cone, DC15 Int'}]},
+  {name:'Minotaur',hp:114,ac:14,cr:'3',attacks:[{name:'Greataxe',roll:'2d12+6 slashing'},{name:'Gore',roll:'2d8+6 piercing'}]},
+  {name:'Mummy',hp:58,ac:11,cr:'3',attacks:[{name:'Rotting Fist',roll:'2d6+3 + 3d6 necrotic, DC12 Con or max HP reduced'},{name:'Dreadful Glare',roll:'DC11 Wis or frightened'}]},
+  {name:'Ogre',hp:59,ac:11,cr:'2',attacks:[{name:'Greatclub',roll:'2d8+5 bludgeoning'},{name:'Javelin',roll:'2d6+5 piercing'}]},
+  {name:'Orc',hp:15,ac:13,cr:'1/2',attacks:[{name:'Greataxe',roll:'1d12+3 slashing'},{name:'Javelin',roll:'1d6+3 piercing'}]},
+  {name:'Owlbear',hp:59,ac:13,cr:'3',attacks:[{name:'Beak',roll:'1d10+5 piercing'},{name:'Claws',roll:'2d8+5 slashing'}]},
+  {name:'Phase Spider',hp:32,ac:13,cr:'3',attacks:[{name:'Bite',roll:'1d10+3 + 4d8 poison, DC11 Con half'}]},
+  {name:'Skeleton',hp:13,ac:13,cr:'1/4',attacks:[{name:'Shortsword',roll:'1d6+2 piercing'},{name:'Shortbow',roll:'1d6+2 piercing'}]},
+  {name:'Specter',hp:22,ac:12,cr:'1',attacks:[{name:'Life Drain',roll:'3d6 necrotic, DC10 Con or max HP reduced'}]},
+  {name:'Troll',hp:84,ac:15,cr:'5',attacks:[{name:'Bite',roll:'1d6+4 piercing'},{name:'Claw x2',roll:'2d6+4 slashing'}]},
+  {name:'Vampire',hp:144,ac:16,cr:'13',attacks:[{name:'Unarmed',roll:'1d8+4 + grapple'},{name:'Bite',roll:'1d6+4 + 3d6 necrotic, grappled'},{name:'Charm',roll:'DC17 Wis or charmed'}]},
+  {name:'Vampire Spawn',hp:82,ac:15,cr:'5',attacks:[{name:'Claws',roll:'2d4+3 + grapple'},{name:'Bite',roll:'1d6+3 + 2d6 necrotic, grappled'}]},
+  {name:'Werewolf',hp:58,ac:11,cr:'3',attacks:[{name:'Bite',roll:'1d8+2 + DC12 Con or lycanthropy'},{name:'Claws',roll:'2d4+2 slashing'}]},
+  {name:'Wight',hp:45,ac:14,cr:'3',attacks:[{name:'Longsword',roll:'1d8+2 slashing'},{name:'Life Drain',roll:'1d6+2 necrotic, DC13 Con or max HP reduced'}]},
+  {name:'Wraith',hp:67,ac:13,cr:'5',attacks:[{name:'Life Drain',roll:'4d8+4 necrotic, DC14 Con or max HP reduced'}]},
+  {name:'Wyvern',hp:110,ac:13,cr:'6',attacks:[{name:'Bite',roll:'2d6+4 piercing'},{name:'Stinger',roll:'2d6+4 + 7d6 poison, DC15 Con half'}]},
+  {name:'Wolf',hp:11,ac:13,cr:'1/4',attacks:[{name:'Bite',roll:'2d4+2 + DC11 Str or prone'}]},
+  {name:'Yuan-ti Abomination',hp:127,ac:15,cr:'7',attacks:[{name:'Bite',roll:'2d6+4 + 2d6 poison'},{name:'Constrict',roll:'2d6+4 + grapple'},{name:'Spit Poison',roll:'2d6 poison, DC13 Con half'}]},
+  {name:'Zombie',hp:22,ac:8,cr:'1/4',attacks:[{name:'Slam',roll:'1d6+1 bludgeoning'}]},
+  {name:'Roc',hp:248,ac:15,cr:'11',attacks:[{name:'Beak',roll:'4d8+9 piercing'},{name:'Talons',roll:'4d6+9 + grapple DC19'}]}
+];
+
+// ═══════════ PRE-MADE ENCOUNTER GROUPS DB ═══════════
+var PRESET_GROUPS=[
+  {name:'Goblin Ambush',monsters:[{name:'Goblin Boss',hp:21,ac:17},{name:'Goblin',hp:7,ac:15},{name:'Goblin',hp:7,ac:15},{name:'Goblin',hp:7,ac:15},{name:'Goblin',hp:7,ac:15}]},
+  {name:'Bandit Camp',monsters:[{name:'Bandit Captain',hp:65,ac:15},{name:'Bandit',hp:11,ac:12},{name:'Bandit',hp:11,ac:12},{name:'Bandit',hp:11,ac:12},{name:'Bandit',hp:11,ac:12}]},
+  {name:'Undead Patrol',monsters:[{name:'Wight',hp:45,ac:14},{name:'Zombie',hp:22,ac:8},{name:'Zombie',hp:22,ac:8},{name:'Skeleton',hp:13,ac:13},{name:'Skeleton',hp:13,ac:13}]},
+  {name:'Kobold Pack',monsters:[{name:'Kobold',hp:5,ac:12},{name:'Kobold',hp:5,ac:12},{name:'Kobold',hp:5,ac:12},{name:'Kobold',hp:5,ac:12},{name:'Kobold',hp:5,ac:12},{name:'Kobold',hp:5,ac:12}]},
+  {name:'Orc War Band',monsters:[{name:'Orc War Chief (Orc)',hp:93,ac:16},{name:'Orc',hp:15,ac:13},{name:'Orc',hp:15,ac:13},{name:'Orc',hp:15,ac:13},{name:'Orc',hp:15,ac:13}]},
+  {name:'Hobgoblin Squad',monsters:[{name:'Hobgoblin Captain',hp:52,ac:17},{name:'Hobgoblin',hp:11,ac:18},{name:'Hobgoblin',hp:11,ac:18},{name:'Hobgoblin',hp:11,ac:18}]},
+  {name:'Wolf Pack',monsters:[{name:'Dire Wolf',hp:37,ac:14},{name:'Wolf',hp:11,ac:13},{name:'Wolf',hp:11,ac:13},{name:'Wolf',hp:11,ac:13},{name:'Wolf',hp:11,ac:13}]},
+  {name:'Vampire Lair',monsters:[{name:'Vampire',hp:144,ac:16},{name:'Vampire Spawn',hp:82,ac:15},{name:'Vampire Spawn',hp:82,ac:15}]},
+  {name:'Gnoll Raiders',monsters:[{name:'Gnoll Pack Lord (Gnoll)',hp:49,ac:15},{name:'Gnoll',hp:22,ac:15},{name:'Gnoll',hp:22,ac:15},{name:'Gnoll',hp:22,ac:15}]},
+  {name:'Hell\'s Guards',monsters:[{name:'Hell Hound',hp:45,ac:15},{name:'Hell Hound',hp:45,ac:15},{name:'Imp',hp:10,ac:13}]},
+  {name:'Bugbear Scouts',monsters:[{name:'Bugbear Chief (Bugbear)',hp:65,ac:17},{name:'Bugbear',hp:27,ac:16},{name:'Bugbear',hp:27,ac:16}]},
+  {name:'Zombie Horde',monsters:[{name:'Zombie',hp:22,ac:8},{name:'Zombie',hp:22,ac:8},{name:'Zombie',hp:22,ac:8},{name:'Zombie',hp:22,ac:8},{name:'Zombie',hp:22,ac:8},{name:'Zombie',hp:22,ac:8}]},
+];
+
+var CONDITIONS=['Blinded','Charmed','Concentration','Deafened','Exhaustion','Frightened','Grappled','Incapacitated','Invisible','Paralyzed','Petrified','Poisoned','Prone','Restrained','Stunned','Surprised','Unconscious'];
+
+// ═══════════ STATE ═══════════
+var state={
+  combatActive:false,round:0,currentTurnIndex:0,
+  creatures:[],players:[],encounterMonsters:[],
+  concentrations:[],combatLog:[],pinnedLogs:[],
+  session:null,nextId:1,
+  selectedDBMonster:null,customCreatureType:'enemy',concCustomMode:false,
+  savedGroups:[],selectedGroupId:null,editingEncMonsterId:null
+};
+
+function genId(){return state.nextId++;}
+function rollDie(s){return Math.floor(Math.random()*s)+1;}
+function hpColor(c,m){if(!m)return'#94a3b8';var p=c/m;return p>.6?'var(--green)':p>.25?'var(--yellow)':'var(--red)';}
+function hpPct(c,m){if(!m)return 0;return Math.max(0,Math.min(100,Math.round(c/m*100)));}
+function condClass(c){return'cond-'+c.toLowerCase();}
+function escHtml(s){var d=document.createElement('div');d.appendChild(document.createTextNode(String(s||'')));return d.innerHTML;}
+function showToast(msg,type){var c=document.getElementById('toastContainer');var t=document.createElement('div');t.className='toast'+(type?' '+type:'');t.textContent=msg;c.appendChild(t);setTimeout(function(){if(t.parentNode)t.parentNode.removeChild(t);},2800);}
+
+// ═══════════ COMBAT LOG ═══════════
+function logEntry(msg,type){
+  var now=new Date();var h=String(now.getHours()).padStart(2,'0');var min=String(now.getMinutes()).padStart(2,'0');
+  var entry={id:genId(),msg:msg,type:type,time:h+':'+min,pinned:false};
+  state.combatLog.push(entry);
+  renderLog();
+}
+
+function renderLog(){
+  var el=document.getElementById('combatLog');
+  if(!state.combatLog.length){el.innerHTML='<div class="log-entry"><span class="log-msg log-system">-- Combat log ready --</span></div>';return;}
+  el.innerHTML=state.combatLog.slice(-80).map(function(e){
+    var cls=e.type?'log-'+e.type:'';
+    var pinClass=e.pinned?'log-entry pinned':'log-entry';
+    return'<div class="'+pinClass+'" data-log-id="'+e.id+'">'+'<button class="log-pin-btn'+(e.pinned?' pinned-active':'')+'" data-action="togglePin" data-log-id="'+e.id+'" title="Pin">&#128204;</button>'+'<span class="log-time">'+e.time+'</span>'+'<span class="log-msg '+cls+'">'+escHtml(e.msg)+'</span>'+'</div>';
+  }).join('');
+  el.scrollTop=el.scrollHeight;
+  renderPinnedLogs();
+}
+
+function renderPinnedLogs(){
+  var pinned=state.combatLog.filter(function(e){return e.pinned;});
+  var wrap=document.getElementById('pinnedLogWrap');
+  var list=document.getElementById('pinnedLogList');
+  if(!pinned.length){wrap.classList.add('hidden');return;}
+  wrap.classList.remove('hidden');
+  list.innerHTML=pinned.map(function(e){
+    var cls=e.type?'log-'+e.type:'';
+    return'<div class="pinned-log-entry"><button class="pin-unpin-btn" data-action="unpinLog" data-log-id="'+e.id+'" title="Unpin">&#128204;</button><span class="log-time">'+e.time+'</span><span class="'+cls+'">'+escHtml(e.msg)+'</span></div>';
+  }).join('');
+}
+
+function togglePin(id){
+  var e=state.combatLog.find(function(x){return x.id===id;});
+  if(e)e.pinned=!e.pinned;
+  renderLog();
+}
+function unpinLog(id){
+  var e=state.combatLog.find(function(x){return x.id===id;});
+  if(e)e.pinned=false;
+  renderLog();
+}
+
+// ═══════════ DASHBOARD ═══════════
+function renderDashboard(){
+  var sn=(state.session&&state.session.name)?state.session.name:'No Session';
+  document.getElementById('dashSessionName').textContent=sn;
+  document.getElementById('dashCombatStatus').textContent=state.combatActive?'Round '+state.round:'Inactive';
+  document.getElementById('dashPlayerCount').textContent=state.players.length;
+  document.getElementById('dashRound').textContent=state.combatActive?state.round:'-';
+  var en=state.creatures.filter(function(c){return c.type==='enemy'&&!c.dead;});
+  document.getElementById('dashEnemyCount').textContent=en.length;
+  renderDashboardPlayers();
+}
+
+function getPlayerCombatData(p){
+  // merge player card with their live combat creature if in combat
+  var creature=state.creatures.find(function(c){return c.name===p.name&&c.type==='player';});
+  if(creature){
+    return{hp:creature.hp,maxHp:creature.maxHp,ac:creature.ac,passivePerception:p.passivePerception,conditions:creature.conditions,inspiration:p.inspiration,tempHp:creature.tempHp};
+  }
+  return{hp:p.hp,maxHp:p.maxHp,ac:p.ac,passivePerception:p.passivePerception,conditions:p.conditions||[],inspiration:p.inspiration,tempHp:0};
+}
+
+function renderDashboardPlayers(){
+  var grid=document.getElementById('dashboardGrid');
+  if(!state.players.length){grid.innerHTML='<div class="empty-state" style="grid-column:1/-1;padding:20px;">No players configured. Tap Edit.</div>';return;}
+  grid.innerHTML='';
+  state.players.forEach(function(p){
+    var d=getPlayerCombatData(p);
+    var pct=hpPct(d.hp,d.maxHp);var col=hpColor(d.hp,d.maxHp);
+    var cls='player-card';
+    if(pct===0)cls+=' hp-dead';else if(pct<=25)cls+=' hp-danger';else if(pct<=60)cls+=' hp-warning';
+    var conc=state.concentrations.find(function(c){return c.caster===p.name;});
+    var condHtml=(d.conditions&&d.conditions.length)?'<div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:4px;">'+d.conditions.slice(0,3).map(function(c){return'<span class="condition-tag '+condClass(c)+'" style="font-size:10px;padding:1px 5px;">'+escHtml(c)+'</span>';}).join('')+(d.conditions.length>3?'<span class="condition-tag cond-blinded" style="font-size:10px;padding:1px 5px;">+'+(d.conditions.length-3)+'</span>':'')+' </div>':'';
+    var concHtml=conc?'<div style="margin-top:4px;"><span class="condition-tag cond-concentration" style="font-size:10px;padding:1px 5px;">Conc: '+escHtml(conc.spell)+'</span></div>':'';
+    var inspHtml=d.inspiration?'<span style="font-size:9px;background:var(--yellow-light);color:var(--yellow);border:1px solid #fde68a;padding:1px 4px;border-radius:2px;font-weight:700;">INSPO</span>':'';
+    var tempHtml=d.tempHp>0?'<span class="stat-chip" style="color:var(--purple);border-color:var(--purple-light);background:var(--purple-light);">+'+d.tempHp+' tmp</span>':'';
+    var card=document.createElement('div');
+    card.className=cls;
+    card.setAttribute('data-action','openPlayerDetail');
+    card.setAttribute('data-player-id',p.id);
+    card.innerHTML=
+      '<div class="player-card-name">'+escHtml(p.name)+(inspHtml?' '+inspHtml:'')+'</div>'+
+      '<div class="player-card-hp-row"><div class="hp-bar-wrap" style="flex:1;"><div class="hp-bar" style="width:'+pct+'%;background:'+col+';"></div></div><span class="hp-text" style="color:'+col+';">'+d.hp+'/'+d.maxHp+'</span></div>'+
+      '<div class="player-card-stats">'+(d.ac?'<span class="stat-chip">AC '+d.ac+'</span>':'')+(d.passivePerception?'<span class="stat-chip">PP '+d.passivePerception+'</span>':'')+tempHtml+'</div>'+
+      condHtml+concHtml;
+    grid.appendChild(card);
+  });
+}
+
+// ═══════════ INITIATIVE ═══════════
+function getBadgeHtml(t){
+  if(t==='enemy')return'<span class="enemy-badge">Enemy</span>';
+  if(t==='npc')return'<span class="npc-badge">NPC</span>';
+  return'<span class="player-badge">Player</span>';
+}
+
+function renderInitList(){
+  var list=document.getElementById('initList');list.innerHTML='';
+  if(!state.creatures.length){list.innerHTML='<li class="empty-state"><div style="font-size:28px;margin-bottom:8px;">&#9876;</div><div>No creatures in initiative.</div></li>';return;}
+  state.creatures.forEach(function(c,idx){
+    var isActive=state.combatActive&&idx===state.currentTurnIndex;
+    var li=document.createElement('li');
+    li.className='init-item'+(isActive?' active-turn':'')+(c.dead?' dead':'')+((!c.dead&&c.unconscious)?' unconscious-state':'');
+    var condHtml='';
+    if(c.conditions&&c.conditions.length)condHtml='<div class="condition-list">'+c.conditions.map(function(cd){return'<span class="condition-tag '+condClass(cd)+'">'+escHtml(cd)+'<button class="remove-condition" data-remove-condition="'+escHtml(cd)+'" data-creature-id="'+c.id+'">x</button></span>';}).join('')+'</div>';
+    var statusLabel=c.dead?'<span style="font-size:11px;color:var(--red);font-weight:700;">DEAD</span>':(c.unconscious?'<span style="font-size:11px;color:var(--text-muted);font-weight:700;">DOWN</span>':'');
+    var surprisedLabel=c.surprised?'<span class="condition-tag cond-surprised" style="font-size:10px;">Surprised</span>':'';
+    var tempHp=c.tempHp>0?'<span class="temp-hp-badge">+'+c.tempHp+' temp</span>':'';
+    li.innerHTML=
+      '<div class="init-header" data-action="openCreatureDetail" data-creature-id="'+c.id+'">'+'<div class="init-number">'+c.initRoll+'</div>'+'<div class="creature-name">'+escHtml(c.name)+'</div>'+getBadgeHtml(c.type)+'</div>'+
+      '<div class="init-stats"><div style="display:flex;align-items:center;gap:4px;"><div class="hp-bar-wrap"><div class="hp-bar" style="width:'+hpPct(c.hp,c.maxHp)+'%;background:'+hpColor(c.hp,c.maxHp)+';"></div></div><span class="hp-text" style="color:'+hpColor(c.hp,c.maxHp)+';">'+c.hp+'/'+c.maxHp+'</span></div>'+(c.ac?'<span class="stat-chip">AC '+c.ac+'</span>':'')+tempHp+statusLabel+surprisedLabel+'</div>'+
+      condHtml+
+      '<div class="dmg-heal-inline"><input type="number" placeholder="0" min="0" id="dmg-input-'+c.id+'"><button class="dmg-btn minus" data-action="applyInlineDmg" data-creature-id="'+c.id+'">- Damage</button><button class="dmg-btn plus" data-action="applyInlineHeal" data-creature-id="'+c.id+'">+ Heal</button></div>'+
+      '<div class="init-actions"><button class="btn btn-sm btn-ghost" data-action="openConditions" data-creature-id="'+c.id+'">Conditions</button>'+(c.dead?'<button class="btn btn-sm btn-ghost" data-action="revive" data-creature-id="'+c.id+'">Revive</button>':(c.unconscious?'<button class="btn btn-sm btn-ghost" data-action="stabilize" data-creature-id="'+c.id+'">Stabilize</button>':''))+'<button class="btn btn-sm btn-ghost" style="margin-left:auto;" data-action="removeCreature" data-creature-id="'+c.id+'">Remove</button></div>';
+    list.appendChild(li);
+  });
+}
+
+function renderCombatHeader(){
+  var rnd=document.getElementById('roundCounter');
+  var badge=document.getElementById('headerRoundBadge');
+  var strip=document.getElementById('turnStrip');
+  var stripName=document.getElementById('turnStripName');
+  var startBtn=document.getElementById('startCombatBtn');
+  var endBtn=document.getElementById('endCombatBtn');
+  if(state.combatActive){
+    rnd.textContent=state.round;badge.textContent='Round '+state.round;badge.classList.remove('hidden');
+    strip.classList.remove('hidden');startBtn.classList.add('hidden');endBtn.classList.remove('hidden');
+    var cur=state.creatures[state.currentTurnIndex];
+    if(cur)stripName.textContent=cur.name+'\'s turn';
+  }else{
+    rnd.textContent='-';badge.classList.add('hidden');strip.classList.add('hidden');
+    startBtn.classList.remove('hidden');endBtn.classList.add('hidden');
+  }
+}
+
+function renderAll(){renderInitList();renderCombatHeader();renderDashboard();}
+
+// ═══════════ COMBAT LOGIC ═══════════
+function startCombat(){
+  if(!state.creatures.length){showToast('Add creatures first','error');return;}
+  state.combatActive=true;state.round=1;state.currentTurnIndex=0;
+  sortCreaturesByInit();
+  // skip to first non-dead
+  skipDeadCreatures();
+  logEntry('Combat started - Round 1','system');renderAll();onTurnStart();showToast('Combat started!','success');
+}
+
+function endCombat(){
+  // clear ALL creatures (players and enemies)
+  state.creatures=[];
+  state.combatActive=false;state.round=0;state.currentTurnIndex=0;
+  document.getElementById('turnAlertArea').innerHTML='';
+  logEntry('Combat ended - victory!','system');renderAll();
+  document.getElementById('victoryOverlay').classList.add('open');
+}
+
+function nextTurn(){
+  if(!state.combatActive)return;
+  var prev=state.creatures[state.currentTurnIndex];if(prev)prev.surprised=false;
+  state.currentTurnIndex++;
+  if(state.currentTurnIndex>=state.creatures.length){state.currentTurnIndex=0;state.round++;logEntry('--- Round '+state.round+' ---','system');showToast('Round '+state.round+' begins');}
+  // skip dead creatures
+  skipDeadCreatures();
+  renderAll();onTurnStart();
+}
+
+function skipDeadCreatures(){
+  if(!state.creatures.length)return;
+  var attempts=0;
+  while(state.creatures[state.currentTurnIndex]&&state.creatures[state.currentTurnIndex].dead&&attempts<state.creatures.length){
+    state.currentTurnIndex++;
+    if(state.currentTurnIndex>=state.creatures.length){state.currentTurnIndex=0;state.round++;logEntry('--- Round '+state.round+' ---','system');}
+    attempts++;
+  }
+}
+
+function onTurnStart(){
+  var area=document.getElementById('turnAlertArea');area.innerHTML='';
+  if(!state.combatActive)return;
+  var c=state.creatures[state.currentTurnIndex];if(!c)return;
+  if(c.conditions&&c.conditions.length){var div=document.createElement('div');div.className='turn-alert';div.textContent=c.name+' has conditions: '+c.conditions.join(', ');area.appendChild(div);}
+  logEntry(c.name+'\'s turn (Round '+state.round+')','event');
+}
+
+function sortCreaturesByInit(){state.creatures.sort(function(a,b){return b.initRoll-a.initRoll;});}
+
+// ═══════════ INLINE DMG/HEAL ═══════════
+function applyInlineDmg(id){
+  var c=state.creatures.find(function(x){return x.id===id;});if(!c)return;
+  var inp=document.getElementById('dmg-input-'+id);
+  var amount=parseInt(inp?inp.value:0)||0;
+  if(!amount){showToast('Enter an amount','error');return;}
+  if(c.tempHp>0&&amount>0){var abs=Math.min(c.tempHp,amount);c.tempHp-=abs;amount-=abs;}
+  c.hp=Math.max(0,c.hp-amount);
+  if(c.hp===0&&c.type==='enemy'){c.dead=true;logEntry(c.name+' died! ('+amount+' dmg)','dmg');showToast(c.name+' is dead!','error');}
+  else if(c.hp===0&&c.type!=='enemy'){c.unconscious=true;if(!c.conditions.includes('Unconscious'))c.conditions.push('Unconscious');logEntry(c.name+' down! ('+amount+' dmg)','dmg');showToast(c.name+' is down!','warning');}
+  else{logEntry(c.name+' took '+amount+' dmg (HP: '+c.hp+'/'+c.maxHp+')','dmg');}
+  if(amount>0){var conc=state.concentrations.find(function(x){return x.caster===c.name;});if(conc){var dc=Math.max(10,Math.floor(amount/2));logEntry(c.name+' - Con save DC '+dc+' for '+conc.spell+'!','event');showToast(c.name+' - Con save DC '+dc+'!','warning');}}
+  // sync player HP back to player record
+  if(c.type==='player'){var pl=state.players.find(function(p){return p.name===c.name;});if(pl){pl.hp=c.hp;pl.conditions=c.conditions;}}
+  renderAll();
+}
+
+function applyInlineHeal(id){
+  var c=state.creatures.find(function(x){return x.id===id;});if(!c)return;
+  var inp=document.getElementById('dmg-input-'+id);
+  var amount=parseInt(inp?inp.value:0)||0;
+  if(!amount){showToast('Enter an amount','error');return;}
+  c.hp=Math.min(c.maxHp,c.hp+amount);
+  if(c.hp>0&&c.unconscious){c.unconscious=false;c.conditions=c.conditions.filter(function(x){return x!=='Unconscious';});}
+  if(c.hp>0)c.dead=false;
+  if(c.type==='player'){var pl=state.players.find(function(p){return p.name===c.name;});if(pl){pl.hp=c.hp;pl.conditions=c.conditions;}}
+  logEntry(c.name+' healed '+amount+' HP (HP: '+c.hp+'/'+c.maxHp+')','heal');
+  renderAll();
+}
+
+function revive(id){var c=state.creatures.find(function(x){return x.id===id;});if(!c)return;c.dead=false;c.hp=1;logEntry(c.name+' revived','heal');renderAll();showToast(c.name+' revived');}
+function stabilize(id){var c=state.creatures.find(function(x){return x.id===id;});if(!c)return;c.unconscious=false;c.hp=1;c.conditions=c.conditions.filter(function(x){return x!=='Unconscious';});if(c.type==='player'){var pl=state.players.find(function(p){return p.name===c.name;});if(pl){pl.hp=1;pl.conditions=c.conditions;}}logEntry(c.name+' stabilized','heal');renderAll();showToast(c.name+' stabilized');}
+function removeCreature(id){state.creatures=state.creatures.filter(function(c){return c.id!==id;});if(state.combatActive&&state.currentTurnIndex>=state.creatures.length)state.currentTurnIndex=Math.max(0,state.creatures.length-1);renderAll();}
+
+// ═══════════ CONDITIONS ═══════════
+var conditionsTargetId=null;
+function openConditions(id){
+  conditionsTargetId=id;
+  var c=state.creatures.find(function(x){return x.id===id;});if(!c)return;
+  var container=document.getElementById('conditionButtons');container.innerHTML='';
+  CONDITIONS.forEach(function(cond){
+    var active=c.conditions.includes(cond);
+    var btn=document.createElement('button');
+    btn.className='condition-tag '+condClass(cond);btn.style.cursor='pointer';
+    btn.style.border=active?'2px solid currentColor':'1px dashed currentColor';btn.style.opacity=active?'1':'0.5';
+    btn.textContent=cond;btn.setAttribute('data-condition',cond);btn.setAttribute('data-action','toggleCondition');
+    container.appendChild(btn);
+  });
+  document.getElementById('conditionsModal').classList.add('open');
+}
+
+function toggleCondition(cond){
+  var c=state.creatures.find(function(x){return x.id===conditionsTargetId;});if(!c)return;
+  var idx=c.conditions.indexOf(cond);
+  if(idx===-1){c.conditions.push(cond);logEntry(c.name+': '+cond+' applied','event');}
+  else{c.conditions.splice(idx,1);logEntry(c.name+': '+cond+' removed','event');}
+  if(c.type==='player'){var pl=state.players.find(function(p){return p.name===c.name;});if(pl)pl.conditions=c.conditions.slice();}
+  openConditions(conditionsTargetId);
+}
+
+function removeConditionFromCreature(creatureId,cond){
+  var c=state.creatures.find(function(x){return x.id===creatureId;});if(!c)return;
+  c.conditions=c.conditions.filter(function(x){return x!==cond;});
+  if(c.type==='player'){var pl=state.players.find(function(p){return p.name===c.name;});if(pl)pl.conditions=c.conditions.slice();}
+  logEntry(c.name+': '+cond+' removed','event');renderInitList();renderDashboardPlayers();
+}
+
+// ═══════════ ADD TO COMBAT ═══════════
+function openAddCombat(){
+  state.selectedDBMonster=null;state.customCreatureType='enemy';
+  document.getElementById('addCombatSearch').value='';
+  document.getElementById('addCombatResults').classList.remove('open');
+  document.getElementById('addCombatSearchClear').classList.add('hidden');
+  document.getElementById('addCombatSelected').innerHTML='<div style="font-size:12px;color:var(--text-muted);">Select a monster above.</div>';
+  document.getElementById('addCombatInit').value='';document.getElementById('addCombatSurprised').checked=false;
+  document.getElementById('customName').value='';document.getElementById('customInit').value='';document.getElementById('customHp').value='';document.getElementById('customAC').value='';
+  document.getElementById('customSurprised').checked=false;document.getElementById('customAttackRows').innerHTML='';
+  document.getElementById('customTypeEnemy').className='type-btn active-enemy';document.getElementById('customTypeNpc').className='type-btn';
+  switchCombatModalTab('db');renderAddCombatPlayers();
+  document.getElementById('addCombatModal').classList.add('open');
+}
+
+function renderAddCombatPlayers(){
+  var container=document.getElementById('addCombatPlayersList');
+  var allPlayers=state.players.slice();
+  if(state.session&&state.session.invitedPlayers){
+    state.session.invitedPlayers.forEach(function(ip){
+      if(!allPlayers.find(function(p){return p.name===ip.name;})){
+        allPlayers.push({id:ip.id,name:ip.name,maxHp:0,hp:0,ac:0,passivePerception:0,conditions:[],fromSession:true});
+      }
+    });
+  }
+  if(!allPlayers.length){container.innerHTML='<div style="padding:24px;text-align:center;color:var(--text-muted);font-size:13px;"><div style="font-size:28px;margin-bottom:8px;">&#128101;</div><div>No players configured.</div><div style="font-size:12px;margin-top:4px;">Add players via Dashboard or Session settings.</div></div>';return;}
+  container.innerHTML='';
+  allPlayers.forEach(function(p){
+    var alreadyIn=state.creatures.find(function(c){return c.name===p.name&&c.type==='player';});
+    var row=document.createElement('div');row.className='invited-player-row';
+    row.innerHTML='<div style="flex:1;"><div style="font-size:13px;font-weight:600;">'+escHtml(p.name)+'</div>'+(p.fromSession?'<div style="font-size:11px;color:var(--text-muted);">From session</div>':'<div style="font-size:11px;color:var(--text-muted);">HP '+p.maxHp+' | AC '+p.ac+'</div>')+'</div>'+(alreadyIn?'<span style="font-size:11px;color:var(--teal);font-weight:600;">In combat</span>':'<button class="btn btn-primary btn-sm" data-action="addPlayerToCombat" data-player-id="'+p.id+'" data-player-name="'+escHtml(p.name)+'">Add</button>');
+    container.appendChild(row);
+  });
+}
+
+function addPlayerToCombat(id,name){
+  var p=state.players.find(function(x){return x.id===id;})||{id:id,name:name,maxHp:10,hp:10,ac:10,passivePerception:10};
+  state.creatures.push({id:genId(),name:p.name,type:'player',initRoll:rollDie(20),maxHp:p.maxHp||10,hp:p.hp||10,tempHp:0,ac:p.ac||10,conditions:[],surprised:false,dead:false,unconscious:false,attacks:[]});
+  logEntry(p.name+' added to combat','event');renderAddCombatPlayers();renderAll();showToast(p.name+' added');
+}
+
+function switchCombatModalTab(tab){
+  document.querySelectorAll('.modal-tab').forEach(function(t){t.classList.toggle('active',t.getAttribute('data-modal-tab')===tab);});
+  document.querySelectorAll('.modal-tab-panel').forEach(function(p){p.classList.toggle('active',p.id==='mtp-'+tab);});
+}
+
+function setCustomType(type){
+  state.customCreatureType=type;
+  document.getElementById('customTypeEnemy').className=type==='enemy'?'type-btn active-enemy':'type-btn';
+  document.getElementById('customTypeNpc').className=type==='npc'?'type-btn active-npc':'type-btn';
+}
+
+function confirmAddCombatDB(){
+  if(!state.selectedDBMonster){showToast('Select a monster first','error');return;}
+  var m=state.selectedDBMonster;
+  var initRoll=parseInt(document.getElementById('addCombatInit').value)||rollDie(20);
+  var surprised=document.getElementById('addCombatSurprised').checked;
+  state.creatures.push({id:genId(),name:m.name,type:'enemy',initRoll:initRoll,maxHp:m.hp,hp:m.hp,tempHp:0,ac:m.ac,conditions:[],surprised:surprised,dead:false,unconscious:false,attacks:m.attacks||[]});
+  logEntry(m.name+' added to combat','event');
+  document.getElementById('addCombatModal').classList.remove('open');renderAll();showToast(m.name+' added');
+}
+
+function addCustomAttackRow(){
+  var container=document.getElementById('customAttackRows');var rowId=genId();
+  var row=document.createElement('div');row.className='attack-edit-row';row.setAttribute('data-attack-row-id',rowId);
+  row.innerHTML='<input type="text" placeholder="Attack name" data-attack-field="name"><input type="text" placeholder="Damage / effect" data-attack-field="roll"><button style="background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;padding:4px;" data-action="removeAttackRow" data-attack-row-id="'+rowId+'">x</button>';
+  container.appendChild(row);
+}
+function removeAttackRow(id){var r=document.querySelector('[data-attack-row-id="'+id+'"]');if(r)r.parentNode.removeChild(r);}
+
+function confirmAddCustom(){
+  var name=document.getElementById('customName').value.trim();if(!name){showToast('Enter a name','error');return;}
+  var initRoll=parseInt(document.getElementById('customInit').value)||rollDie(20);
+  var maxHp=parseInt(document.getElementById('customHp').value)||10;
+  var ac=parseInt(document.getElementById('customAC').value)||10;
+  var surprised=document.getElementById('customSurprised').checked;
+  var attacks=[];
+  document.querySelectorAll('#customAttackRows .attack-edit-row').forEach(function(row){
+    var n=row.querySelector('[data-attack-field="name"]').value.trim();
+    var r=row.querySelector('[data-attack-field="roll"]').value.trim();
+    if(n)attacks.push({name:n,roll:r});
+  });
+  state.creatures.push({id:genId(),name:name,type:state.customCreatureType,initRoll:initRoll,maxHp:maxHp,hp:maxHp,tempHp:0,ac:ac,conditions:[],surprised:surprised,dead:false,unconscious:false,attacks:attacks});
+  logEntry(name+' ('+state.customCreatureType+') added','event');
+  document.getElementById('addCombatModal').classList.remove('open');renderAll();showToast(name+' added');
+}
+
+// ═══════════ CREATURE DETAIL ═══════════
+function openCreatureDetail(id){
+  var c=state.creatures.find(function(x){return x.id===id;});if(!c)return;
+  document.getElementById('creatureDetailName').textContent=c.name;
+  var badge=document.getElementById('creatureDetailBadge');
+  badge.className=c.type==='enemy'?'enemy-badge':c.type==='npc'?'npc-badge':'player-badge';
+  badge.textContent=c.type==='enemy'?'Enemy':c.type==='npc'?'NPC':'Player';
+  document.getElementById('creatureDetailStats').innerHTML='<div class="card" style="padding:10px 12px;"><div class="info-row"><span class="info-label">HP</span><span class="info-value" style="color:'+hpColor(c.hp,c.maxHp)+';">'+c.hp+' / '+c.maxHp+'</span></div><div class="info-row"><span class="info-label">AC</span><span class="info-value">'+(c.ac||'-')+'</span></div><div class="info-row"><span class="info-label">Initiative</span><span class="info-value">'+c.initRoll+'</span></div></div>';
+  var attacks=c.attacks||[];
+  document.getElementById('creatureDetailAttacks').innerHTML=!attacks.length?'<div style="padding:12px;font-size:13px;color:var(--text-muted);">No attacks defined.</div>':attacks.map(function(a){return'<div class="attack-row"><div class="attack-name">'+escHtml(a.name)+'</div><div class="attack-meta">'+escHtml(a.roll)+'</div></div>';}).join('');
+  document.getElementById('creatureDetailModal').classList.add('open');
+}
+
+// ═══════════ ENCOUNTER BUILDER ═══════════
+function renderEncounterGrid(){
+  var grid=document.getElementById('encounterGrid');
+  var count=document.getElementById('encMonsterCount');
+  count.textContent=state.encounterMonsters.length?'('+state.encounterMonsters.length+')':'';
+  if(!state.encounterMonsters.length){grid.innerHTML='<div class="empty-state" style="grid-column:1/-1;padding:20px;">No monsters yet. Search above or load a group.</div>';return;}
+  grid.innerHTML='';
+  state.encounterMonsters.forEach(function(m){
+    var pct=hpPct(m.maxHp,m.maxHp);
+    var card=document.createElement('div');
+    card.className='enc-card';
+    card.setAttribute('data-action','openEncDetail');
+    card.setAttribute('data-enc-monster-id',m.id);
+    card.innerHTML=
+      '<div class="enc-card-name">'+escHtml(m.name)+'</div>'+
+      '<div class="enc-card-stats">'+
+        (m.maxHp?'<span class="stat-chip">HP '+m.maxHp+'</span>':'')+
+        (m.ac?'<span class="stat-chip">AC '+m.ac+'</span>':'')+
+        (m.initRoll?'<span class="stat-chip">Init '+m.initRoll+'</span>':'')+
+      '</div>';
+    grid.appendChild(card);
+  });
+}
+
+function addMonsterRow(name,hp,ac){
+  state.encounterMonsters.push({id:genId(),name:name||'',maxHp:hp||0,ac:ac||0,initRoll:null});
+  renderEncounterGrid();
+}
+function removeMonsterRow(id){state.encounterMonsters=state.encounterMonsters.filter(function(m){return m.id!==id;});renderEncounterGrid();}
+
+function rollAllInit(){state.encounterMonsters.forEach(function(m){m.initRoll=rollDie(20);});renderEncounterGrid();showToast('Rolled initiative');}
+function clearEncounter(){state.encounterMonsters=[];renderEncounterGrid();}
+
+// Encounter monster detail modal
+function openEncDetail(id){
+  var m=state.encounterMonsters.find(function(x){return x.id===id;});if(!m)return;
+  state.editingEncMonsterId=id;
+  document.getElementById('encDetailName').textContent=m.name;
+  document.getElementById('encDetailHp').value=m.maxHp||'';
+  document.getElementById('encDetailAC').value=m.ac||'';
+  document.getElementById('encDetailInit').value=m.initRoll||'';
+  document.getElementById('encMonsterDetailModal').classList.add('open');
+}
+function saveEncDetail(){
+  var m=state.encounterMonsters.find(function(x){return x.id===state.editingEncMonsterId;});if(!m)return;
+  m.maxHp=parseInt(document.getElementById('encDetailHp').value)||0;
+  m.ac=parseInt(document.getElementById('encDetailAC').value)||0;
+  m.initRoll=parseInt(document.getElementById('encDetailInit').value)||0;
+  document.getElementById('encMonsterDetailModal').classList.remove('open');
+  renderEncounterGrid();showToast('Saved');
+}
+function removeEncMonster(){
+  state.encounterMonsters=state.encounterMonsters.filter(function(x){return x.id!==state.editingEncMonsterId;});
+  document.getElementById('encMonsterDetailModal').classList.remove('open');
+  renderEncounterGrid();showToast('Removed');
+}
+
+function loadEncounter(){
+  var valid=state.encounterMonsters.filter(function(m){return m.name;});
+  if(!valid.length){showToast('Add monsters first','error');return;}
+  var cb=document.getElementById('surpriseCheckboxes');cb.innerHTML='';
+  valid.forEach(function(m){
+    var lbl=document.createElement('label');lbl.style.cssText='display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;';
+    var inp=document.createElement('input');inp.type='checkbox';inp.style.width='auto';inp.setAttribute('data-encounter-monster-id',m.id);
+    lbl.appendChild(inp);lbl.appendChild(document.createTextNode(m.name));cb.appendChild(lbl);
+  });
+  document.getElementById('surpriseModal').classList.add('open');
+}
+
+function confirmSurprise(){
+  var valid=state.encounterMonsters.filter(function(m){return m.name;});
+  var surprisedIds=[];
+  document.querySelectorAll('#surpriseCheckboxes input[type="checkbox"]').forEach(function(inp){if(inp.checked)surprisedIds.push(parseInt(inp.getAttribute('data-encounter-monster-id')));});
+  valid.forEach(function(m){
+    var db=MONSTER_DB.find(function(x){return x.name===m.name;});
+    state.creatures.push({id:genId(),name:m.name,type:'enemy',initRoll:m.initRoll||rollDie(20),maxHp:m.maxHp||1,hp:m.maxHp||1,tempHp:0,ac:m.ac||0,conditions:[],surprised:surprisedIds.includes(m.id),dead:false,unconscious:false,attacks:db?db.attacks:[]});
+    logEntry(m.name+' added from encounter','event');
+  });
+  document.getElementById('surpriseModal').classList.remove('open');
+  activateTab('combat');renderAll();showToast(valid.length+' monsters loaded');
+}
+
+// ═══════════ ENCOUNTER GROUPS ═══════════
+function renderGroupGrid(){
+  var grid=document.getElementById('groupGrid');grid.innerHTML='';
+  var allGroups=PRESET_GROUPS.concat(state.savedGroups);
+  if(!allGroups.length){grid.innerHTML='<div style="font-size:12px;color:var(--text-muted);padding:8px 0;">No groups yet. Add monsters and tap Save Current.</div>';return;}
+  allGroups.forEach(function(g,idx){
+    var isCustom=idx>=PRESET_GROUPS.length;
+    var card=document.createElement('div');card.className='group-card';
+    card.setAttribute('data-action','openGroupDetail');card.setAttribute('data-group-index',idx);
+    card.innerHTML=
+      '<div class="group-card-name">'+escHtml(g.name)+(isCustom?'<span style="font-size:9px;background:var(--teal-light);color:var(--teal);padding:1px 4px;border-radius:2px;font-weight:700;margin-left:4px;">CUSTOM</span>':'')+'</div>'+
+      '<div class="group-card-count">'+g.monsters.length+' creatures</div>'+
+      '<div class="group-card-monsters">'+g.monsters.slice(0,3).map(function(m){return'<span class="stat-chip" style="font-size:9px;padding:1px 4px;">'+escHtml(m.name)+'</span>';}).join('')+(g.monsters.length>3?'<span class="stat-chip" style="font-size:9px;padding:1px 4px;">+'+( g.monsters.length-3)+' more</span>':'')+'</div>';
+    grid.appendChild(card);
+  });
+}
+
+function openGroupDetail(idx){
+  state.selectedGroupId=idx;
+  var allGroups=PRESET_GROUPS.concat(state.savedGroups);
+  var g=allGroups[idx];if(!g)return;
+  document.getElementById('groupDetailName').textContent=g.name;
+  document.getElementById('groupDetailMonsters').innerHTML='<div style="display:flex;flex-wrap:wrap;gap:6px;">'+g.monsters.map(function(m){return'<div class="card" style="padding:8px 10px;display:inline-flex;flex-direction:column;gap:2px;min-width:100px;"><div style="font-weight:600;font-size:12px;">'+escHtml(m.name)+'</div><div style="font-size:11px;color:var(--text-muted);">HP '+m.hp+' | AC '+m.ac+'</div></div>';}).join('')+'</div>';
+  var deleteBtn=document.querySelector('[data-action="deleteGroup"]');
+  if(deleteBtn)deleteBtn.classList.toggle('hidden',idx<PRESET_GROUPS.length);
+  document.getElementById('groupDetailModal').classList.add('open');
+}
+
+function loadGroup(){
+  var allGroups=PRESET_GROUPS.concat(state.savedGroups);
+  var g=allGroups[state.selectedGroupId];if(!g)return;
+  g.monsters.forEach(function(m){
+    state.encounterMonsters.push({id:genId(),name:m.name,maxHp:m.hp,ac:m.ac,initRoll:null});
+  });
+  document.getElementById('groupDetailModal').classList.remove('open');
+  renderEncounterGrid();showToast(g.name+' loaded ('+g.monsters.length+' monsters)','success');
+}
+
+function deleteGroup(){
+  var customIdx=state.selectedGroupId-PRESET_GROUPS.length;
+  if(customIdx<0)return;
+  state.savedGroups.splice(customIdx,1);
+  document.getElementById('groupDetailModal').classList.remove('open');
+  renderGroupGrid();showToast('Group deleted');
+}
+
+function openSaveGroup(){
+  var valid=state.encounterMonsters.filter(function(m){return m.name;});
+  if(!valid.length){showToast('Add monsters to the encounter first','error');return;}
+  document.getElementById('groupNameInput').value='';
+  document.getElementById('saveGroupPreview').textContent=valid.length+' monsters: '+valid.map(function(m){return m.name;}).join(', ');
+  document.getElementById('saveGroupModal').classList.add('open');
+}
+
+function confirmSaveGroup(){
+  var name=document.getElementById('groupNameInput').value.trim();if(!name){showToast('Enter a group name','error');return;}
+  var valid=state.encounterMonsters.filter(function(m){return m.name;});
+  state.savedGroups.push({name:name,monsters:valid.map(function(m){return{name:m.name,hp:m.maxHp,ac:m.ac};})});
+  document.getElementById('saveGroupModal').classList.remove('open');
+  renderGroupGrid();showToast('Group saved: '+name,'success');
+}
+
+// ═══════════ DROPDOWN BUILDER ═══════════
+function buildDropdown(inputEl,resultsEl,clearEl,onSelect){
+  function show(){
+    var q=(inputEl.value||'').trim().toLowerCase();
+    var matches=q?MONSTER_DB.filter(function(m){return m.name.toLowerCase().indexOf(q)!==-1;}):MONSTER_DB.slice(0,20);
+    if(!matches.length){resultsEl.classList.remove('open');return;}
+    resultsEl.innerHTML='';
+    matches.forEach(function(m){
+      var div=document.createElement('div');div.className='dropdown-item';
+      div.innerHTML='<span>'+escHtml(m.name)+'</span><span class="dropdown-meta">HP '+m.hp+' | AC '+m.ac+' | CR '+m.cr+'</span>';
+      div.addEventListener('click',function(){
+        inputEl.value=m.name;resultsEl.classList.remove('open');
+        if(clearEl)clearEl.classList.remove('hidden');
+        onSelect(m);
+      });
+      resultsEl.appendChild(div);
+    });
+    resultsEl.classList.add('open');
+  }
+  inputEl.addEventListener('focus',show);
+  inputEl.addEventListener('input',show);
+}
+
+// ═══════════ PLAYERS ═══════════
+function openEditPlayers(){
+  var container=document.getElementById('editPlayersRows');container.innerHTML='';
+  for(var i=0;i<6;i++){
+    var p=state.players[i]||{name:'',maxHp:'',ac:'',passivePerception:''};
+    var row=document.createElement('div');row.className='edit-player-grid';row.setAttribute('data-player-index',i);
+    row.innerHTML='<input type="text" placeholder="Player '+(i+1)+'" value="'+escHtml(p.name)+'" data-pfield="name"><input type="number" placeholder="HP" value="'+(p.maxHp||'')+'" data-pfield="maxHp"><input type="number" placeholder="AC" value="'+(p.ac||'')+'" data-pfield="ac"><input type="number" placeholder="PP" value="'+(p.passivePerception||'')+'" data-pfield="passivePerception">';
+    container.appendChild(row);
+  }
+  document.getElementById('editPlayersModal').classList.add('open');
+}
+
+function savePlayers(){
+  var rows=document.querySelectorAll('#editPlayersRows .edit-player-grid');var newPlayers=[];
+  rows.forEach(function(row){
+    var name=row.querySelector('[data-pfield="name"]').value.trim();if(!name)return;
+    var maxHp=parseInt(row.querySelector('[data-pfield="maxHp"]').value)||0;
+    var ac=parseInt(row.querySelector('[data-pfield="ac"]').value)||0;
+    var pp=parseInt(row.querySelector('[data-pfield="passivePerception"]').value)||0;
+    var existing=state.players.find(function(p){return p.name===name;});
+    if(existing){existing.maxHp=maxHp;existing.ac=ac;existing.passivePerception=pp;if(!existing.conditions)existing.conditions=[];newPlayers.push(existing);}
+    else{newPlayers.push({id:genId(),name:name,maxHp:maxHp,hp:maxHp,ac:ac,passivePerception:pp,conditions:[],inspiration:false});}
+  });
+  state.players=newPlayers;
+  document.getElementById('editPlayersModal').classList.remove('open');
+  renderDashboard();populateConcDropdown();showToast('Players saved','success');
+}
+
+var playerDetailId=null;
+function openPlayerDetail(id){
+  playerDetailId=id;
+  var p=state.players.find(function(x){return x.id===id;});if(!p)return;
+  var d=getPlayerCombatData(p);
+  document.getElementById('playerDetailName').textContent=p.name;
+  var inspBtn=document.getElementById('inspirationToggle');
+  inspBtn.className='toggle-btn'+(p.inspiration?' active':'');
+  document.getElementById('inspirationLabel').textContent=p.inspiration?'Inspired!':'Inspiration';
+  var conc=state.concentrations.find(function(c){return c.caster===p.name;});
+  var condHtml=(d.conditions&&d.conditions.length)?'<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;">'+d.conditions.map(function(c){return'<span class="condition-tag '+condClass(c)+'">'+escHtml(c)+'</span>';}).join('')+'</div>':'<span style="font-size:12px;color:var(--text-muted);">None</span>';
+  document.getElementById('playerDetailBody').innerHTML=
+    '<div class="card" style="padding:10px 12px;margin-bottom:12px;">'+'<div class="info-row"><span class="info-label">HP</span><span class="info-value" style="color:'+hpColor(d.hp,d.maxHp)+';">'+d.hp+' / '+d.maxHp+'</span></div>'+'<div class="info-row"><span class="info-label">AC</span><span class="info-value">'+(d.ac||'-')+'</span></div>'+'<div class="info-row"><span class="info-label">Passive Perception</span><span class="info-value">'+(p.passivePerception||'-')+'</span></div>'+'<div class="info-row"><span class="info-label">Concentration</span><span style="display:flex;align-items:center;gap:8px;">'+(conc?'<span class="condition-tag cond-concentration">'+escHtml(conc.spell)+'</span><button class="btn btn-sm btn-danger-outline" data-action="removeConcentrationByName" data-caster="'+escHtml(p.name)+'">End</button>':'<span style="font-size:12px;color:var(--text-muted);">None</span><button class="btn btn-sm btn-secondary" data-action="addConcFromDetail" data-player-name="'+escHtml(p.name)+'" style="font-size:11px;padding:2px 8px;">+ Add</button>')+'</span></div>'+'</div>'+'<div style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Conditions</div>'+condHtml;
+  document.getElementById('playerDetailModal').classList.add('open');
+}
+
+function toggleInspiration(){
+  var p=state.players.find(function(x){return x.id===playerDetailId;});if(!p)return;
+  p.inspiration=!p.inspiration;
+  document.getElementById('inspirationToggle').className='toggle-btn'+(p.inspiration?' active':'');
+  document.getElementById('inspirationLabel').textContent=p.inspiration?'Inspired!':'Inspiration';
+  logEntry(p.name+(p.inspiration?' gained':' lost')+' inspiration','event');
+  renderDashboardPlayers();
+}
+
+// ═══════════ CONCENTRATION ═══════════
+function populateConcDropdown(){
+  var sel=document.getElementById('concCasterSelect');
+  sel.innerHTML='<option value="">-- Select player --</option>';
+  state.players.forEach(function(p){var opt=document.createElement('option');opt.value=p.name;opt.textContent=p.name;sel.appendChild(opt);});
+}
+
+function addConcentration(){
+  populateConcDropdown();
+  document.getElementById('concCasterSelect').value='';
+  document.getElementById('concCasterCustom').value='';
+  document.getElementById('concSpell').value='';
+  state.concCustomMode=false;
+  document.getElementById('concCasterCustomWrap').classList.add('hidden');
+  document.getElementById('concCasterSelect').classList.remove('hidden');
+  document.getElementById('concCustomToggle').textContent='Enter name manually';
+  document.getElementById('addConcentrationModal').classList.add('open');
+  setTimeout(function(){document.getElementById('concSpell').focus();},100);
+}
+
+function addConcFromDetail(playerName){
+  addConcentration();
+  setTimeout(function(){document.getElementById('concCasterSelect').value=playerName||'';},50);
+}
+
+function toggleConcCustom(){
+  state.concCustomMode=!state.concCustomMode;
+  document.getElementById('concCasterCustomWrap').classList.toggle('hidden',!state.concCustomMode);
+  document.getElementById('concCasterSelect').classList.toggle('hidden',state.concCustomMode);
+  document.getElementById('concCustomToggle').textContent=state.concCustomMode?'Select from list':'Enter name manually';
+}
+
+function confirmAddConcentration(){
+  var caster=state.concCustomMode?document.getElementById('concCasterCustom').value.trim():document.getElementById('concCasterSelect').value;
+  var spell=document.getElementById('concSpell').value.trim();
+  if(!caster||!spell){showToast('Fill in caster and spell','error');return;}
+  state.concentrations=state.concentrations.filter(function(c){return c.caster!==caster;});
+  state.concentrations.push({id:genId(),caster:caster,spell:spell});
+  document.getElementById('addConcentrationModal').classList.remove('open');
+  logEntry(caster+' concentrating on '+spell,'event');renderDashboard();showToast(caster+' concentrating on '+spell,'success');
+}
+
+function removeConcentration(id){
+  var conc=state.concentrations.find(function(c){return c.id===id;});
+  if(conc)logEntry(conc.caster+' lost concentration on '+conc.spell,'event');
+  state.concentrations=state.concentrations.filter(function(c){return c.id!==id;});renderDashboard();
+}
+
+function removeConcentrationByName(casterName){
+  var conc=state.concentrations.find(function(c){return c.caster===casterName;});
+  if(conc){logEntry(conc.caster+' lost concentration on '+conc.spell,'event');state.concentrations=state.concentrations.filter(function(c){return c.caster!==casterName;});}
+  document.getElementById('playerDetailModal').classList.remove('open');renderDashboard();
+}
+
+// ═══════════ SESSION ═══════════
+function generateCode(){var c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';var s='';for(var i=0;i<6;i++)s+=c[Math.floor(Math.random()*c.length)];return s;}
+function openSession(){document.getElementById('sessionModal').classList.add('open');}
+function createSession(){
+  state.session={name:'',code:generateCode(),invitedPlayers:[]};
+  document.getElementById('sessionNoActive').classList.add('hidden');document.getElementById('sessionActive').classList.remove('hidden');
+  document.getElementById('sessionCodeDisplay').textContent=state.session.code;document.getElementById('sessionNameInput').value='';
+  renderInvitedPlayers();renderDashboard();showToast('Session created','success');
+}
+function saveSessionName(){var n=document.getElementById('sessionNameInput').value.trim();if(!state.session)return;state.session.name=n;document.getElementById('headerSessionName').textContent=n?'- '+n:'';renderDashboard();showToast('Saved','success');}
+function copySessionCode(){if(!state.session)return;if(navigator.clipboard){navigator.clipboard.writeText(state.session.code).then(function(){showToast('Code copied: '+state.session.code,'success');});}else{showToast('Code: '+state.session.code);}}
+function regenerateCode(){if(!state.session)return;state.session.code=generateCode();document.getElementById('sessionCodeDisplay').textContent=state.session.code;showToast('New code generated');}
+function invitePlayer(){document.getElementById('inviteName').value='';document.getElementById('inviteEmail').value='';document.getElementById('invitePlayerModal').classList.add('open');setTimeout(function(){document.getElementById('inviteName').focus();},100);}
+function confirmInvitePlayer(){
+  var name=document.getElementById('inviteName').value.trim();var email=document.getElementById('inviteEmail').value.trim();
+  if(!name){showToast('Enter a name','error');return;}if(!state.session)return;
+  state.session.invitedPlayers.push({id:genId(),name:name,email:email});
+  document.getElementById('invitePlayerModal').classList.remove('open');renderInvitedPlayers();showToast(name+' added');
+}
+function renderInvitedPlayers(){
+  var list=document.getElementById('invitedPlayersList');
+  if(!state.session||!state.session.invitedPlayers.length){list.innerHTML='<div style="padding:14px;text-align:center;font-size:13px;color:var(--text-muted);">No players added yet.</div>';return;}
+  list.innerHTML='';
+  state.session.invitedPlayers.forEach(function(ip){
+    var row=document.createElement('div');row.className='invited-player-row';
+    row.innerHTML='<span class="status-dot offline"></span><div style="flex:1;"><div style="font-size:13px;font-weight:500;">'+escHtml(ip.name)+'</div>'+(ip.email?'<div style="font-size:11px;color:var(--text-muted);">'+escHtml(ip.email)+'</div>':'')+'</div><button class="btn btn-ghost btn-sm" data-action="removeInvitedPlayer" data-invited-id="'+ip.id+'">Remove</button>';
+    list.appendChild(row);
+  });
+}
+function removeInvitedPlayer(id){if(!state.session)return;state.session.invitedPlayers=state.session.invitedPlayers.filter(function(p){return p.id!==id;});renderInvitedPlayers();}
+function endSession(){state.session=null;document.getElementById('sessionNoActive').classList.remove('hidden');document.getElementById('sessionActive').classList.add('hidden');document.getElementById('headerSessionName').textContent='';renderDashboard();showToast('Session ended');}
+
+// ═══════════ DICE ═══════════
+function rollDice(sides){
+  var count=parseInt(document.getElementById('diceCount').value)||1;var mod=parseInt(document.getElementById('diceMod').value)||0;
+  var rolls=[];for(var i=0;i<count;i++)rolls.push(rollDie(sides));
+  var sum=rolls.reduce(function(a,b){return a+b;},0)+mod;
+  document.getElementById('diceResult').textContent=sum;
+  document.getElementById('diceResultDetail').textContent=count+'d'+sides+(mod!==0?(mod>0?'+':'')+mod:'')+' = ['+rolls.join(', ')+']';
+}
+
+// ═══════════ TAB NAV ═══════════
+function activateTab(tabName){
+  document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.toggle('active',t.getAttribute('data-tab')===tabName);});
+  document.querySelectorAll('.section').forEach(function(s){s.classList.toggle('active',s.id==='tab-'+tabName);});
+}
+
+// ═══════════ EVENT DELEGATION ═══════════
+document.addEventListener('click',function(e){
+  var target=e.target;
+
+  if(target.classList.contains('nav-tab')){activateTab(target.getAttribute('data-tab'));return;}
+  if(target.hasAttribute('data-die')){rollDice(parseInt(target.getAttribute('data-die')));return;}
+  if(target.hasAttribute('data-remove-condition')){removeConditionFromCreature(parseInt(target.getAttribute('data-creature-id')),target.getAttribute('data-remove-condition'));return;}
+  if(target.getAttribute('data-action')==='toggleCondition'){toggleCondition(target.getAttribute('data-condition'));return;}
+  if(target.hasAttribute('data-modal-tab')){switchCombatModalTab(target.getAttribute('data-modal-tab'));return;}
+  if(target.hasAttribute('data-customtype')){setCustomType(target.getAttribute('data-customtype'));return;}
+
+  var action=target.getAttribute('data-action');
+  if(!action){
+    var hdr=target.closest?target.closest('.init-header[data-action]'):null;
+    if(hdr)openCreatureDetail(parseInt(hdr.getAttribute('data-creature-id')));
+    return;
+  }
+
+  switch(action){
+    case'startCombat':startCombat();break;
+    case'endCombat':endCombat();break;
+    case'nextTurn':nextTurn();break;
+    case'openAddCombat':openAddCombat();break;
+    case'closeAddCombat':document.getElementById('addCombatModal').classList.remove('open');break;
+    case'confirmAddCombatDB':confirmAddCombatDB();break;
+    case'rollAddCombatInit':document.getElementById('addCombatInit').value=rollDie(20);break;
+    case'addCustomAttackRow':addCustomAttackRow();break;
+    case'removeAttackRow':removeAttackRow(parseInt(target.getAttribute('data-attack-row-id')));break;
+    case'confirmAddCustom':confirmAddCustom();break;
+    case'sortByInit':sortCreaturesByInit();renderInitList();break;
+    case'applyInlineDmg':applyInlineDmg(parseInt(target.getAttribute('data-creature-id')));break;
+    case'applyInlineHeal':applyInlineHeal(parseInt(target.getAttribute('data-creature-id')));break;
+    case'openCreatureDetail':openCreatureDetail(parseInt(target.getAttribute('data-creature-id')));break;
+    case'closeCreatureDetail':document.getElementById('creatureDetailModal').classList.remove('open');break;
+    case'openConditions':openConditions(parseInt(target.getAttribute('data-creature-id')));break;
+    case'closeConditions':document.getElementById('conditionsModal').classList.remove('open');renderInitList();break;
+    case'revive':revive(parseInt(target.getAttribute('data-creature-id')));break;
+    case'stabilize':stabilize(parseInt(target.getAttribute('data-creature-id')));break;
+    case'removeCreature':removeCreature(parseInt(target.getAttribute('data-creature-id')));break;
+    case'addPlayerToCombat':addPlayerToCombat(parseInt(target.getAttribute('data-player-id')),target.getAttribute('data-player-name'));break;
+    // encounter
+    case'openAddManualModal':document.getElementById('manualName').value='';document.getElementById('manualHp').value='';document.getElementById('manualAC').value='';document.getElementById('manualInit').value='';document.getElementById('addManualModal').classList.add('open');break;
+    case'closeAddManual':document.getElementById('addManualModal').classList.remove('open');break;
+    case'confirmAddManual':{var n=document.getElementById('manualName').value.trim();if(!n){showToast('Enter a name','error');return;}var ih=parseInt(document.getElementById('manualHp').value)||0;var ia=parseInt(document.getElementById('manualAC').value)||0;var ii=parseInt(document.getElementById('manualInit').value)||0;state.encounterMonsters.push({id:genId(),name:n,maxHp:ih,ac:ia,initRoll:ii||null});document.getElementById('addManualModal').classList.remove('open');renderEncounterGrid();showToast(n+' added to encounter');break;}
+    case'rollAllInit':rollAllInit();break;
+    case'clearEncounter':clearEncounter();break;
+    case'loadEncounter':loadEncounter();break;
+    case'confirmSurprise':confirmSurprise();break;
+    case'closeSurprise':document.getElementById('surpriseModal').classList.remove('open');break;
+    case'clearEncSearch':document.getElementById('monsterSearchInput').value='';document.getElementById('encSearchClear').classList.add('hidden');document.getElementById('monsterResults').classList.remove('open');break;
+    case'openEncDetail':openEncDetail(parseInt(target.getAttribute('data-enc-monster-id')));break;
+    case'closeEncDetail':document.getElementById('encMonsterDetailModal').classList.remove('open');break;
+    case'saveEncDetail':saveEncDetail();break;
+    case'removeEncMonster':removeEncMonster();break;
+    case'openSaveGroup':openSaveGroup();break;
+    case'closeSaveGroup':document.getElementById('saveGroupModal').classList.remove('open');break;
+    case'confirmSaveGroup':confirmSaveGroup();break;
+    case'openGroupDetail':openGroupDetail(parseInt(target.getAttribute('data-group-index')));break;
+    case'closeGroupDetail':document.getElementById('groupDetailModal').classList.remove('open');break;
+    case'loadGroup':loadGroup();break;
+    case'deleteGroup':deleteGroup();break;
+    // players
+    case'editPlayers':openEditPlayers();break;
+    case'savePlayers':savePlayers();break;
+    case'closeEditPlayers':document.getElementById('editPlayersModal').classList.remove('open');break;
+    case'openPlayerDetail':openPlayerDetail(parseInt(target.getAttribute('data-player-id')));break;
+    case'closePlayerDetail':document.getElementById('playerDetailModal').classList.remove('open');break;
+    case'openEditFromDetail':document.getElementById('playerDetailModal').classList.remove('open');openEditPlayers();break;
+    case'toggleInspiration':toggleInspiration();break;
+    // concentration
+    case'addConcentration':addConcentration();break;
+    case'confirmAddConcentration':confirmAddConcentration();break;
+    case'closeAddConcentration':document.getElementById('addConcentrationModal').classList.remove('open');break;
+    case'removeConcentration':removeConcentration(parseInt(target.getAttribute('data-conc-id')));break;
+    case'removeConcentrationByName':removeConcentrationByName(target.getAttribute('data-caster'));break;
+    case'addConcFromDetail':document.getElementById('playerDetailModal').classList.remove('open');addConcFromDetail(target.getAttribute('data-player-name'));break;
+    case'toggleConcCustom':toggleConcCustom();break;
+    // log
+    case'togglePin':togglePin(parseInt(target.getAttribute('data-log-id')));break;
+    case'unpinLog':unpinLog(parseInt(target.getAttribute('data-log-id')));break;
+    case'clearLog':state.combatLog=state.combatLog.filter(function(e){return e.pinned;});renderLog();break;
+    // session
+    case'openSession':openSession();break;
+    case'closeSession':document.getElementById('sessionModal').classList.remove('open');break;
+    case'createSession':createSession();break;
+    case'saveSessionName':saveSessionName();break;
+    case'copySessionCode':copySessionCode();break;
+    case'regenerateCode':regenerateCode();break;
+    case'invitePlayer':invitePlayer();break;
+    case'confirmInvitePlayer':confirmInvitePlayer();break;
+    case'closeInvitePlayer':document.getElementById('invitePlayerModal').classList.remove('open');break;
+    case'removeInvitedPlayer':removeInvitedPlayer(parseInt(target.getAttribute('data-invited-id')));break;
+    case'endSession':endSession();break;
+    // dice/misc
+    case'openDice':document.getElementById('diceSheet').classList.add('open');break;
+    case'closeDice':document.getElementById('diceSheet').classList.remove('open');break;
+    case'closeVictory':document.getElementById('victoryOverlay').classList.remove('open');break;
+  }
+});
+
+// Backdrop close
+document.querySelectorAll('.sheet-overlay,.modal-overlay').forEach(function(overlay){
+  overlay.addEventListener('click',function(e){
+    if(e.target===overlay){overlay.classList.remove('open');if(overlay.id==='conditionsModal')renderInitList();}
+  });
+});
+
+// Dropdown close on outside click (capture phase)
+document.addEventListener('click',function(e){
+  ['monsterResults','addCombatResults'].forEach(function(rid){
+    var el=document.getElementById(rid);if(el&&!el.contains(e.target))el.classList.remove('open');
+  });
+},true);
+
+// Wire up dropdowns
+buildDropdown(
+  document.getElementById('monsterSearchInput'),
+  document.getElementById('monsterResults'),
+  document.getElementById('encSearchClear'),
+  function(m){addMonsterRow(m.name,m.hp,m.ac);document.getElementById('monsterSearchInput').value='';document.getElementById('encSearchClear').classList.add('hidden');document.getElementById('monsterResults').classList.remove('open');showToast(m.name+' added');}
+);
+
+buildDropdown(
+  document.getElementById('addCombatSearch'),
+  document.getElementById('addCombatResults'),
+  document.getElementById('addCombatSearchClear'),
+  function(m){
+    state.selectedDBMonster=m;
+    document.getElementById('addCombatSearchClear').classList.remove('hidden');
+    document.getElementById('addCombatSelected').innerHTML='<div class="card" style="padding:10px 12px;margin-bottom:0;"><div style="font-weight:700;font-size:14px;margin-bottom:3px;">'+escHtml(m.name)+'</div><div style="font-size:12px;color:var(--text-muted);">HP '+m.hp+' | AC '+m.ac+' | CR '+m.cr+'</div></div>';
+  }
+);
+
+// ═══════════ INIT ═══════════
+populateConcDropdown();
+renderGroupGrid();
+renderEncounterGrid();
+renderAll();
+</script>
+</body>
+</html>
